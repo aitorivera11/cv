@@ -2,34 +2,34 @@
 // src/components/Sidebar.astro
 import { Image } from 'astro:assets';
 import { urlFor } from '../lib/sanity.ts'; //
-// Hem comentat la importació del component de React
-// import ThemeToggle from './ThemeToggle.jsx';
 
 const { settings } = Astro.props;
 ---
-<aside class="w-full lg:w-2/5 lg:h-screen lg:sticky top-0 bg-slate-100 p-8 lg:p-16 flex flex-col">
+<aside class="w-full lg:w-2/5 lg:h-screen lg:sticky top-0 bg-slate-100 dark:bg-slate-900 p-8 lg:p-16 flex flex-col">
 	<div class="absolute top-8 right-8">
-        </div>
+        <button id="theme-toggle" class="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 focus:outline-none transition-colors" aria-label="Canviar tema">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="dark:hidden"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden dark:block"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2m-6.07-1.41.4.4m10.26-10.26.4.4M2 12h2m16 0h2m-6.46 5.25-.4.4M7.46 6.34l-.4.4"></path></svg>
+        </button>
+	</div>
 	<div class="flex flex-col h-full">
 		<div>
-			{/* ... resta del teu codi del sidebar ... */}
-            {settings?.foto && <Image src={urlFor(settings.foto).url()} width={96} height={96} alt={`Foto de ${settings.nom}`} class="h-24 w-24 rounded-full object-cover mb-6 border-4 border-white shadow-lg"/>}
-			<h1 class="text-4xl lg:text-5xl font-bold text-slate-900">{settings?.nom}</h1>
-			<h2 class="text-xl font-medium text-blue-600 mt-2">{settings?.titol}</h2>
-			<p class="text-slate-600 mt-6 max-w-md">{settings?.resumSidebar}</p>
+			{settings?.foto && <Image src={urlFor(settings.foto).url()} width={96} height={96} alt={`Foto de ${settings.nom}`} class="h-24 w-24 rounded-full object-cover mb-6 border-4 border-white dark:border-slate-800 shadow-lg"/>}
+			<h1 class="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white">{settings?.nom}</h1>
+			<h2 class="text-xl font-medium text-blue-600 dark:text-blue-400 mt-2">{settings?.titol}</h2>
+			<p class="text-slate-600 dark:text-slate-400 mt-6 max-w-md">{settings?.resumSidebar}</p>
 			<nav class="mt-12 hidden lg:flex flex-col gap-1">
-				<a href="#experiencia" class="group font-semibold text-slate-600 py-2"><span>Experiència</span></a>
-				<a href="#habilitats" class="group font-semibold text-slate-600 py-2"><span>Habilitats</span></a>
-				<a href="#formacio" class="group font-semibold text-slate-600 py-2"><span>Formació</span></a>
+				<a href="#experiencia" class="group font-semibold text-slate-600 dark:text-slate-300 py-2"><span class="group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Experiència</span></a>
+				<a href="#habilitats" class="group font-semibold text-slate-600 dark:text-slate-300 py-2"><span class="group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Habilitats</span></a>
+				<a href="#formacio" class="group font-semibold text-slate-600 dark:text-slate-300 py-2"><span class="group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Formació</span></a>
 			</nav>
 		</div>
 		<div class="mt-8 lg:mt-auto pt-8">
-			{/* ... resta del teu codi del sidebar ... */}
-            {settings?.cvUrl && <a href={settings.cvUrl} download class="w-full text-center inline-block bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-slate-900 transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl"><i class="fa-solid fa-download mr-2"></i>Descarregar CV</a>}
+			{settings?.cvUrl && <a href={settings.cvUrl} download class="w-full text-center inline-block bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-slate-900 dark:hover:bg-slate-700 transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl"><i class="fa-solid fa-download mr-2"></i>Descarregar CV</a>}
 			<div class="mt-8 flex justify-center lg:justify-start gap-6">
-				{settings?.linkedinUrl && <a href={settings.linkedinUrl} target="_blank" title="LinkedIn" class="text-slate-500 hover:text-blue-600 text-2xl transition-colors"><i class="fa-brands fa-linkedin"></i></a>}
-				{settings?.githubUrl && <a href={settings.githubUrl} target="_blank" title="GitHub" class="text-slate-500 hover:text-slate-900 text-2xl transition-colors"><i class="fa-brands fa-github"></i></a>}
-				{settings?.email && <a href={`mailto:${settings.email}`} title="Correu Electrònic" class="text-slate-500 hover:text-blue-600 text-2xl transition-colors"><i class="fa-solid fa-envelope"></i></a>}
+				{settings?.linkedinUrl && <a href={settings.linkedinUrl} target="_blank" title="LinkedIn" class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 text-2xl transition-colors"><i class="fa-brands fa-linkedin"></i></a>}
+				{settings?.githubUrl && <a href={settings.githubUrl} target="_blank" title="GitHub" class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-2xl transition-colors"><i class="fa-brands fa-github"></i></a>}
+				{settings?.email && <a href={`mailto:${settings.email}`} title="Correu Electrònic" class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 text-2xl transition-colors"><i class="fa-solid fa-envelope"></i></a>}
 			</div>
 		</div>
 	</div>
