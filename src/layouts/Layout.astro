@@ -1,14 +1,10 @@
 ---
-// src/layouts/Layout.astro
-import "../styles/global.css";
-
+import '../styles/global.css';
 interface Props {
 	title: string;
 }
-
 const { title } = Astro.props;
 ---
-
 <!doctype html>
 <html lang="ca" class="scroll-smooth">
 	<head>
@@ -22,9 +18,12 @@ const { title } = Astro.props;
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-        <script src="https://kit.fontawesome.com/4933c02f67.js" crossorigin="anonymous"></script>
+        
+        <script is:inline src="/scripts/theme.js"></script>
+        
+        <script src="https://kit.fontawesome.com/4933c02f67.js" crossorigin="anonymous" defer></script>
 	</head>
-	<body class="bg-slate-50 text-slate-800">
+	<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-300 transition-colors duration-300">
 		<slot />
-        </body>
+	</body>
 </html>

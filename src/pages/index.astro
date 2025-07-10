@@ -1,98 +1,69 @@
 ---
-// src/pages/index.astro (VERSIÓ FINAL AMB TAILWIND COMPLET)
 import Layout from '../layouts/Layout.astro';
 import Sidebar from '../components/Sidebar.astro';
 import client from '../lib/sanity.ts'; 
 import { PortableText } from 'astro-portabletext';
 
-const query = `*[_type == "siteSettings"][0]{
-  ...,
-  "experiencies": *[_type == "experiencia"] | order(ordre asc),
-  "formacions": *[_type == "formacio"] | order(ordre asc),
-  "habilitatsTecniques": *[_type == "habilitat" && categoria == "tecnica"] | order(nom asc),
-  "habilitatsClau": *[_type == "habilitat" && categoria == "clau"] | order(nom asc)
-}`;
-
+const query = `*[_type == "siteSettings"][0]{...,"experiencies": *[_type == "experiencia"] | order(ordre asc),"formacions": *[_type == "formacio"] | order(ordre asc),"habilitatsTecniques": *[_type == "habilitat" && categoria == "tecnica"] | order(nom asc),"habilitatsClau": *[_type == "habilitat" && categoria == "clau"] | order(nom asc)}`;
 const data = await client.fetch(query);
 ---
-
 <Layout title={data?.nom || 'Portafoli Aitor Rivera'}>
-    <div class="lg:flex max-w-7xl mx-auto">
-        
-        <Sidebar settings={data} />
+  <div class="max-w-screen-xl mx-auto lg:flex">
+    <Sidebar settings={data} />
+    <main class="w-full lg:w-3/5 p-8 lg:p-12 lg:py-24">
+      <section id="sobre-mi" class="mb-16">
+        <p class="text-lg leading-relaxed text-slate-600 dark:text-slate-400">Soc un desenvolupador apassionat per la tecnologia i la innovació, amb una trajectòria dual que em permet tant construir solucions tècniques robustes com liderar projectes complexos. El meu objectiu és aportar valor en entorns dinàmics, aplicant un alt sentit de la responsabilitat i un compromís total amb cada repte.</p>
+      </section>
 
-        <main class="w-full lg:w-3/5 p-8 lg:p-16">
-            {data ? (
-                <>
-                    <section id="sobre-mi" class="mb-16 lg:scroll-mt-24">
-                        <div class="bg-slate-800 text-slate-200 p-8 rounded-lg">
-                            <p class="text-lg leading-relaxed">Soc un desenvolupador apassionat per la tecnologia i la innovació, amb una trajectòria dual que em permet tant construir solucions tècniques robustes com liderar projectes complexos. El meu objectiu és aportar valor en entorns dinàmics, aplicant un alt sentit de la responsabilitat i un compromís total amb cada repte.</p>
-                        </div>
-                    </section>
-
-                    <section id="experiencia" class="mb-16 lg:scroll-mt-24">
-                        <h3 class="text-sm font-bold uppercase tracking-widest text-slate-500 mb-8">Experiència</h3>
-                        <div class="flex flex-col gap-y-8">
-                            {data.experiencies?.map(feina => (
-                                <div class="group relative grid grid-cols-8 gap-4">
-                                    <div class="col-span-8 lg:col-span-2">
-                                        <p class="text-sm text-slate-500 font-semibold">{feina.dates}</p>
-                                    </div>
-                                    <div class="col-span-8 lg:col-span-6">
-                                        <h4 class="text-xl font-bold text-slate-900">{feina.titol}</h4>
-                                        <h5 class="text-blue-700 font-semibold mb-2">{feina.empresa}</h5>
-                                        <div class="text-slate-600 prose prose-sm max-w-none prose-p:mb-2 prose-ul:list-disc prose-ul:pl-4">
-                                            <PortableText value={feina.descripcio} />
-                                        </div>
-                                        <div class="mt-4 flex flex-wrap gap-2">
-                                            {feina.tecnologies?.map(tag => <div class="flex items-center rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">{tag}</div>)}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-
-                    <section id="habilitats" class="mb-16 lg:scroll-mt-24">
-                        <h3 class="text-sm font-bold uppercase tracking-widest text-slate-500 mb-8">Habilitats</h3>
-                        <div class="flex flex-col gap-8">
-                            <div>
-                                <h5 class="font-bold text-lg mb-4 text-slate-800">Tècniques</h5>
-                                <div class="flex flex-wrap gap-2">
-                                    {data.habilitatsTecniques?.map(hab => <div class="flex items-center rounded-full bg-slate-200 px-3 py-1 text-xs font-medium text-slate-800">{hab.nom}</div>)}
-                                </div>
-                            </div>
-                             <div>
-                                <h5 class="font-bold text-lg mb-4 text-slate-800">Competències Clau</h5>
-                                <div class="flex flex-wrap gap-2">
-                                    {data.habilitatsClau?.map(hab => <div class="flex items-center rounded-full bg-slate-200 px-3 py-1 text-xs font-medium text-slate-800">{hab.nom}</div>)}
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    
-                    <section id="formacio" class="lg:scroll-mt-24">
-                        <h3 class="text-sm font-bold uppercase tracking-widest text-slate-500 mb-8">Formació</h3>
-                        <div class="flex flex-col gap-y-6">
-                             {data.formacions?.map(estudi => (
-                                <div>
-                                    <h4 class="text-xl font-bold text-slate-900">{estudi.titulacio}</h4>
-                                    <p class="text-slate-600">{estudi.centre} | {estudi.dates}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-
-                    <footer class="text-center mt-24 text-slate-500 text-sm">
-                        <p>Dissenyat amb Astro i Tailwind CSS. Contingut gestionat amb Sanity.io.</p>
-                        <p>&copy; {new Date().getFullYear()} {data.nom}</p>
-                    </footer>
-                </>
-            ) : (
-                <div class="bg-slate-800 text-slate-200 p-8 rounded-lg">
-                    <p>Connectant amb Sanity i carregant les dades...</p>
+      <section id="experiencia" class="mb-16 scroll-mt-24">
+        <h3 class="text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-8">Experiència</h3>
+        <div class="flex flex-col gap-y-4">
+          {data.experiencies?.map(feina => (
+            <a href="#" class="group block p-6 -mx-6 rounded-lg hover:bg-slate-200/75 dark:hover:bg-slate-800/50 transition-all duration-300">
+              <div class="grid sm:grid-cols-8 gap-4">
+                <div class="sm:col-span-2">
+                  <p class="text-sm text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider">{feina.dates}</p>
                 </div>
-            )}
-        </main>
-    </div>
+                <div class="sm:col-span-6">
+                  <h4 class="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{feina.titol}</h4>
+                  <h5 class="font-semibold text-slate-600 dark:text-slate-300 mb-2">{feina.empresa}</h5>
+                  <div class="text-slate-600 dark:text-slate-400 prose prose-slate dark:prose-invert max-w-none prose-p:mb-2 prose-ul:list-disc prose-ul:pl-4">
+                    <PortableText value={feina.descripcio} />
+                  </div>
+                  <div class="mt-4 flex flex-wrap gap-2">
+                    {feina.tecnologies?.map(tag => <div class="rounded-full bg-blue-100 dark:bg-blue-900/50 px-3 py-1 text-xs font-medium text-blue-800 dark:text-blue-300">{tag}</div>)}
+                  </div>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+      
+      <section id="habilitats" class="mb-16 scroll-mt-24">
+        <h3 class="text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-8">Habilitats</h3>
+        <div class="flex flex-wrap gap-2">
+            {data.habilitatsTecniques?.map(hab => <div class="rounded-full bg-slate-200 dark:bg-slate-800 px-3 py-1 text-sm font-medium text-slate-700 dark:text-slate-300">{hab.nom}</div>)}
+            {data.habilitatsClau?.map(hab => <div class="rounded-full bg-blue-100 dark:bg-blue-900/50 px-3 py-1 text-sm font-medium text-blue-800 dark:text-blue-300">{hab.nom}</div>)}
+        </div>
+      </section>
+      
+      <section id="formacio" class="scroll-mt-24">
+          <h3 class="text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-8">Formació</h3>
+          <div class="flex flex-col gap-y-6">
+               {data.formacions?.map(estudi => (
+                  <div>
+                      <h4 class="text-lg font-bold text-slate-900 dark:text-slate-100">{estudi.titulacio}</h4>
+                      <p class="text-slate-600 dark:text-slate-400">{estudi.centre} | {estudi.dates}</p>
+                  </div>
+              ))}
+          </div>
+      </section>
+
+      <footer class="text-center mt-24 text-slate-500 text-sm">
+          <p>Dissenyat amb Astro i Tailwind CSS. Contingut gestionat amb Sanity.io.</p>
+          <p>&copy; {new Date().getFullYear()} {data.nom}</p>
+      </footer>
+    </main>
+  </div>
 </Layout>
