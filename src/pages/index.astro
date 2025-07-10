@@ -1,95 +1,85 @@
 ---
-// src/pages/index.astro
 import Layout from '../layouts/Layout.astro';
 import Sidebar from '../components/Sidebar.astro';
-import client from '../lib/sanity.ts'; //
+import client from '../lib/sanity.ts';
 import { PortableText } from 'astro-portabletext';
-import AnimateOnScroll from '../components/AnimateOnScroll.jsx'; // Importem el component d'animació
+import AnimateOnScroll from '../components/AnimateOnScroll.jsx';
 
-// Mantenim la teva consulta a Sanity EXACTAMENT IGUAL.
-const query = `*[_type == "siteSettings"][0]{...,"experiencies": *[_type == "experiencia"] | order(ordre asc),"formacions": *[_type == "formacio"] | order(ordre asc),"habilitatsTecniques": *[_type == "habilitat" && categoria == "tecnica"] | order(nom asc),"habilitatsClau": *[_type == "habilitat" && categoria == "clau"] | order(nom asc)}`; //
+const query = `*[_type == "siteSettings"][0]{...,"experiencies": *[_type == "experiencia"] | order(ordre asc),"formacions": *[_type == "formacio"] | order(ordre asc),"habilitatsTecniques": *[_type == "habilitat" && categoria == "tecnica"] | order(nom asc),"habilitatsClau": *[_type == "habilitat" && categoria == "clau"] | order(nom asc)}`;
 const data = await client.fetch(query);
 ---
-<Layout title={data?.nom || 'Portafoli Aitor Rivera'}>
-	<div class="max-w-screen-xl mx-auto lg:flex">
-		<Sidebar settings={data} />
-		<main class="w-full lg:w-3/5 p-8 lg:p-16 lg:py-24">
-			{data ? (
-				<>
-                    {/* Cada secció ara està envoltada pel component AnimateOnScroll */}
-					<AnimateOnScroll client:visible>
-                        <section id="sobre-mi" class="mb-20">
-                            <p class="text-lg leading-relaxed text-slate-600 dark:text-slate-400">Soc un desenvolupador apassionat per la tecnologia i la innovació, amb una trajectòria dual que em permet tant construir solucions tècniques robustes com liderar projectes complexos. El meu objectiu és aportar valor en entorns dinàmics, aplicant un alt sentit de la responsabilitat i un compromís total amb cada repte.</p>
-                        </section>
-                    </AnimateOnScroll>
-                    
-                    <AnimateOnScroll client:visible>
-                        <section id="experiencia" class="mb-20 scroll-mt-24">
-                            <h3 class="text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-8">Experiència</h3>
-                            <div class="flex flex-col gap-y-4">
-                                {data.experiencies?.map(feina => (
-                                    <div class="group block p-6 -mx-6 rounded-lg hover:bg-white/50 dark:hover:bg-slate-800/50 hover:shadow-lg transition-all duration-300">
-                                        <div class="grid sm:grid-cols-8 gap-x-6">
-                                            <p class="sm:col-span-2 text-sm text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider mb-2 sm:mb-0">{feina.dates}</p>
-                                            <div class="sm:col-span-6">
-                                                <h4 class="text-xl font-bold text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{feina.titol}</h4>
-                                                <h5 class="font-semibold text-slate-600 dark:text-slate-300 mb-3">{feina.empresa}</h5>
-                                                <div class="text-slate-600 dark:text-slate-400 prose prose-slate dark:prose-invert max-w-none prose-p:mb-2 prose-ul:list-disc prose-ul:pl-4">
-                                                    <PortableText value={feina.descripcio} />
-                                                </div>
-                                                <div class="mt-4 flex flex-wrap gap-2">
-                                                    {feina.tecnologies?.map(tag => <div class="rounded-full bg-blue-100 dark:bg-blue-900/50 px-3 py-1 text-xs font-medium text-blue-800 dark:text-blue-300">{tag}</div>)}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
-                    </AnimateOnScroll>
-					
-                    <AnimateOnScroll client:visible>
-                        <section id="habilitats" class="mb-20 scroll-mt-24">
-                            <h3 class="text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-8">Habilitats</h3>
-                            <div class="flex flex-col gap-8">
-                                    <div>
-                                        <h5 class="font-bold text-lg mb-4 text-slate-800 dark:text-slate-200">Tècniques</h5>
-                                        <div class="flex flex-wrap gap-2">
-                                            {data.habilitatsTecniques?.map(hab => <div class="rounded-full bg-slate-200 dark:bg-slate-800 px-3 py-1 text-sm font-medium text-slate-700 dark:text-slate-300">{hab.nom}</div>)}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h5 class="font-bold text-lg mb-4 text-slate-800 dark:text-slate-200">Competències Clau</h5>
-                                        <div class="flex flex-wrap gap-2">
-                                            {data.habilitatsClau?.map(hab => <div class="rounded-full bg-blue-100 dark:bg-blue-900/50 px-3 py-1 text-sm font-medium text-blue-800 dark:text-blue-300">{hab.nom}</div>)}
-                                        </div>
-                                    </div>
-                            </div>
-                        </section>
-                    </AnimateOnScroll>
-					
-                    <AnimateOnScroll client:visible>
-                        <section id="formacio" class="scroll-mt-24">
-                            <h3 class="text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-8">Formació</h3>
-                            <div class="flex flex-col gap-y-6">
-                                    {data.formacions?.map(estudi => (
-                                        <div>
-                                            <h4 class="text-lg font-bold text-slate-900 dark:text-slate-100">{estudi.titulacio}</h4>
-                                            <p class="text-slate-600 dark:text-slate-400">{estudi.centre} | {estudi.dates}</p>
-                                        </div>
-                                    ))}
-                            </div>
-                        </section>
-                    </AnimateOnScroll>
 
-					<footer class="text-center mt-24 text-slate-500 text-sm">
-						<p>Dissenyat amb Astro i Tailwind CSS. Contingut gestionat amb Sanity.io.</p>
-						<p>&copy; {new Date().getFullYear()} {data.nom}</p>
-					</footer>
-				</>
-			) : (
-				<div class="bg-slate-800 text-slate-200 p-8 rounded-lg"><p>Connectant amb Sanity...</p></div>
-			)}
-		</main>
-	</div>
+<Layout title={data?.nom || 'Portafoli Aitor Rivera'}>
+  <div class="max-w-screen-xl mx-auto lg:flex lg:gap-8">
+    <Sidebar settings={data} />
+    <main class="w-full lg:w-3/5 p-8 lg:p-16 lg:py-24 bg-white/80 dark:bg-slate-900/70 rounded-2xl shadow-xl transition-all duration-500 min-h-screen">
+      {data ? (
+        <>
+          <AnimateOnScroll client:visible>
+            <section id="sobre-mi" class="mb-20">
+              <h2 class="text-2xl font-bold mb-4 text-indigo-700 dark:text-indigo-300">Sobre mi</h2>
+              <p class="text-lg leading-relaxed text-slate-600 dark:text-slate-300">{data.sobreMi}</p>
+            </section>
+          </AnimateOnScroll>
+
+          <AnimateOnScroll client:visible>
+            <section id="experiencia" class="mb-20">
+              <h2 class="text-2xl font-bold mb-4 text-indigo-700 dark:text-indigo-300">Experiència</h2>
+              <ul class="space-y-6">
+                {data.experiencies?.map((exp) => (
+                  <li>
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-1">
+                      <span class="font-semibold text-lg">{exp.carrec}</span>
+                      <span class="text-slate-400 text-sm">{exp.anyInici} – {exp.anyFi || 'Actualitat'}</span>
+                    </div>
+                    <div class="text-slate-600 dark:text-slate-400 mb-1">{exp.empresa}</div>
+                    <div class="text-sm text-slate-500 dark:text-slate-400">
+                      <PortableText value={exp.descripcio} />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </AnimateOnScroll>
+
+          <AnimateOnScroll client:visible>
+            <section id="formacio" class="mb-20">
+              <h2 class="text-2xl font-bold mb-4 text-indigo-700 dark:text-indigo-300">Formació</h2>
+              <ul class="space-y-4">
+                {data.formacions?.map((f) => (
+                  <li>
+                    <span class="font-medium">{f.titol}</span> — {f.institucio} ({f.anyInici} - {f.anyFi || 'Actualitat'})
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </AnimateOnScroll>
+
+          <AnimateOnScroll client:visible>
+            <section id="skills" class="mb-20">
+              <h2 class="text-2xl font-bold mb-4 text-indigo-700 dark:text-indigo-300">Competències tècniques</h2>
+              <ul class="flex flex-wrap gap-3">
+                {data.habilitatsTecniques?.map((h) => (
+                  <li class="bg-indigo-100 dark:bg-indigo-900 px-3 py-1 rounded-full text-indigo-700 dark:text-indigo-200 text-sm">{h.nom}</li>
+                ))}
+              </ul>
+            </section>
+          </AnimateOnScroll>
+
+          <AnimateOnScroll client:visible>
+            <section id="skills-clau" class="mb-20">
+              <h2 class="text-2xl font-bold mb-4 text-indigo-700 dark:text-indigo-300">Competències clau</h2>
+              <ul class="flex flex-wrap gap-3">
+                {data.habilitatsClau?.map((h) => (
+                  <li class="bg-amber-100 dark:bg-amber-900 px-3 py-1 rounded-full text-amber-700 dark:text-amber-200 text-sm">{h.nom}</li>
+                ))}
+              </ul>
+            </section>
+          </AnimateOnScroll>
+        </>
+      ) : (
+        <div>Carregant...</div>
+      )}
+    </main>
+  </div>
 </Layout>
