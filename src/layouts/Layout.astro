@@ -1,6 +1,6 @@
 ---
 // src/layouts/Layout.astro
-import '../styles/tailwind.css'; 
+import '../styles/tailwind.css'; // Importem els estils base de Tailwind
 
 interface Props {
 	title: string;
@@ -10,7 +10,7 @@ const { title } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="ca">
+<html lang="ca" class="scroll-smooth">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="description" content="Portafoli professional d'Aitor Rivera Garcia" />
@@ -24,13 +24,7 @@ const { title } = Astro.props;
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
         <script src="https://kit.fontawesome.com/4933c02f67.js" crossorigin="anonymous"></script>
 	</head>
-	<body>
+	<body class="bg-slate-50 text-slate-800">
 		<slot />
-        <script src="../scripts/animations.js"></script>
-	</body>
+        </body>
 </html>
-
-<style is:global>
-    /* Aquí enganxarem tot el nostre CSS */
-    @import '../styles/global.css';
-</style>
