@@ -1,11 +1,13 @@
-// astro.config.mjs (VERSIÓ SIMPLIFICADA)
+// astro.config.mjs
 import { defineConfig } from 'astro/config';
+import tailwind from "@astrojs/tailwind";
 
-import tailwindcss from '@tailwindcss/vite';
-
-// Ja no necessitem la integració de Sanity aquí.
+// https://astro.build/config
 export default defineConfig({
-  vite: {
-    plugins: [tailwindcss()]
-  }
+  integrations: [
+    tailwind({
+        // Desactiva l'aplicació d'estils base d'Astro per evitar conflictes amb els de Tailwind.
+        applyBaseStyles: false,
+    }),
+  ]
 });
