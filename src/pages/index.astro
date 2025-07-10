@@ -1,14 +1,13 @@
 ---
-// src/pages/index.astro (VERSIÓ FINAL AMB EINES PRÒPIES)
+// src/pages/index.astro (Versió amb Tailwind)
 import Layout from '../layouts/Layout.astro';
-
-// 1. Importem DES DEL NOSTRE FITXER
-import client, { urlFor } from '../lib/sanity.ts'; 
+import Sidebar from '../components/Sidebar.astro'; // <-- Importem el nostre nou component
+import client from '../lib/sanity.ts'; 
 import { PortableText } from 'astro-portabletext';
 
+// La consulta a Sanity no canvia
 const query = `*[_type == "siteSettings"][0]{
   ...,
-  "cvUrl": cvPdf.asset->url,
   "experiencies": *[_type == "experiencia"] | order(ordre asc),
   "formacions": *[_type == "formacio"] | order(ordre asc),
   "habilitatsTecniques": *[_type == "habilitat" && categoria == "tecnica"],
@@ -19,87 +18,33 @@ const data = await client.fetch(query);
 ---
 
 <Layout title={data?.nom || 'Portafoli Aitor Rivera'}>
-    <div class="page-wrapper">
-        <aside class="sidebar">
-            <div class="sidebar-content">
-                {data?.foto && <img src={urlFor(data.foto).width(240).url()} alt={`Foto de ${data.nom}`} class="sidebar-photo">}
-                <h1 class="sidebar-title">{data?.nom}</h1>
-                <h2 class="sidebar-subtitle">{data?.titol}</h2>
-                <p class="sidebar-summary">{data?.resumSidebar}</p>
+    <div class="lg:flex">
+        <Sidebar settings={data} />
 
-                <nav class="sidebar-nav">
-                    <a href="#sobre-mi">Sobre Mi</a>
-                    <a href="#experiencia">Experiència</a>
-                    <a href="#habilitats">Habilitats</a>
-                    <a href="#formacio">Formació</a>
-                </nav>
-
-                {data?.cvUrl && <a href={data.cvUrl} download class="btn-download"><i class="fa-solid fa-download"></i> Descarregar CV</a>}
-
-                <div class="sidebar-contact">
-                    {data?.linkedinUrl && <a href={data.linkedinUrl} target="_blank" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>}
-                    {data?.githubUrl && <a href={data.githubUrl} target="_blank" title="GitHub"><i class="fa-brands fa-github"></i></a>}
-                    {data?.email && <a href={`mailto:${data.email}`} title="Correu Electrònic"><i class="fa-solid fa-envelope"></i></a>}
-                </div>
-            </div>
-        </aside>
-
-        <main class="main-content">
+        <main class="w-full lg:w-3/5 p-8 lg:p-16">
             {data ? (
             <>
-                <section id="sobre-mi" class="content-section">
-                    <div class="intro-card hidden">
-                        <p>Soc un desenvolupador apassionat per la tecnologia i la innovació, amb una trajectòria dual que em permet tant construir solucions tècniques robustes com liderar projectes complexos. El meu objectiu és aportar valor en entorns dinàmics, aplicant un alt sentit de la responsabilitat i un compromís total amb cada repte.</p>
+                <section id="sobre-mi" class="mb-16 scroll-mt-24">
+                    <div class="bg-slate-800 text-slate-200 p-8 rounded-lg border-l-4 border-blue-500 hidden">
+                        <p class="text-lg">Soc un desenvolupador apassionat per la tecnologia i la innovació, amb una trajectòria dual que em permet tant construir solucions tècniques robustes com liderar projectes complexos. El meu objectiu és aportar valor en entorns dinàmics, aplicant un alt sentit de la responsabilitat i un compromís total amb cada repte.</p>
                     </div>
                 </section>
-                <section id="experiencia" class="content-section">
-                    <h3 class="content-title hidden">Experiència</h3>
+                <section id="experiencia" class="mb-16 scroll-mt-24">
+                    <h3 class="text-sm font-bold uppercase tracking-widest text-slate-500 mb-8 hidden">Experiència</h3>
                     {data.experiencies?.map(feina => (
-                        <div class="experience-card hidden">
-                            <h4>{feina.titol}</h4>
-                            <h5>{feina.empresa} | {feina.dates}</h5>
-                            <div class="description-content">
+                        <div class="bg-white border border-slate-200 rounded-lg p-6 mb-6 hidden hover:shadow-xl hover:border-blue-500 transition-all duration-300">
+                            <h4 class="text-xl font-bold text-slate-900">{feina.titol}</h4>
+                            <h5 class="text-blue-700 font-semibold mb-2">{feina.empresa} | {feina.dates}</h5>
+                            <div class="text-slate-600 prose prose-sm max-w-none">
                                 <PortableText value={feina.descripcio} />
                             </div>
-                            <div class="experience-tags">
-                                {feina.tecnologies?.map(tag => <span class="tech-tag">{tag}</span>)}
-                            </div>
                         </div>
                     ))}
                 </section>
-                <section id="habilitats" class="content-section">
-                    <h3 class="content-title hidden">Habilitats</h3>
-                    <div class="skills-container">
-                        <div class="skill-card hidden">
-                            <h5>Tècniques</h5>
-                            <div class="skills-grid">
-                                {data.habilitatsTecniques?.map(hab => <span class="skill-tag">{hab.nom}</span>)}
-                            </div>
-                        </div>
-                        <div class="skill-card hidden">
-                            <h5>Competències Clau</h5>
-                            <div class="skills-grid">
-                                {data.habilitatsClau?.map(hab => <span class="skill-tag">{hab.nom}</span>)}
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                <section id="formacio" class="content-section">
-                    <h3 class="content-title hidden">Formació</h3>
-                    {data.formacions?.map(estudi => (
-                        <div class="education-card hidden">
-                            <h4>{estudi.titulacio}</h4>
-                            <p>{estudi.centre} | {estudi.dates}</p>
-                        </div>
-                    ))}
-                </section>
-                <footer class="main-footer hidden">
-                    <p>&copy; {new Date().getFullYear()} {data.nom}</p>
-                </footer>
             </>
         ) : (
-            <div class="intro-card">
-                <p>Connectant amb Sanity i carregant les dades... Si aquest missatge persisteix, assegura't que has creat i publicat una entrada a la secció "Configuració del Lloc" del teu Sanity Studio.</p>
+            <div class="bg-slate-800 text-slate-200 p-8 rounded-lg">
+                <p>Connectant amb Sanity i carregant les dades...</p>
             </div>
         )}
         </main>

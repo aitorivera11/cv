@@ -1,0 +1,35 @@
+---
+// src/components/Sidebar.astro
+import { urlFor } from '../lib/sanity.ts'; // Necessitem la nostra funció per a imatges
+
+// Aquest component espera rebre un objecte 'settings' amb totes les dades
+const { settings } = Astro.props;
+---
+
+<aside class="w-full lg:w-2/5 lg:h-screen lg:sticky top-0 bg-slate-50 p-8 lg:p-16 flex flex-col">
+    <div class="flex flex-col h-full">
+        {settings?.foto && <img src={urlFor(settings.foto).width(240).url()} alt={`Foto de ${settings.nom}`} class="h-24 w-24 rounded-full object-cover border-4 border-white shadow-lg mb-6">}
+
+        <h1 class="text-4xl lg:text-5xl font-bold text-slate-900">{settings?.nom}</h1>
+        <h2 class="text-xl font-medium text-blue-700 mt-2">{settings?.titol}</h2>
+        <p class="text-slate-600 mt-6 max-w-md">{settings?.resumSidebar}</p>
+
+        <nav class="mt-12 hidden lg:flex flex-col gap-2">
+            <a href="#sobre-mi" class="font-semibold text-slate-600 hover:text-blue-700 transition-colors py-1">Sobre Mi</a>
+            <a href="#experiencia" class="font-semibold text-slate-600 hover:text-blue-700 transition-colors py-1">Experiència</a>
+            <a href="#habilitats" class="font-semibold text-slate-600 hover:text-blue-700 transition-colors py-1">Habilitats</a>
+            <a href="#formacio" class="font-semibold text-slate-600 hover:text-blue-700 transition-colors py-1">Formació</a>
+        </nav>
+
+        <div class="mt-auto pt-8">
+            {settings?.cvUrl && <a href={settings.cvUrl} download class="w-full max-w-md text-center inline-block bg-blue-700 text-white font-bold py-3 px-4 rounded-lg hover:bg-slate-900 transition-all duration-300 transform hover:-translate-y-0.5"><i class="fa-solid fa-download"></i> Descarregar CV</a>}
+
+            <div class="mt-8 flex justify-center lg:justify-start gap-6">
+                {settings?.linkedinUrl && <a href={settings.linkedinUrl} target="_blank" title="LinkedIn" class="text-slate-500 hover:text-blue-700 text-2xl transition-colors"><i class="fa-brands fa-linkedin"></i></a>}
+                {settings?.githubUrl && <a href={settings.githubUrl} target="_blank" title="GitHub" class="text-slate-500 hover:text-slate-900 text-2xl transition-colors"><i class="fa-brands fa-github"></i></a>}
+                {settings?.email && <a href={`mailto:${settings.email}`} title="Correu Electrònic" class="text-slate-500 hover:text-blue-700 text-2xl transition-colors"><i class="fa-solid fa-envelope"></i></a>}
+            </div>
+        </div>
+    </div>
+        ) : (
+</aside>
