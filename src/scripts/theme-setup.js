@@ -1,37 +1,25 @@
 // src/scripts/theme.js
 
-// Funció per aplicar el tema
-const applyTheme = (theme) => {
+// Funció per llegir i aplicar el tema guardat o el del sistema.
+const applyInitialTheme = () => {
+  const theme = localStorage.getItem('theme') || 
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  
   if (theme === 'dark') {
     document.documentElement.classList.add('dark');
   } else {
     document.documentElement.classList.remove('dark');
   }
-  localStorage.setItem('theme', theme);
 };
 
-// Funció per gestionar el clic del botó
+// Funció per canviar el tema en fer clic.
 const handleThemeToggle = () => {
-  const currentTheme = localStorage.getItem('theme') || 'light';
-  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  applyTheme(newTheme);
+  const isDark = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
 };
 
-// Codi principal que s'executa
-// 1. Apliquem el tema inicial només carregar l'script
-const initialTheme = (() => {
-  if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-    return localStorage.getItem('theme');
-  }
-  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    return 'dark';
-  }
-  return 'light';
-})();
-applyTheme(initialTheme);
+// Apliquem el tema només carregar la pàgina.
+applyInitialTheme();
 
-// 2. Busquem el botó i li afegim la funcionalitat
-const themeToggleButton = document.getElementById('theme-toggle');
-if (themeToggleButton) {
-  themeToggleButton.addEventListener('click', handleThemeToggle);
-}
+// Afegim la funcionalitat al botó.
+document.getElementById('theme-toggle')?.addEventListener('click', handleThemeToggle);
