@@ -1,6 +1,7 @@
 ---
 // src/layouts/Layout.astro
 import '../styles/global.css';
+import themeScript from '../scripts/theme-setup.js?raw'; // Assegura't que importes amb '?raw'
 
 interface Props {
 	title: string;
@@ -21,9 +22,10 @@ const { title } = Astro.props;
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
 		
-        <script is:inline src="../scripts/theme-setup.js"></script>
+        {/* CORRECCIÓ: Injectem el codi del script directament */}
+		<script is:inline set:html={themeScript}></script>
 		
-        <script src="https://kit.fontawesome.com/4933c02f67.js" crossorigin="anonymous" defer></script>
+		<script src="https://kit.fontawesome.com/4933c02f67.js" crossorigin="anonymous" defer></script>
 	</head>
 	<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-300 transition-colors duration-300">
 		<slot />
