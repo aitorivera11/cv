@@ -1,7 +1,25 @@
-// src/scripts/theme-setup.js
+// src/scripts/theme.js
 
-// Aquesta funció defineix el tema inicial per evitar el parpadeig.
-const getInitialTheme = () => {
+// Funció per aplicar el tema
+const applyTheme = (theme) => {
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  localStorage.setItem('theme', theme);
+};
+
+// Funció per gestionar el clic del botó
+const handleThemeToggle = () => {
+  const currentTheme = localStorage.getItem('theme') || 'light';
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  applyTheme(newTheme);
+};
+
+// Codi principal que s'executa
+// 1. Apliquem el tema inicial només carregar l'script
+const initialTheme = (() => {
   if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
     return localStorage.getItem('theme');
   }
@@ -9,36 +27,11 @@ const getInitialTheme = () => {
     return 'dark';
   }
   return 'light';
-};
+})();
+applyTheme(initialTheme);
 
-// Apliquem el tema inicial a l'etiqueta <html>
-const theme = getInitialTheme();
-if (theme === 'dark') {
-  document.documentElement.classList.add('dark');
+// 2. Busquem el botó i li afegim la funcionalitat
+const themeToggleButton = document.getElementById('theme-toggle');
+if (themeToggleButton) {
+  themeToggleButton.addEventListener('click', handleThemeToggle);
 }
-
-// Guardem el tema a la memòria del navegador per a la sessió actual.
-localStorage.setItem('theme', theme);
-
-// Aquesta funció s'executarà quan la pàgina hagi carregat completament.
-// Assignarà la funcionalitat al botó.
-document.addEventListener('DOMContentLoaded', () => {
-  const themeToggleButton = document.getElementById('theme-toggle');
-  
-  if (themeToggleButton) {
-    themeToggleButton.addEventListener('click', () => {
-      // Obtenim el tema actual, el canviem i el guardem.
-      let currentTheme = localStorage.getItem('theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      
-      localStorage.setItem('theme', newTheme);
-      
-      // Apliquem el canvi de classe a l'HTML.
-      if (newTheme === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    });
-  }
-});
