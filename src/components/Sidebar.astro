@@ -1,12 +1,12 @@
 ---
+// src/components/Sidebar.astro
 import { urlFor } from '../lib/sanity.ts';
-import ThemeToggle from './ThemeToggle.astro'; // Importem el nou component
+import ThemeToggle from './ThemeToggle.astro';
 
 const { settings } = Astro.props;
 ---
 <aside class="w-full lg:w-2/5 lg:h-screen lg:sticky top-0 bg-slate-100 dark:bg-slate-900 p-8 lg:p-16 flex flex-col">
-    <div class="flex items-center justify-between mb-6">
-        <div class="flex-grow"></div>
+    <div class="absolute top-8 right-8">
         <ThemeToggle />
     </div>
     <div class="flex flex-col h-full">
@@ -15,14 +15,20 @@ const { settings } = Astro.props;
             <h1 class="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white">{settings?.nom}</h1>
             <h2 class="text-xl font-medium text-blue-600 dark:text-blue-400 mt-2">{settings?.titol}</h2>
             <p class="text-slate-600 dark:text-slate-400 mt-6 max-w-md">{settings?.resumSidebar}</p>
-            <nav class="mt-12 hidden lg:flex flex-col gap-2">
-                <a href="#experiencia" class="group font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors py-1"><span>Experiència</span></a>
-                <a href="#habilitats" class="group font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors py-1"><span>Habilitats</span></a>
-                <a href="#formacio" class="group font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors py-1"><span>Formació</span></a>
+            <nav class="mt-12 hidden lg:flex flex-col gap-1">
+                <a href="#experiencia" class="group font-semibold text-slate-600 dark:text-slate-300 py-2">
+                    <span class="group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Experiència</span>
+                </a>
+                <a href="#habilitats" class="group font-semibold text-slate-600 dark:text-slate-300 py-2">
+                    <span class="group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Habilitats</span>
+                </a>
+                <a href="#formacio" class="group font-semibold text-slate-600 dark:text-slate-300 py-2">
+                    <span class="group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Formació</span>
+                </a>
             </nav>
         </div>
         <div class="mt-8 lg:mt-auto pt-8">
-            {settings?.cvUrl && <a href={settings.cvUrl} download class="w-full text-center inline-block bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl"><i class="fa-solid fa-download mr-2"></i>Descarregar CV</a>}
+            {settings?.cvUrl && <a href={settings.cvUrl} download class="w-full text-center inline-block bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-slate-900 dark:hover:bg-slate-700 transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl"><i class="fa-solid fa-download mr-2"></i>Descarregar CV</a>}
             <div class="mt-8 flex justify-center lg:justify-start gap-6">
                 {settings?.linkedinUrl && <a href={settings.linkedinUrl} target="_blank" title="LinkedIn" class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 text-2xl transition-colors"><i class="fa-brands fa-linkedin"></i></a>}
                 {settings?.githubUrl && <a href={settings.githubUrl} target="_blank" title="GitHub" class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-2xl transition-colors"><i class="fa-brands fa-github"></i></a>}
