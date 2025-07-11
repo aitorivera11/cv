@@ -9,9 +9,15 @@ import Formacio from '../../components/sections/Formacio.astro';
 import SobreMi from '../../components/sections/SobreMi.astro';
 import { getLangFromUrl, useTranslations } from '../../i18n/utils';
 
-// Substituïm 'const lang = 'ca';' per aquesta línia:
-const lang = Astro.currentLocale || 'ca';
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
+export async function getStaticPaths() {
+  return [
+    { params: { locale: 'en' } },
+    { params: { locale: 'es' } },
+  ];
+}
 // Consulta a Sanity per obtenir les dades del portafoli
 // La teva consulta adaptada per a i18n
 const query = `*[_type == "siteSettings"][0]{

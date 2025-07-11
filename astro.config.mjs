@@ -2,8 +2,6 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from "@tailwindcss/vite";
 import react from "@astrojs/react";
-
-
 import sentry from '@sentry/astro';
 import spotlightjs from '@spotlightjs/astro';
 
@@ -13,7 +11,6 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  output: 'server', // <-- AQUEST ÉS EL CANVI MÀGIC
   
   integrations: [react(), sentry(), spotlightjs()],
   i18n: {
