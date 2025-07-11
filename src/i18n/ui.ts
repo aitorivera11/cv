@@ -19,6 +19,7 @@ export const ui = {
     'nav.education': 'Formació',
     'footer.design': 'Dissenyat amb Astro, Tailwind CSS i React',
     'footer.content': 'Contingut gestionat amb Sanity.io',
+    'button.contact': 'Contacta amb mi'
   },
   es: {
     'button.downloadCV': 'Descargar CV',
@@ -30,6 +31,7 @@ export const ui = {
     'nav.education': 'Formación',
     'footer.design': 'Diseñado con Astro, Tailwind CSS y React',
     'footer.content': 'Contenido gestionado con Sanity.io',
+    'button.contact': 'Contáctame'
   },
   en: {
     'button.downloadCV': 'Download CV',
@@ -41,5 +43,6 @@ export const ui = {
     'nav.education': 'Education',
     'footer.design': 'Designed with Astro, Tailwind CSS and React',
     'footer.content': 'Content managed with Sanity.io',
+    'button.contact': 'Get in touch'
   },
 } as const;

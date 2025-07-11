@@ -12,75 +12,96 @@ const lang = getLangFromUrl(Astro.url) as keyof typeof ui;
 const t = ui[lang];
 ---
 
-<aside class="w-full lg:w-2/5 lg:h-screen lg:sticky top-0 bg-slate-50 dark:bg-slate-900 p-6 lg:p-10 flex flex-col border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-700">
-  
-  <div class="flex justify-end items-center gap-2 mb-6">
+<aside class="w-full lg:w-2/5 lg:h-screen lg:sticky top-0 bg-gradient-to-b from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 p-6 lg:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-700">
 
-      <div class="flex items-center gap-2 text-sm font-medium">
-        <a href={getRelativeLocaleUrl('ca')} class={Astro.currentLocale === 'ca' ? 'font-bold text-indigo-600' : ''}>CA</a>
-        <span>|</span>
-        <a href={getRelativeLocaleUrl('es')} class={Astro.currentLocale === 'es' ? 'font-bold text-indigo-600' : ''}>ES</a>
-        <span>|</span>
-        <a href={getRelativeLocaleUrl('en')} class={Astro.currentLocale === 'en' ? 'font-bold text-indigo-600' : ''}>EN</a>
+  <!-- TOP: idioma i tema -->
+  <header class="flex justify-end items-center gap-2 mb-6">
+    <div class="flex items-center gap-2 text-sm font-medium" aria-label="Idioma">
+      <a href={getRelativeLocaleUrl('ca')} class={Astro.currentLocale === 'ca' ? 'font-bold text-indigo-600' : ''}>CA</a>
+      <span>|</span>
+      <a href={getRelativeLocaleUrl('es')} class={Astro.currentLocale === 'es' ? 'font-bold text-indigo-600' : ''}>ES</a>
+      <span>|</span>
+      <a href={getRelativeLocaleUrl('en')} class={Astro.currentLocale === 'en' ? 'font-bold text-indigo-600' : ''}>EN</a>
+    </div>
+
+    <button 
+      id="theme-toggle"
+      aria-label="Canviar tema"
+      type="button"
+      class="relative w-12 h-12 flex items-center justify-center rounded-full text-slate-600 dark:text-indigo-600 hover:bg-slate-200 dark:hover:bg-slate-800 focus:outline-none transition-all duration-300 ease-in-out hover:scale-110"
+    >
+      <div class="relative w-6 h-6">
+        <i class="fas fa-sun absolute inset-0 text-xl transition-all duration-500 ease-in-out transform dark:-rotate-90 dark:opacity-0"></i>
+        <i class="fas fa-moon absolute inset-0 text-xl transition-all duration-500 ease-in-out transform rotate-90 opacity-0 dark:rotate-0 dark:opacity-100"></i>
       </div>
+    </button>
+  </header>
 
-      <button 
-          id="theme-toggle" 
-          type="button" 
-          class="relative w-12 h-12 flex items-center justify-center rounded-full text-slate-600 dark:text-indigo-600 hover:bg-slate-200 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900 focus:ring-indigo-500 transition-all duration-300 ease-in-out hover:scale-110"
-          aria-label="Canviar tema"
-      >
-          <div class="relative w-6 h-6">
-              <i class="fas fa-sun absolute inset-0 text-xl transition-all duration-500 ease-in-out transform dark:-rotate-90 dark:opacity-0"></i>
-              <i class="fas fa-moon absolute inset-0 text-xl transition-all duration-500 ease-in-out transform rotate-90 opacity-0 dark:rotate-0 dark:opacity-100"></i>
-          </div>
-      </button>
+  <!-- MIDDLE: HERO -->
+  <div class="flex-grow flex flex-col justify-center">
+    {settings?.foto && (
+      <Image
+        src={urlFor(settings.foto).url()}
+        width={96}
+        height={96}
+        alt={`Foto de ${settings.nom}`}
+        class="h-24 w-24 rounded-full object-cover mb-6 ring-2 ring-indigo-500 shadow-xl mx-auto"
+      />
+    )}
+
+    <h1 class="text-4xl lg:text-5xl font-extrabold text-center text-slate-900 dark:text-white leading-tight tracking-tight">
+      {settings?.nom}
+    </h1>
+
+    <h2 class="text-xl font-semibold text-center text-indigo-600 dark:text-indigo-400 mt-2 tracking-wide">
+      {settings?.titol}
+    </h2>
+
+    <p class="mt-6 text-center text-base leading-relaxed text-slate-600 dark:text-slate-400 italic max-w-sm mx-auto">
+      {settings?.resumSidebar}
+    </p>
+
+    <a 
+      href="#contacte" 
+      class="mt-6 inline-block mx-auto text-center bg-slate-800 text-white dark:bg-white dark:text-slate-900 font-semibold py-2 px-6 rounded-full hover:bg-slate-900 dark:hover:bg-slate-100 transition-colors duration-200 shadow-sm"
+    >
+      <i class="fa-solid fa-message mr-2"></i>{t['button.contact']}
+    </a>
+
+    <nav class="mt-10 hidden lg:flex justify-center gap-4 text-sm font-medium">
+      <a href="#sobre-mi" class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline transition-colors">{t['nav.about']}</a>
+      <a href="#experiencia" class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline transition-colors">{t['nav.experience']}</a>
+      <a href="#habilitats" class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline transition-colors">{t['nav.skills']}</a>
+      <a href="#formacio" class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline transition-colors">{t['nav.education']}</a>
+    </nav>
   </div>
 
-  <div class="flex flex-col flex-grow justify-between">
-    
-    <div>
-      {settings?.foto && (
-        <Image src={urlFor(settings.foto).url()} width={96} height={96} alt={`Foto de ${settings.nom}`} loading="eager" class="h-24 w-24 rounded-full object-cover mb-6 border-4 border-white dark:border-slate-800 shadow-lg" />
-      )}
-      <h1 class="text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white leading-tight">{settings?.nom}</h1>
-      <h2 class="text-lg font-medium text-indigo-600 dark:text-indigo-400 mt-2">{settings?.titol}</h2>
-      <p class="text-slate-600 dark:text-slate-400 mt-6 max-w-md leading-relaxed text-sm">{settings?.resumSidebar}</p>
-      <nav class="mt-10 hidden lg:flex flex-col gap-2 text-sm font-medium">
-        <a href="#sobre-mi" class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{t['nav.about']}</a>
-        <a href="#experiencia" class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{t['nav.experience']}</a>
-        <a href="#habilitats" class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{t['nav.skills']}</a>
-        <a href="#formacio" class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{t['nav.education']}</a>
-      </nav>
-    </div>
+  <!-- BOTTOM: accions i footer -->
+  <div class="mt-6 flex justify-center gap-4 text-xl">
+    {settings?.cvPdf && (
+      <a href={settings.cvPdf} target="_blank" download title="Descarregar CV" class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+        <i class="fa-solid fa-file-arrow-down"></i>
+      </a>
+    )}
+    {settings?.linkedinUrl && (
+      <a href={settings.linkedinUrl} aria-label={`LinkedIn de ${settings.nom}`} target="_blank" class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+        <i class="fa-brands fa-linkedin"></i>
+      </a>
+    )}
+    {settings?.githubUrl && (
+      <a href={settings.githubUrl} aria-label={`GitHub de ${settings.nom}`} target="_blank" class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+        <i class="fa-brands fa-github"></i>
+      </a>
+    )}
+    {settings?.email && (
+      <a href={`mailto:${settings.email}`} aria-label={`Email de ${settings.nom}`} class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+        <i class="fa-solid fa-envelope"></i>
+      </a>
+    )}
+  </div>
 
-    <div class="mt-10">
-      {settings?.cvPdf && (
-        <a href={settings.cvPdf} target="_blank" download class="block w-full text-center bg-indigo-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition transform hover:-translate-y-0.5 shadow-md">
-          <i class="fa-solid fa-download mr-2"></i>{t['button.downloadCV']}
-        </a>
-      )}
-      <div class="mt-6 flex justify-center lg:justify-start gap-4 text-xl">
-        {settings?.linkedinUrl && (
-          <a href={settings.linkedinUrl} aria-label={`LinkedIn de ${settings.nom}`} target="_blank" title="LinkedIn" class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-            <i class="fa-brands fa-linkedin"></i>
-          </a>
-        )}
-        {settings?.githubUrl && (
-          <a href={settings.githubUrl} aria-label={`GitHub de ${settings.nom}`} target="_blank" title="GitHub" class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
-            <i class="fa-brands fa-github"></i>
-          </a>
-        )}
-        {settings?.email && (
-          <a href={`mailto:${settings.email}`} aria-label={`Email de ${settings.nom}`} title="Correu Electrònic" class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-            <i class="fa-solid fa-envelope"></i>
-          </a>
-        )}
-      </div>
-    </div>
-    <div class="hidden lg:block pt-10 text-center lg:text-center">
+    <div class="hidden lg:block pt-10">
       <Footer nom={settings.nom} t={t} />
     </div>
   </div>
-
 </aside>
