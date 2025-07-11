@@ -1,0 +1,30 @@
+---
+// src/components/sections/Habilitats.astro
+import AnimateOnScroll from '../AnimateOnScroll.jsx'; 
+
+const { tecniques, clau } = Astro.props;
+---
+
+<AnimateOnScroll client:visible>
+  <section id="habilitats" class="mb-24 scroll-mt-24">
+    <h3 class="text-xs font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 mb-10">Habilitats</h3>
+    <div class="space-y-12">
+      <div>
+        <h4 class="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">Tècniques</h4>
+        <ul class="flex flex-wrap gap-2">
+          {tecniques?.map((hab) => (
+            <li class="rounded-full bg-slate-200 dark:bg-slate-700 px-3 py-1 text-sm font-medium text-slate-800 dark:text-slate-200">{hab.nom}</li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">Competències Clau</h4>
+        <ul class="flex flex-wrap gap-2">
+          {clau?.map((hab) => (
+            <li class="rounded-full bg-indigo-100 dark:bg-indigo-900/40 px-3 py-1 text-sm font-medium text-indigo-800 dark:text-indigo-300">{hab.nom}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+</AnimateOnScroll>
