@@ -1,7 +1,8 @@
 // src/components/AnimateOnScroll.jsx
 import { useState, useEffect, useRef } from 'react';
 
-const AnimateOnScroll = ({ children, className = '', threshold = 0.1, delay = 0 }) => {
+// Afegim la nova prop 'triggerOnce' amb valor per defecte 'true'
+const AnimateOnScroll = ({ children, className = '', threshold = 0.1, delay = 0, triggerOnce = true }) => {
   const [isVisible, setIsVisible] = useState(false);
   const elementRef = useRef(null);
 
@@ -11,7 +12,15 @@ const AnimateOnScroll = ({ children, className = '', threshold = 0.1, delay = 0 
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             setIsVisible(true);
-            observer.unobserve(entry.target);
+            // Només deixem d'observar si triggerOnce és true
+            if (triggerOnce) {
+              observer.unobserve(entry.target);
+            }
+          } else {
+            // Si l'element surt de la pantalla i no és 'triggerOnce', el tornem a amagar
+            if (!triggerOnce) {
+              setIsVisible(false);
+            }
           }
         });
       },
@@ -28,7 +37,7 @@ const AnimateOnScroll = ({ children, className = '', threshold = 0.1, delay = 0 
         observer.unobserve(currentElement);
       }
     };
-  }, [threshold]);
+  }, [threshold, triggerOnce]); // Afegim triggerOnce a les dependències del useEffect
 
   const classes = `
     transition-all duration-700 ease-out
