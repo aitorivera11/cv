@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@astrojs/react": "^4.3.0",
+    "@emailjs/browser": "^4.4.1",
+    "@radix-ui/react-dialog": "^1.1.14",
     "@sanity/client": "^7.6.0",
     "@sanity/image-url": "^1.1.0",
     "@sentry/astro": "^9.38.0",
