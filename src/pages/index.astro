@@ -7,10 +7,14 @@ import Experiencia from '../components/sections/Experiencia.astro';
 import Habilitats from '../components/sections/Habilitats.astro';
 import Formacio from '../components/sections/Formacio.astro';
 import SobreMi from '../components/sections/SobreMi.astro';
+import { ui } from '../i18n/ui.ts';
+import Footer from '../components/Footer.astro';
+
 
 
 // Substituïm 'const lang = 'ca';' per aquesta línia:
 const lang = Astro.currentLocale || 'ca';
+const t = ui[lang];
 
 // Consulta a Sanity per obtenir les dades del portafoli
 // La teva consulta adaptada per a i18n
@@ -69,5 +73,12 @@ const data = await client.fetch(query);
 				<div class="bg-slate-800 text-slate-200 p-8 rounded-lg"><p>Connectant amb Sanity...</p></div>
 			)}
 		</main>
+        {data && (
+        <footer class="block lg:hidden p-6 text-center bg-slate-50 dark:bg-slate-900 border-t ">
+            <Footer nom={data.nom} t={t} />
+        </footer>
+        )}
 	</div>
+
+
 </Layout>

@@ -4,6 +4,7 @@ import { Image } from 'astro:assets';
 import { urlFor } from '../lib/sanity.ts';
 import { ui } from '../i18n/ui.ts';
 import { getRelativeLocaleUrl } from 'astro:i18n';
+import Footer from './Footer.astro';
 
 const { settings } = Astro.props;
 const getLangFromUrl = (url: URL) => url.pathname.split('/')[1] || 'ca';
@@ -76,11 +77,10 @@ const t = ui[lang];
           </a>
         )}
       </div>
-      <footer class="mt-10 text-center lg:text-left text-slate-400 text-xs">
-        <p>{t['footer.design']}</p>
-        <p>{t['footer.content']}</p>
-        <p>&copy; {new Date().getFullYear()} {settings.nom}</p>
-      </footer>
+    </div>
+    <div class="hidden lg:block pt-10 text-center lg:text-center">
+      <Footer nom={settings.nom} t={t} />
     </div>
   </div>
+
 </aside>
