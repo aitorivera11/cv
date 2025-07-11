@@ -12,6 +12,8 @@
     "@astrojs/react": "^4.3.0",
     "@sanity/client": "^7.6.0",
     "@sanity/image-url": "^1.1.0",
+    "@sentry/astro": "^9.38.0",
+    "@spotlightjs/astro": "^3.2.5",
     "@tailwindcss/vite": "^4.1.11",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",

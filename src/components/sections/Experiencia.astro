@@ -1,14 +1,17 @@
 ---
 // src/components/sections/Experiencia.astro
-import { PortableText } from 'astro-portabletext';
 import AnimateOnScroll from '../AnimateOnScroll.jsx'; 
+import { ui } from '../../i18n/ui.ts';
 
+const getLangFromUrl = (url: URL) => url.pathname.split('/')[1] || 'ca';
+const lang = getLangFromUrl(Astro.url) as keyof typeof ui;
+const t = ui[lang];
 const { experiencies } = Astro.props;
 ---
 
 <AnimateOnScroll client:visible triggerOnce={false}>
   <section id="experiencia" class="mb-24 scroll-mt-24">
-    <h3 class="text-xs font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 mb-10">Experiència</h3>
+    <h3 class="text-xs font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 mb-10">{t['nav.experience']}</h3>
     <ul class="space-y-6">
       {experiencies?.map((feina) => (
         <li class="group block p-6 rounded-xl border border-transparent hover:border-slate-300 dark:hover:border-slate-700 hover:bg-white/60 dark:hover:bg-slate-800/60 transition-shadow">
@@ -18,7 +21,7 @@ const { experiencies } = Astro.props;
               <h4 class="text-xl font-semibold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{feina.titol}</h4>
               <h5 class="text-base text-slate-600 dark:text-slate-300">{feina.empresa}</h5>
               <div class="prose prose-slate dark:prose-invert max-w-none">
-                <PortableText value={feina.descripcio} />
+                <p>{feina.descripcio} </p>
               </div>
               {feina.tecnologies?.length > 0 && (
                 <ul class="mt-3 flex flex-wrap gap-2">

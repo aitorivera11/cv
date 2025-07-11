@@ -1,13 +1,18 @@
 ---
 // src/components/sections/Formacio.astro
 import AnimateOnScroll from '../AnimateOnScroll.jsx'; 
+import { ui } from '../../i18n/ui.ts';
+
+const getLangFromUrl = (url: URL) => url.pathname.split('/')[1] || 'ca';
+const lang = getLangFromUrl(Astro.url) as keyof typeof ui;
+const t = ui[lang];
 
 const { formacions } = Astro.props;
 ---
 
 <AnimateOnScroll client:visible triggerOnce={false}>
   <section id="formacio" class="mb-24 scroll-mt-24">
-    <h3 class="text-xs font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 mb-10">Formació</h3>
+    <h3 class="text-xs font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 mb-10">{t['nav.education']}</h3>
     <ul class="space-y-6">
       {formacions?.map((estudi) => (
         <li class="group p-4 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-indigo-300 dark:hover:border-indigo-500 transition-colors">

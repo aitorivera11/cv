@@ -2,13 +2,27 @@
 // src/components/Sidebar.astro
 import { Image } from 'astro:assets';
 import { urlFor } from '../lib/sanity.ts';
+import { ui } from '../i18n/ui.ts';
+import { getRelativeLocaleUrl } from 'astro:i18n';
 
 const { settings } = Astro.props;
+const getLangFromUrl = (url: URL) => url.pathname.split('/')[1] || 'ca';
+const lang = getLangFromUrl(Astro.url) as keyof typeof ui;
+const t = ui[lang];
 ---
 
 <aside class="w-full lg:w-2/5 lg:h-screen lg:sticky top-0 bg-slate-50 dark:bg-slate-900 p-6 lg:p-10 flex flex-col border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-700">
   
   <div class="flex justify-end items-center gap-2 mb-6">
+
+      <div class="flex items-center gap-2 text-sm font-medium">
+        <a href={getRelativeLocaleUrl('ca')} class={Astro.currentLocale === 'ca' ? 'font-bold text-indigo-600' : ''}>CA</a>
+        <span>|</span>
+        <a href={getRelativeLocaleUrl('es')} class={Astro.currentLocale === 'es' ? 'font-bold text-indigo-600' : ''}>ES</a>
+        <span>|</span>
+        <a href={getRelativeLocaleUrl('en')} class={Astro.currentLocale === 'en' ? 'font-bold text-indigo-600' : ''}>EN</a>
+      </div>
+
       <button 
           id="theme-toggle" 
           type="button" 
@@ -32,17 +46,17 @@ const { settings } = Astro.props;
       <h2 class="text-lg font-medium text-indigo-600 dark:text-indigo-400 mt-2">{settings?.titol}</h2>
       <p class="text-slate-600 dark:text-slate-400 mt-6 max-w-md leading-relaxed text-sm">{settings?.resumSidebar}</p>
       <nav class="mt-10 hidden lg:flex flex-col gap-2 text-sm font-medium">
-        <a href="#sobre-mi" class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Sobre mi</a>
-        <a href="#experiencia" class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Experiència</a>
-        <a href="#habilitats" class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Habilitats</a>
-        <a href="#formacio" class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Formació</a>
+        <a href="#sobre-mi" class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{t['nav.about']}</a>
+        <a href="#experiencia" class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{t['nav.experience']}</a>
+        <a href="#habilitats" class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{t['nav.skills']}</a>
+        <a href="#formacio" class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{t['nav.education']}</a>
       </nav>
     </div>
 
     <div class="mt-10">
       {settings?.cvPdf && (
-        <a href={settings.cvPdf} download class="block w-full text-center bg-indigo-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition transform hover:-translate-y-0.5 shadow-md">
-          <i class="fa-solid fa-download mr-2"></i>Descarregar CV
+        <a href={settings.cvPdf} target="_blank" download class="block w-full text-center bg-indigo-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition transform hover:-translate-y-0.5 shadow-md">
+          <i class="fa-solid fa-download mr-2"></i>{t['button.downloadCV']}
         </a>
       )}
       <div class="mt-6 flex justify-center lg:justify-start gap-4 text-xl">
@@ -63,8 +77,8 @@ const { settings } = Astro.props;
         )}
       </div>
       <footer class="mt-10 text-center lg:text-left text-slate-400 text-xs">
-        <p>Dissenyat amb Astro, Tailwind CSS i React</p>
-        <p>Contingut gestionat amb Sanity.io</p>
+        <p>{t['footer.design']}</p>
+        <p>{t['footer.content']}</p>
         <p>&copy; {new Date().getFullYear()} {settings.nom}</p>
       </footer>
     </div>
