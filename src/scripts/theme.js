@@ -2,13 +2,11 @@
 
 // Funció per llegir i aplicar el tema guardat o el del sistema.
 const applyInitialTheme = () => {
-  const theme = localStorage.getItem('theme') || 
-                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  
-  if (theme === 'dark') {
-    document.documentElement.classList.add('dark');
+  const userTheme = localStorage.getItem("theme");
+  if (userTheme === "dark" || (!userTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+    document.documentElement.classList.add("dark");
   } else {
-    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.remove("dark");
   }
 };
 

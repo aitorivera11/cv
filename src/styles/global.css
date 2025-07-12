@@ -7,3 +7,13 @@
 body {
   font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
 }
+
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+  main {
+    padding-top: 4rem; /* Ajustable segons mida del header */
+  }
+}

@@ -30,7 +30,7 @@ export default function ContactModal({ t }) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <button
+        <button aria-label="Obrir formulari de contacte" title={t['contact.button']}
           className="mt-6 inline-block mx-auto text-center bg-slate-800 text-white dark:bg-white dark:text-slate-900 font-semibold py-2 px-6 rounded-full hover:bg-slate-900 dark:hover:bg-slate-100 transition-colors duration-200 shadow-sm"
         >
           <i className="fa-solid fa-paper-plane mr-1" />
