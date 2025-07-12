@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import emailjs from '@emailjs/browser';
 import * as Dialog from '@radix-ui/react-dialog';
+import { EnvelopeIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
 export default function ContactModal({ t }) {
   const [sent, setSent] = useState(false);
@@ -30,10 +31,12 @@ export default function ContactModal({ t }) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <button aria-label="Obrir formulari de contacte" title={t['contact.button']}
-          className="mt-6 inline-block mx-auto text-center bg-slate-800 text-white dark:bg-white dark:text-slate-900 font-semibold py-2 px-6 rounded-full hover:bg-slate-900 dark:hover:bg-slate-100 transition-colors duration-200 shadow-sm"
+        <button
+          aria-label="Obrir formulari de contacte"
+          title={t['contact.button']}
+          className="group mt-6 inline-flex items-center justify-center mx-auto text-center bg-slate-800 text-white dark:bg-white dark:text-slate-900 font-semibold py-2 px-6 rounded-full hover:bg-slate-900 dark:hover:bg-slate-100 transition-colors duration-200 shadow-sm"
         >
-          <i className="fa-solid fa-paper-plane mr-1" />
+          <EnvelopeIcon className="w-5 h-5 mr-2 inline-block transition-transform group-hover:-rotate-12" />
           <span>{t['contact.button']}</span>
         </button>
       </Dialog.Trigger>
@@ -95,7 +98,7 @@ export default function ContactModal({ t }) {
             className="absolute top-3 right-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition"
             aria-label={t['contact.close']}
           >
-            <i className="fa-solid fa-xmark" />
+            <XMarkIcon className="w-6 h-6 transition-transform hover:-rotate-z-180" />
           </Dialog.Close>
         </Dialog.Content>
       </Dialog.Portal>

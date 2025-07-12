@@ -11,6 +11,7 @@
   "dependencies": {
     "@astrojs/react": "^4.3.0",
     "@emailjs/browser": "^4.4.1",
+    "@heroicons/react": "^2.2.0",
     "@radix-ui/react-dialog": "^1.1.14",
     "@sanity/client": "^7.6.0",
     "@sanity/image-url": "^1.1.0",

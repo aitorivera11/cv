@@ -8,6 +8,7 @@ import Footer from './Footer.astro';
 import ContactModal from './ContactModal.jsx';
 import ScrollAwareNav from './ScrollAwareNav.jsx';
 import HeroShrinkHeader from './HeroShrinkHeader.jsx';
+import { SunIcon, MoonIcon } from '@heroicons/react/24/solid';
 
 const { settings } = Astro.props;
 const fotoUrl = settings?.foto ? urlFor(settings.foto).url() : '';
@@ -41,8 +42,8 @@ const t = ui[lang];
       class="relative w-12 h-12 flex items-center justify-center rounded-full text-slate-600 dark:text-indigo-600 hover:bg-slate-200 dark:hover:bg-slate-800 focus:outline-none transition-all duration-300 ease-in-out hover:scale-110"
     >
       <div class="relative w-6 h-6">
-        <i class="fas fa-sun absolute inset-0 text-xl transition-all duration-500 ease-in-out transform dark:-rotate-90 dark:opacity-0"></i>
-        <i class="fas fa-moon absolute inset-0 text-xl transition-all duration-500 ease-in-out transform rotate-90 opacity-0 dark:rotate-0 dark:opacity-100"></i>
+        <SunIcon className="absolute inset-0 text-xl transition-all duration-500 ease-in-out transform dark:-rotate-90 dark:opacity-0" />
+        <MoonIcon className="absolute inset-0 text-xl transition-all duration-500 ease-in-out transform rotate-90 opacity-0 dark:rotate-0 dark:opacity-100" />
       </div>
     </button>
   </header>
@@ -71,7 +72,7 @@ const t = ui[lang];
       {settings?.resumSidebar}
     </p>
 
-    <ContactModal client:only="react" t={t} />
+    <ContactModal client:visible t={t} />
 
 
     <ScrollAwareNav client:load t={t} />
