@@ -1,9 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import { ui } from '../i18n/ui.ts';
 
-const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
+// Substituïm 'const lang = 'ca';' per aquesta línia:
+const lang = Astro.currentLocale || 'ca';
+const t = ui[lang];
 const homePath = lang === 'ca' ? '/' : `/${lang}`;
 ---
 <Layout title="404" description="Page not found" lang={lang}>
