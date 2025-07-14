@@ -30,6 +30,9 @@ export const ui = {
     'contact.error': "Hi ha hagut un error. Torna-ho a provar.",
     'contact.close': 'Tancar',
     'contact.description': 'Formulari de contacte',
+    '404.title': 'Pàgina no trobada',
+    '404.message': 'No hem trobat la pàgina que buscaves.',
+    '404.backHome': "Torna a l'inici",
 
   },
   es: {
@@ -53,6 +56,9 @@ export const ui = {
     'contact.error': 'Ha habido un error. Vuelve a intentarlo.',
     'contact.close': 'Cerrar',
     'contact.description': 'Formulario de contacto',
+    '404.title': 'Página no encontrada',
+    '404.message': 'No hemos encontrado la página que buscas.',
+    '404.backHome': 'Volver al inicio',
   },
   en: {
     'button.downloadCV': 'Download CV',
@@ -75,5 +81,8 @@ export const ui = {
     'contact.error': 'There was an error. Please try again.',
     'contact.close': 'Close',
     'contact.description': 'Contact form',
+    '404.title': 'Page not found',
+    '404.message': "We couldn't find the page you're looking for.",
+    '404.backHome': 'Back to home',
   },
 } as const;
