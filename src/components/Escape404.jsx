@@ -2,8 +2,14 @@ import React, { useRef, useState, useEffect } from "react";
 import { KeyIcon, HomeIcon } from "@heroicons/react/24/solid";
 
 function getRandomPosition() {
+  // Top entre 10% i 50%
   const top = Math.random() * 40 + 10;
-  const left = Math.random() * 60 + 10;
+
+  // Left: volem evitar el centre (35% a 65%)
+  let left;
+  do {
+    left = Math.random() * 80 + 5; // entre 5% i 85%
+  } while (left > 35 && left < 65);
   return { top: `${top}%`, left: `${left}%` };
 }
 
@@ -74,7 +80,8 @@ export default function Escape404({ t, homePath }) {
           tabIndex={0}
           role="button"
         >
-          <KeyIcon className="w-16 h-16 sm:w-20 sm:h-20 text-indigo-500 dark:text-indigo-300 drop-shadow" />
+          <KeyIcon className="w-12 h-12 sm:w-16 sm:h-16 text-indigo-500 dark:text-indigo-300 drop-shadow" />
+
         </div>
       )}
 
