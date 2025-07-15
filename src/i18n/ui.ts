@@ -33,6 +33,12 @@ export const ui = {
     '404.title': 'Pàgina no trobada',
     '404.message': 'No hem trobat la pàgina que buscaves.',
     '404.backHome': "Torna a l'inici",
+    '404.escapeRoom': "Escape Room Digital",
+    '404.escapeDesc': "Has entrat a una pàgina secreta del web. Només pots escapar si trobes la clau i obres la porta de casa.",
+    '404.dragKey': "Arrossega'm fins a la casa!",
+    '404.dropHere': "Deixa aquí la clau per escapar!",
+    '404.clue': "// Pista: Arrossega la clau fins a la porta de casa...",
+    '404.success': "Enhorabona! Has trobat el camí a casa. Redirigint...",
 
   },
   es: {
@@ -59,6 +65,12 @@ export const ui = {
     '404.title': 'Página no encontrada',
     '404.message': 'No hemos encontrado la página que buscas.',
     '404.backHome': 'Volver al inicio',
+    '404.escapeRoom': "Escape Room Digital",
+    '404.escapeDesc': "Has entrado en una página secreta de la web. Solo puedes escapar si encuentras la llave y abres la puerta de casa.",
+    '404.dragKey': "¡Arrástrame hasta la casa!",
+    '404.dropHere': "Deja aquí la llave para escapar.",
+    '404.clue': "// Pista: Arrastra la llave hasta la puerta de casa...",
+    '404.success': "¡Enhorabuena! Has encontrado el camino a casa. Redirigiendo...",
   },
   en: {
     'button.downloadCV': 'Download CV',
@@ -84,5 +96,11 @@ export const ui = {
     '404.title': 'Page not found',
     '404.message': "We couldn't find the page you're looking for.",
     '404.backHome': 'Back to home',
+    '404.escapeRoom': "Digital Escape Room",
+    '404.escapeDesc': "You've entered a secret page. You can only escape if you find the key and open the door to home.",
+    '404.dragKey': "Drag me to the house!",
+    '404.dropHere': "Drop the key here to escape.",
+    '404.clue': "// Hint: Drag the key to the door...",
+    '404.success': "Congrats! You’ve found your way home. Redirecting...",
   },
 } as const;
