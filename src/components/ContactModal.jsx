@@ -7,9 +7,9 @@ export default function ContactModal({ t }) {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const SERVICE_ID = 'service_ys28jne';
-  const TEMPLATE_ID = 'template_1ipzhew';
-  const PUBLIC_KEY = '9ty_EWfM7_QY_3R9j';
+  const SERVICE_ID = import.meta.env.PUBLIC_EMAILJS_SERVICE_ID;
+  const TEMPLATE_ID = import.meta.env.PUBLIC_EMAILJS_TEMPLATE_ID;
+  const PUBLIC_KEY = import.meta.env.PUBLIC_EMAILJS_PUBLIC_KEY;
 
   const handleSubmit = (e) => {
     e.preventDefault();
