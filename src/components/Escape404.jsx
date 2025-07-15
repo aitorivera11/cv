@@ -2,14 +2,11 @@ import React, { useRef, useState, useEffect } from "react";
 import { KeyIcon, HomeIcon } from "@heroicons/react/24/solid";
 
 function getRandomPosition() {
-  // Top entre 10% i 50%
   const top = Math.random() * 40 + 10;
-
-  // Left: volem evitar el centre (35% a 65%)
   let left;
   do {
     left = Math.random() * 80 + 5; // entre 5% i 85%
-  } while (left > 35 && left < 65);
+  } while (left > 35 && left < 65); // Evita el centre!
   return { top: `${top}%`, left: `${left}%` };
 }
 
@@ -59,7 +56,7 @@ export default function Escape404({ t, homePath }) {
       <h2 className="text-lg sm:text-2xl font-semibold mb-2">{t['404.escapeRoom'] || "Escape Room Digital"}</h2>
       <p className="text-base sm:text-lg mb-2">{t['404.escapeDesc'] || "Has entrat a una pàgina secreta del web. Només pots escapar si trobes la clau i obres la porta de casa."}</p>
 
-      {/* Clau en posició random però ESTÀTICA */}
+      {/* Clau, més petita i posició random SENSE centre */}
       {!escaped && (
         <div
           ref={clauRef}
@@ -69,9 +66,7 @@ export default function Escape404({ t, homePath }) {
             transition: "top 0.5s, left 0.5s, transform 0.2s",
             zIndex: 10,
           }}
-          className={
-            "cursor-grab " + (dragging ? "scale-125 -rotate-6 opacity-80" : "")
-          }
+          className={"cursor-grab " + (dragging ? "scale-125 -rotate-6 opacity-80" : "")}
           draggable={!escaped}
           aria-grabbed="false"
           onDragStart={handleDragStart}
@@ -81,7 +76,6 @@ export default function Escape404({ t, homePath }) {
           role="button"
         >
           <KeyIcon className="w-12 h-12 sm:w-16 sm:h-16 text-indigo-500 dark:text-indigo-300 drop-shadow" />
-
         </div>
       )}
 
@@ -107,8 +101,6 @@ export default function Escape404({ t, homePath }) {
       </div>
 
       <div className="grow" />
-
-      {/* Pista molt discreta i centrada */}
       <div className="w-full flex justify-center mt-3">
         <span className="text-xs opacity-70 italic dark:text-zinc-300">
           {t['404.clue'] || "Pista: arrossega la clau fins a la porta de casa..."}
