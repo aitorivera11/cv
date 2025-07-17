@@ -4,6 +4,14 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/fonts/SpaceGrotesk-VariableFont_wght.ttf') format('truetype');
+  font-weight: 300 700; 
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
 body {
   font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
 }

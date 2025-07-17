@@ -21,7 +21,7 @@ const { tecniques, clau } = Astro.props;
         </h4>
         <ul class="flex flex-wrap gap-2">
           {tecniques?.map((hab) => (
-            <li class="rounded-full bg-slate-200 dark:bg-slate-700 px-3 py-1 text-sm font-medium text-slate-800 dark:text-slate-200">{hab.nom}</li>
+            <li class="rounded-full bg-slate-200 dark:bg-slate-700 px-3 py-1 text-sm font-medium text-slate-800 dark:text-slate-200 transition-transform hover:scale-105">{hab.nom}</li>
           ))}
         </ul>
       </div>
@@ -31,7 +31,7 @@ const { tecniques, clau } = Astro.props;
         </h4>        
         <ul class="flex flex-wrap gap-2">
           {clau?.map((hab) => (
-            <li class="rounded-full bg-indigo-100 dark:bg-indigo-900/40 px-3 py-1 text-sm font-medium text-indigo-800 dark:text-indigo-300">{hab.nom}</li>
+            <li class="rounded-full bg-indigo-100 dark:bg-indigo-900/40 px-3 py-1 text-sm font-medium text-indigo-800 dark:text-indigo-300 transition-transform hover:scale-105">{hab.nom}</li>
           ))}
         </ul>
       </div>
