@@ -25,3 +25,8 @@ html {
     padding-top: 4rem; /* Ajustable segons mida del header */
   }
 }
+
+@keyframes fillBar {
+  from { width: 0; }
+  to { width: var(--target-width); }
+}
