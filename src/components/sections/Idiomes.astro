@@ -30,15 +30,8 @@ const idiomes = [
             <GlobeAltIcon className="w-4 h-4 mr-2 text-slate-400 dark:text-slate-500 group-hover:rotate-12 transition-transform duration-300" />
             {lang.nom}
           </span>
-          <div 
-            class="flex-1 bg-slate-200 dark:bg-slate-700 rounded-full h-2 relative overflow-visible"
-            aria-label={`${lang.nom} ${lang.nivell} (${lang.percent}%)`}
-            role="progressbar"
-            aria-valuenow={lang.percent}
-            aria-valuemin="0"
-            aria-valuemax="100"
-          >
-            <BarraIdiomes percent={lang.percent}>
+          <div class="flex-1 bg-slate-200 dark:bg-slate-700 rounded-full h-2 relative overflow-visible">
+            <BarraIdiomes client:visible percent={lang.percent}>
               {lang.percent < 100 && (
                 <span class="absolute right-2 -top-6 text-xs text-indigo-700 bg-white/90 px-1 rounded shadow">
                   {lang.percent}%
