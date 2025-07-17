@@ -1,8 +1,8 @@
 ---
-// src/components/sections/Idiomes.astro
 import AnimateOnScroll from '../AnimateOnScroll.jsx';
 import { ui } from '../../i18n/ui.ts';
 import { GlobeAltIcon } from '@heroicons/react/24/solid';
+import BarraIdiomes from '../BarraIdiomes.jsx';
 
 const getLangFromUrl = (url: URL) => url.pathname.split('/')[1] || 'ca';
 const lang = getLangFromUrl(Astro.url) as keyof typeof ui;
@@ -38,16 +38,13 @@ const idiomes = [
             aria-valuemin="0"
             aria-valuemax="100"
           >
-            <div 
-              class="h-2 rounded-full shadow-md transition-all duration-1000"
-              style={`width: ${lang.percent}%; background: linear-gradient(90deg, #6366f1 0%, #818cf8 100%); box-shadow: 0 0 8px #6366f1cc;`}
-            >
+            <BarraIdiomes percent={lang.percent}>
               {lang.percent < 100 && (
                 <span class="absolute right-2 -top-6 text-xs text-indigo-700 bg-white/90 px-1 rounded shadow">
                   {lang.percent}%
                 </span>
               )}
-            </div>
+            </BarraIdiomes>
           </div>
           <span class="w-20 text-sm text-slate-500 dark:text-slate-400 text-right group relative cursor-pointer">
             {lang.nivell}
@@ -58,6 +55,5 @@ const idiomes = [
         </li>
       ))}
     </ul>
-
   </section>
 </AnimateOnScroll>
