@@ -5,6 +5,7 @@ import Sidebar from '../../components/Sidebar.astro';
 import client from '../../lib/sanity.ts'; 
 import Experiencia from '../../components/sections/Experiencia.astro';
 import Habilitats from '../../components/sections/Habilitats.astro';
+import Idiomes from '../../components/sections/Idiomes.astro';
 import Formacio from '../../components/sections/Formacio.astro';
 import SobreMi from '../../components/sections/SobreMi.astro';
 import { getLangFromUrl, useTranslations } from '../../i18n/utils';
@@ -69,7 +70,9 @@ const data = await client.fetch(query);
                     <Experiencia experiencies={data.experiencies} />
 					
                     <Habilitats tecniques={data.habilitatsTecniques} clau={data.habilitatsClau} />
-					
+
+                    <Idiomes />
+
                     <Formacio formacions={data.formacions} />
 
 				</>
