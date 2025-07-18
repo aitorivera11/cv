@@ -18,12 +18,10 @@ const lang = getLangFromUrl(Astro.url) as keyof typeof ui;
 const t = ui[lang];
 ---
 
-<aside class="w-full lg:w-2/5 lg:h-screen lg:sticky top-0 
-              bg-white dark:bg-slate-950 
-              lg:bg-gradient-to-b lg:from-slate-50 lg:via-white lg:to-slate-100 
-              dark:lg:from-slate-900 dark:lg:via-slate-950 dark:lg:to-slate-900 
-              p-6 lg:p-10 flex flex-col justify-between 
-              border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-700">
+<aside class="relative w-full lg:w-2/5 lg:h-screen lg:sticky top-0 bg-slate-50
+  dark:bg-gradient-to-b dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 
+  p-6 lg:p-10 flex flex-col justify-between 
+  border-b lg:border-b-0 lg:border-r lg:border-l border-slate-200 dark:border-slate-700">
 
   <!-- TOP: idioma i tema -->
   <header class="flex justify-end items-center gap-2 mb-6">
@@ -68,9 +66,7 @@ const t = ui[lang];
       {settings?.titol}
     </h2>
 
-    <p class="mt-6 text-center text-base leading-relaxed text-slate-600 dark:text-slate-400 italic max-w-sm mx-auto">
-      {settings?.resumSidebar}
-    </p>
+
 
     <ContactModal client:visible t={t} />
 

@@ -46,6 +46,11 @@ export default function ScrollAwareNav({ t }) {
           </a>
         </li>
         <li>
+          <a href="#formacio" className={linkClass('formacio')} aria-current={activeSection === 'formacio' ? 'page' : undefined}>
+            {t['nav.education']}
+          </a>
+        </li>
+        <li>
           <a href="#habilitats" className={linkClass('habilitats')} aria-current={activeSection === 'habilitats' ? 'page' : undefined}>
             {t['nav.skills']}
           </a>
@@ -55,11 +60,7 @@ export default function ScrollAwareNav({ t }) {
             {t['nav.languages']}
           </a>
         </li>
-        <li>
-          <a href="#formacio" className={linkClass('formacio')} aria-current={activeSection === 'formacio' ? 'page' : undefined}>
-            {t['nav.education']}
-          </a>
-        </li>
+
       </ul>
     </nav>
   );
