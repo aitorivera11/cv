@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@astrojs/react";
 import sentry from '@sentry/astro';
 import spotlightjs from '@spotlightjs/astro';
+import sanity from '@sanity/astro';
 
 
 // https://astro.build/config
@@ -12,7 +13,12 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   
-  integrations: [react(), sentry(), spotlightjs()],
+  integrations: [react(), sentry(), spotlightjs(), sanity({
+      projectId: 'l4g6ncle',
+      dataset: 'production',
+      useCdn: false,
+      studioBasePath: '/admin',
+    })],
   i18n: {
     // L'idioma per defecte no tindrà prefix a l'URL (p.ex. /)
     defaultLocale: 'ca',
