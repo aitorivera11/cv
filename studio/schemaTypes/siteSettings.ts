@@ -26,7 +26,7 @@ export default defineType({
       name: 'descripcioSobreMi',
       title: 'Sobre mi',
       description: 'Aquest és el text principal que apareixerà a la secció "Sobre mi" de la pàgina.',
-      type: 'localizedText', 
+      type: 'localizedBlockContent',  
     }),
     defineField({
       name: 'foto',
