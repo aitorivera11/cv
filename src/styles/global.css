@@ -12,13 +12,36 @@
   font-style: normal;
 }
 
-body {
-  font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+html.theme-transition {
+  transition: none;
+  animation: themeFade 0.4s ease-in-out;
 }
 
-html {
-  transition: background-color 0.3s ease, color 0.3s ease;
+@keyframes themeFade {
+  0% {
+    opacity: 0.7;
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+  }
 }
+
+
+html {
+  transition: background-color 0.6s ease-in-out, 
+              color 0.6s ease-in-out,
+              filter 0.6s ease-in-out,
+              transform 0.4s ease-in-out;
+}
+
+body {
+  font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+    transition: background-color 0.6s ease-in-out, 
+              color 0.6s ease-in-out;
+}
+
 
 @media (max-width: 1024px) {
   main {
@@ -26,7 +49,4 @@ html {
   }
 }
 
-@keyframes fillBar {
-  from { width: 0; }
-  to { width: var(--target-width); }
-}
+

@@ -1,23 +1,41 @@
-// src/scripts/theme.js
+const getSystemTheme = () => window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 
-// Funció per llegir i aplicar el tema guardat o el del sistema.
 const applyInitialTheme = () => {
-  const userTheme = localStorage.getItem("theme");
-  if (userTheme === "dark" || (!userTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+  const savedTheme = localStorage.getItem("theme");
+  const themeToApply = savedTheme || getSystemTheme();
+
+  if (themeToApply === "dark") {
     document.documentElement.classList.add("dark");
   } else {
     document.documentElement.classList.remove("dark");
   }
 };
 
-// Funció per canviar el tema en fer clic.
+// Canvi manual amb transició suau
 const handleThemeToggle = () => {
+  // Afegim classe per activar animació
+  document.documentElement.classList.add('theme-transition');
+
+  // Canviem el tema realment
   const isDark = document.documentElement.classList.toggle('dark');
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
+
+  // Després de 400ms traiem la classe
+  setTimeout(() => {
+    document.documentElement.classList.remove('theme-transition');
+  }, 400);
 };
 
-// Apliquem el tema només carregar la pàgina.
+// Detecta canvis del sistema en temps real (opcional)
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+  const savedTheme = localStorage.getItem("theme");
+  if (!savedTheme) {
+    document.documentElement.classList.toggle("dark", e.matches);
+  }
+});
+
+// Apliquem el tema només carregar la pàgina
 applyInitialTheme();
 
-// Afegim la funcionalitat al botó.
-document.getElementById('theme-toggle')?.addEventListener('click', handleThemeToggle);
+// Afegim el listener al botó
+document.getElementById("theme-toggle")?.addEventListener("click", handleThemeToggle);

@@ -2,6 +2,9 @@
 // src/layouts/Layout.astro
 import '../styles/global.css';
 import themeScript from '../scripts/theme.js?raw';
+import Analytics from '@vercel/analytics/astro'
+import  SpeedInsights  from "@vercel/speed-insights/astro"
+
 
 
 interface Props {
@@ -41,5 +44,7 @@ const { title = 'Aitor Rivera Garcia', description = 'Desenvolupador web i gesto
 	<body class="font-sans bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-300 transition-colors duration-300">
 		<slot />
 		<script is:inline set:html={themeScript}></script>
+		<Analytics />
+        <SpeedInsights />
 	</body>
 </html>
