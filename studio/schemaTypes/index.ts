@@ -8,6 +8,7 @@ import habilitat from './habilitat'
 import localizedString from './objects/localizedString'
 import localizedText from './objects/localizedText'
 import localizedBlockContent from './objects/localizedBlockContent'
+import blockContent from './objects/blockContent'
 
 export const schemaTypes = [
   // Documents
@@ -16,6 +17,7 @@ export const schemaTypes = [
   formacio,
   habilitat,
   // Objectes reutilitzables
+  blockContent,
   localizedString,
   localizedText,
   localizedBlockContent,
