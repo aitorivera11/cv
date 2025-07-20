@@ -1,0 +1,27 @@
+---
+// src/components/ProseableText.astro
+import { PortableText } from 'astro-portabletext'
+const { value = [] } = Astro.props
+
+// Agrupa per tipus
+let valueGroups = []
+let currentGroup = []
+let lastType = undefined
+
+for (const item of value) {
+  if (!currentGroup.length || item._type === lastType) {
+    currentGroup.push(item)
+  } else {
+    valueGroups.push(currentGroup)
+    currentGroup = [item]
+  }
+  lastType = item._type
+}
+if (currentGroup.length) valueGroups.push(currentGroup)
+---
+
+{valueGroups.map(group =>
+  group[0]?._type === 'block'
+    ? <div class="prose prose-slate dark:prose-invert max-w-none py-4"><PortableText value={group} /></div>
+    : <PortableText value={group} />
+)}

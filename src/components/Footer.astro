@@ -1,12 +1,7 @@
 ---
 // src/components/Footer.astro
-import { ui } from '../i18n/ui.ts';
+const { nom, t } = Astro.props
 
-const { nom} = Astro.props;
-
-const getLangFromUrl = (url: URL) => url.pathname.split('/')[1] || 'ca';
-const lang = getLangFromUrl(Astro.url) as keyof typeof ui;
-const t = ui[lang];
 ---
 <footer class="text-slate-500 dark:text-slate-400 text-xs border-t border-slate-200 dark:border-slate-700 pt-4 ">
   <div class="flex flex-col gap-1 items-center lg:items-start">

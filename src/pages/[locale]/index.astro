@@ -1,90 +1,85 @@
 ---
-// src/pages/index.astro
-import Layout from '../../layouts/Layout.astro';
-import Sidebar from '../../components/Sidebar.astro';
-import client from '../../lib/sanity.ts'; 
-import Experiencia from '../../components/sections/Experiencia.astro';
-import Habilitats from '../../components/sections/Habilitats.astro';
-import Idiomes from '../../components/sections/Idiomes.astro';
-import Formacio from '../../components/sections/Formacio.astro';
-import SobreMi from '../../components/sections/SobreMi.astro';
-import { getLangFromUrl, useTranslations } from '../../i18n/utils';
-import Footer from '../../components/Footer.astro';
+import Layout from '../../layouts/Layout.astro'
+import Sidebar from '../../components/Sidebar.astro'
+import client from '../../lib/sanity.ts'
+import Experiencia from '../../components/sections/Experiencia.astro'
+import Habilitats from '../../components/sections/Habilitats.astro'
+import Idiomes from '../../components/sections/Idiomes.astro'
+import Formacio from '../../components/sections/Formacio.astro'
+import SobreMi from '../../components/sections/SobreMi.astro'
+import { useTranslations, normalizeLocale } from '../../i18n/utils'
+import Footer from '../../components/Footer.astro'
 
-
-const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
+const lang = normalizeLocale(Astro.params.locale)
+const t = useTranslations(lang)
 
 export async function getStaticPaths() {
   return [
     { params: { locale: 'en' } },
     { params: { locale: 'es' } },
-  ];
+  ]
 }
-// Consulta a Sanity per obtenir les dades del portafoli
-// La teva consulta adaptada per a i18n
+
 const query = `*[_type == "siteSettings"][0]{
-    // --- Camps NO traduïts (es queden igual) ---
-    nom,
-    foto,
-    "cvPdf": cvPdf.asset->url,
-    linkedinUrl,
-    githubUrl,
-    email,
+  // Camps NO traduïts
+  nom,
+  foto,
+  "cvPdf": cvPdf.asset->url,
+  linkedinUrl,
+  githubUrl,
+  email,
 
-    // --- Camps traduïts de siteSettings ---
-    "titol": titol.${lang},
-    "resumSidebar": resumSidebar.${lang},
-    "descripcioSobreMi": descripcioSobreMi.${lang},
+  // Camps traduïts
+  "titol": titol.${lang},
+  "resumSidebar": resumSidebar.${lang},
+  "descripcioSobreMi": descripcioSobreMi.${lang},
 
-    // --- Sub-consultes amb camps traduïts ---
-    "experiencies": *[_type == "experiencia"] | order(ordre asc) {
-        empresa,
-        dates,
-        tecnologies,
-        "titol": titol.${lang},
-        "descripcio": descripcio.${lang}
-    },
-    "formacions": *[_type == "formacio"] | order(ordre asc) {
-        centre,
-        dates,
-        "titulacio": titulacio.${lang}
-    },
-    "habilitatsTecniques": *[_type == "habilitat" && categoria == "tecnica"] | order(nom asc) {
-        "nom": nom.${lang}
-    },
-    "habilitatsClau": *[_type == "habilitat" && categoria == "clau"] | order(nom asc) {
-        "nom": nom.${lang}
-    }
-}`; 
-const data = await client.fetch(query);
+  // Sub-consultes traduïdes
+  "experiencies": *[_type == "experiencia"] | order(ordre asc) {
+      empresa,
+      dates,
+      tecnologies,
+      "titol": titol.${lang},
+      "descripcio": descripcio.${lang}
+  },
+  "formacions": *[_type == "formacio"] | order(ordre asc) {
+      centre,
+      dates,
+      "titulacio": titulacio.${lang}
+  },
+  "habilitatsTecniques": *[_type == "habilitat" && categoria == "tecnica"] | order(nom asc) {
+      "nom": nom.${lang}
+  },
+  "habilitatsClau": *[_type == "habilitat" && categoria == "clau"] | order(nom asc) {
+      "nom": nom.${lang}
+  }
+}`
+const data = await client.fetch(query)
 ---
+
 <Layout title={data?.nom || 'Portafoli Aitor Rivera'} description={data?.resumSidebar} lang={lang}>
-	<div class="max-w-screen-xl mx-auto lg:flex">
-		<Sidebar settings={data} />
-		<main class="w-full lg:w-3/5 p-8 lg:p-16 lg:py-24">
-			{data ? (
-				<>
-					<SobreMi sobremi={data.descripcioSobreMi}/>
+  <div class="max-w-screen-xl mx-auto lg:flex">
+		<Sidebar settings={data} t={t} lang={lang}/>
+    <main class="w-full lg:w-3/5 p-8 lg:p-16 lg:py-24">
+      {data ? (
+        <>
+          <SobreMi sobremi={data.descripcioSobreMi} />
+          <Experiencia experiencies={data.experiencies} />
+          <Formacio formacions={data.formacions} />
+          <Habilitats tecniques={data.habilitatsTecniques} clau={data.habilitatsClau} />
+          <Idiomes />
+        </>
+      ) : (
+        <div class="bg-slate-800 text-slate-200 p-8 rounded-lg">
+          <p>Connectant amb Sanity...</p>
+        </div>
+      )}
+    </main>
 
-                    <Experiencia experiencies={data.experiencies} />
-                    <Formacio formacions={data.formacions} />
-
-                    <Habilitats tecniques={data.habilitatsTecniques} clau={data.habilitatsClau} />
-
-                    <Idiomes />
-
-				</>
-			) : (
-				<div class="bg-slate-800 text-slate-200 p-8 rounded-lg"><p>Connectant amb Sanity...</p></div>
-			)}
-		</main>
-        {data && (
-        <footer class="block lg:hidden p-6 text-center bg-slate-50 dark:bg-slate-900 border-t">
-            <Footer nom={data.nom} t={t} />
-        </footer>
-        )}
-	</div>
-
-        
+    {data && (
+      <footer class="block lg:hidden p-6 text-center bg-slate-50 dark:bg-slate-900 border-t">
+        <Footer nom={data.nom} t={t} />
+      </footer>
+    )}
+  </div>
 </Layout>
