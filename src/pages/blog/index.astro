@@ -1,0 +1,102 @@
+---
+import Layout from '../../layouts/Layout.astro'
+import BlogSidebar from '../../components/blog/BlogSidebar.astro'
+import client from '../../lib/sanity.ts'
+import { getLangFromUrl, useTranslations } from '../../i18n/utils'
+
+const lang = getLangFromUrl(Astro.url) // català perquè no hi ha prefix
+const t = useTranslations(lang)
+
+const query = `{
+  "settings": *[_type == "blogSettings"][0]{
+    "title": coalesce(title.${lang}, title.ca),
+    "description": coalesce(description.${lang}, description.ca)
+  },
+  "posts": *[_type == "post"] | order(publishedAt desc){
+    "title": coalesce(title.${lang}, title.ca),
+    "excerpt": coalesce(excerpt.${lang}, excerpt.ca),
+    "slug": slug.current,
+    publishedAt,
+    categories[]->{ "title": coalesce(title.${lang}, title.ca), "slug": slug.current },
+    tags[]->{ "title": coalesce(title.${lang}, title.ca), "slug": slug.current }
+  },
+  "sidebarSettings": *[_type == "siteSettings"][0]{
+    nom,
+    foto,
+    linkedinUrl,
+    githubUrl,
+    email,
+    "titol": coalesce(titol.${lang}, titol.ca),
+    "resumSidebar": coalesce(resumSidebar.${lang}, resumSidebar.ca)
+  },
+  "categories": *[_type == "category"]{
+    "title": coalesce(title.${lang}, title.ca),
+    "slug": slug.current,
+    "count": count(*[_type == "post" && references(^._id)])
+  },
+  "tags": *[_type == "tag"]{
+    "title": coalesce(title.${lang}, title.ca),
+    "slug": slug.current
+  },
+  "recentPosts": *[_type == "post"] | order(publishedAt desc)[0..4]{
+    "title": coalesce(title.${lang}, title.ca),
+    "slug": slug.current,
+    publishedAt
+  }
+}`
+const { settings, posts,sidebarSettings, categories, tags, recentPosts } = await client.fetch(query)
+---
+
+<Layout title={`${settings?.title || 'Blog'}`} description={settings?.description || ''} lang={lang}>
+  <div class="max-w-screen-xl mx-auto lg:flex">
+
+    <!-- ✅ Sidebar del blog -->
+    <BlogSidebar
+      lang={lang}
+      settings={sidebarSettings}
+      blogTitle={settings?.title || 'Blog d’Aitor Rivera'}
+      blogDescription={settings?.description || 'Articles sobre desenvolupament, gestió i experiències personals.'}
+      categories={categories}
+      tags={tags}
+      recentPosts={recentPosts}
+      t={t}
+    />
+
+    <!-- ✅ Contingut del blog -->
+    <main class="w-full lg:w-3/5 p-8 lg:p-16 lg:py-24 pt-16">
+
+      <section class="grid gap-12">
+        {posts.length > 0 ? (
+          posts.map(post => (
+            <article class="border-b border-slate-200 dark:border-slate-700 pb-6">
+              <h2 class="text-2xl font-semibold">
+                <a class="hover:underline" href={`/blog/${post.slug}`}>{post.title}</a>
+              </h2>
+              <p class="text-xs text-slate-500 mt-1">
+                {new Date(post.publishedAt).toLocaleDateString(lang)}
+              </p>
+              {post.excerpt && (
+                <p class="mt-2 text-slate-700 dark:text-slate-300 leading-relaxed">{post.excerpt}</p>
+              )}
+
+              <div class="mt-3 flex flex-wrap gap-2 text-xs">
+                {post.categories?.length > 0 && post.categories.map(c => (
+                  <span class="px-2 py-1 rounded bg-indigo-100 dark:bg-indigo-800 text-indigo-700 dark:text-indigo-200">
+                    {c.title}
+                  </span>
+                ))}
+                {post.tags?.length > 0 && post.tags.map(tg => (
+                  <span class="px-2 py-1 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+                    #{tg.title}
+                  </span>
+                ))}
+              </div>
+            </article>
+          ))
+        ) : (
+          <p class="text-center text-slate-600 dark:text-slate-400">{t['blog.noPosts']}</p>
+        )}
+      </section>
+    </main>
+  </div>
+</Layout>

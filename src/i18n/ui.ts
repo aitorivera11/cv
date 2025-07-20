@@ -47,6 +47,20 @@ export const ui = {
     'languages.native': 'Natiu',
     'languages.basic': 'Bàsic',
 
+    'nav.blog': 'Blog',
+    'blog.categories': 'Categories',
+    'blog.tags': 'Etiquetes',
+    'blog.recent': 'Recents',
+    'blog.relatedPosts': 'Articles relacionats',
+    'blog.noPosts': 'Encara no hi ha articles publicats.',
+    'blog.readMore': 'Llegeix més',
+    'blog.notFound': 'No s\'han trobat articles relacionats.',
+
+    'blog.sidebar.backHome': 'Torna a l\'inici',
+    'blog.sidebar.search': 'Cerca articles…',
+    'sidebar.language': 'Idioma',
+    'sidebar.toggleTheme': 'Canviar tema',
+
   },
   es: {
     'button.downloadCV': 'Descargar CV',
@@ -85,6 +99,19 @@ export const ui = {
     'languages.english': 'Inglés',
     'languages.native': 'Nativo',
     'languages.basic': 'Básico',
+
+    'nav.blog': 'Blog',
+    'blog.categories': 'Categorías',
+    'blog.tags': 'Etiquetas',
+    'blog.recent': 'Recientes',
+    'blog.relatedPosts': 'Artículos relacionados',
+    'blog.noPosts': 'Todavía no hay artículos publicados.',
+    'blog.readMore': 'Leer más',
+    'blog.notFound': 'No se han encontrado artículos relacionados.',
+    'blog.sidebar.backHome': 'Volver al inicio',
+    'blog.sidebar.search': 'Buscar artículos…',
+    'sidebar.language': 'Idioma',
+    'sidebar.toggleTheme': 'Cambiar tema',
   },
   en: {
     'button.downloadCV': 'Download CV',
@@ -123,5 +150,20 @@ export const ui = {
     'languages.english': 'English',
     'languages.native': 'Native',
     'languages.basic': 'Basic',
+
+    'nav.blog': 'Blog',
+    'blog.categories': 'Categories',
+    'blog.tags': 'Tags',
+    'blog.recent': 'Recent',
+    'blog.relatedPosts': 'Related posts',
+    'blog.noPosts': 'No posts published yet.',
+    'blog.readMore': 'Read more',
+    'blog.notFound': 'No related posts found.',
+
+    'blog.sidebar.backHome': 'Back to home',
+    'blog.sidebar.search': 'Search articles…',
+    'sidebar.language': 'Language',
+    'sidebar.toggleTheme': 'Toggle theme',
+
   },
 } as const;

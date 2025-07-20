@@ -1,21 +1,15 @@
 ---
-// src/components/Sidebar.astro
 import { Image } from 'astro:assets';
 import { urlFor } from '../lib/sanity.ts';
-import { ui } from '../i18n/ui.ts';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import Footer from './Footer.astro';
 import ContactModal from './ContactModal.jsx';
 import ScrollAwareNav from './ScrollAwareNav.jsx';
 import HeroShrinkHeader from './HeroShrinkHeader.jsx';
-import { SunIcon, MoonIcon } from '@heroicons/react/24/solid';
+import { SunIcon, MoonIcon, BookOpenIcon } from '@heroicons/react/24/solid';
 
-const { settings } = Astro.props;
+const { settings, t, lang } = Astro.props;
 const fotoUrl = settings?.foto ? urlFor(settings.foto).url() : '';
-
-const getLangFromUrl = (url: URL) => url.pathname.split('/')[1] || 'ca';
-const lang = getLangFromUrl(Astro.url) as keyof typeof ui;
-const t = ui[lang];
 ---
 
 <aside class="relative w-full lg:w-2/5 lg:h-screen lg:sticky top-0 bg-slate-50
@@ -26,11 +20,11 @@ const t = ui[lang];
   <!-- TOP: idioma i tema -->
   <header class="flex justify-end items-center gap-2 mb-6">
     <div class="flex items-center gap-2 text-sm font-medium" aria-label="Idioma">
-      <a href={getRelativeLocaleUrl('ca')} class={Astro.currentLocale === 'ca' ? 'font-bold text-indigo-600' : ''}>CA</a>
+      <a href={getRelativeLocaleUrl('ca', '/')} class={lang === 'ca' ? 'font-bold text-indigo-600' : ''}>CA</a>
       <span>|</span>
-      <a href={getRelativeLocaleUrl('es')} class={Astro.currentLocale === 'es' ? 'font-bold text-indigo-600' : ''}>ES</a>
+      <a href={getRelativeLocaleUrl('es', '/')} class={lang === 'es' ? 'font-bold text-indigo-600' : ''}>ES</a>
       <span>|</span>
-      <a href={getRelativeLocaleUrl('en')} class={Astro.currentLocale === 'en' ? 'font-bold text-indigo-600' : ''}>EN</a>
+      <a href={getRelativeLocaleUrl('en', '/')} class={lang === 'en' ? 'font-bold text-indigo-600' : ''}>EN</a>
     </div>
 
     <button 
@@ -46,7 +40,7 @@ const t = ui[lang];
     </button>
   </header>
 
-  <!-- MIDDLE: HERO -->
+  <!-- MIDDLE: HERO + CTA Blog -->
   <div class="flex-grow flex flex-col justify-center">
     {settings?.foto && (
       <Image
@@ -66,10 +60,18 @@ const t = ui[lang];
       {settings?.titol}
     </h2>
 
-
-
+    <!-- Contacte i navegació -->
     <ContactModal client:visible t={t} />
 
+        <!-- CTA Blog: destacat sota el nom/títol -->
+    <a
+      href={getRelativeLocaleUrl(lang, '/blog')}
+          class="group mt-6 inline-flex items-center justify-center mx-auto bg-slate-800 text-white dark:bg-white dark:text-slate-900 font-semibold py-2 px-6 rounded-full hover:bg-slate-900 dark:hover:bg-slate-100 transition-colors duration-200 shadow-sm"
+      
+    >
+      <BookOpenIcon className="w-5 h-5 mr-2 transition-transform group-hover:-rotate-12" />
+      <span class="tracking-wide">{t['nav.blog']}</span>
+    </a>
 
     <ScrollAwareNav client:load t={t} />
   </div>
@@ -98,10 +100,8 @@ const t = ui[lang];
     )}
   </div>
 
-    <div class="hidden lg:block pt-10">
-      <Footer nom={settings.nom} t={t} />
-    </div>
+  <div class="hidden lg:block pt-10">
+    <Footer nom={settings.nom} t={t} />
   </div>
   <HeroShrinkHeader client:only="react" fotoUrl={fotoUrl} nom={settings.nom} titol={settings.titol} />
-
 </aside>

@@ -12,11 +12,11 @@ interface Props {
 	description: string;
 	lang?: string;
 }
-const { title = 'Aitor Rivera Garcia', description = 'Desenvolupador web i gestor de projectes. Portafoli personal.', lang = 'ca' } = Astro.props;
+const { title = 'Aitor Rivera Garcia', description = 'Desenvolupador web i gestor de projectes. Portafoli personal.', lang } = Astro.props;
 
 ---
 <!doctype html>
-<html lang="ca" class="scroll-smooth">
+<html lang={lang} class="scroll-smooth">
 	<head>
 
 		<meta charset="UTF-8" />

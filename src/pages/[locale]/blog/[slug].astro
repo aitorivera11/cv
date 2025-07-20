@@ -1,0 +1,169 @@
+---
+import Layout from '../../../layouts/Layout.astro'
+import BlogSidebar from '../../../components/blog/BlogSidebar.astro'
+import client from '../../../lib/sanity.ts'
+import { PortableText } from 'astro-portabletext'
+import ProseableText from '../../../components/ProseableText.astro'
+import { normalizeLocale, useTranslations } from '../../../i18n/utils'
+
+export async function getStaticPaths() {
+  const posts = await client.fetch(`*[_type == "post"]{
+    "slug": slug.current
+  }`)
+
+  const locales = ['en', 'es'] // idiomes amb traducció
+
+  const paths = []
+  for (const locale of locales) {
+    for (const post of posts) {
+      paths.push({
+        params: {
+          locale,
+          slug: post.slug
+        }
+      })
+    }
+  }
+
+  return paths
+}
+
+const lang = normalizeLocale(Astro.params.locale)
+const t = useTranslations(lang)
+const slug = Astro.params.slug
+
+const query = `{
+  "settings": *[_type == "blogSettings"][0]{
+    "title": coalesce(title.${lang}, title.ca),
+    "description": coalesce(description.${lang}, description.ca)
+  },
+  "categories": *[_type == "category"]{
+    "title": coalesce(title.${lang}, title.ca),
+    "slug": slug.current,
+    "count": count(*[_type == "post" && references(^._id)])
+  },
+  "tags": *[_type == "tag"]{
+    "title": coalesce(title.${lang}, title.ca),
+    "slug": slug.current
+  },
+  "recentPosts": *[_type == "post"] | order(publishedAt desc)[0..4]{
+    "title": coalesce(title.${lang}, title.ca),
+    "slug": slug.current,
+    publishedAt
+  },
+  "post": *[_type == "post" && slug.current == $slug][0]{
+    "title": coalesce(title.${lang}, title.ca),
+    "excerpt": coalesce(excerpt.${lang}, excerpt.ca),
+    "content": coalesce(content.${lang}, content.ca),
+    publishedAt,
+    categories[]->{ "title": coalesce(title.${lang}, title.ca), "slug": slug.current },
+    tags[]->{ "title": coalesce(title.${lang}, title.ca), "slug": slug.current },
+    relatedPosts[]->{
+      "title": coalesce(title.${lang}, title.ca),
+      "slug": slug.current,
+      publishedAt,
+      "excerpt": coalesce(excerpt.${lang}, excerpt.ca)
+    }
+  },
+  "sidebarSettings": *[_type == "siteSettings"][0]{
+    nom,
+    foto,
+    "cvPdf": cvPdf.asset->url,
+    linkedinUrl,
+    githubUrl,
+    email,
+    "titol": coalesce(titol.${lang}, titol.ca),
+    "resumSidebar": coalesce(resumSidebar.${lang}, resumSidebar.ca)
+  }
+}`
+
+const { post, sidebarSettings, settings, categories, tags, recentPosts } = await client.fetch(query, { slug })
+---
+
+<Layout title={`${post?.title || 'Article'} | ${sidebarSettings?.nom}`} description={post?.excerpt || ''} lang={lang}>
+  <div class="max-w-screen-xl mx-auto lg:flex">
+
+    <!-- Sidebar del blog -->
+    <BlogSidebar
+      lang={lang}
+      settings={sidebarSettings}
+      blogTitle={settings?.title || 'Blog d’Aitor Rivera'}
+      blogDescription={settings?.description || 'Articles sobre desenvolupament, gestió i experiències personals.'}
+      categories={categories}
+      tags={tags}
+      recentPosts={recentPosts}
+      t={t}
+    />
+
+    <!-- CONTINGUT DEL POST -->
+    <main class="w-full lg:w-3/5 p-6 lg:p-16 lg:py-24 pt-16">
+      {post ? (
+        <article>
+
+          {/* HERO del post */}
+          <header class="mb-10 pb-6 border-b border-slate-200 dark:border-slate-700">
+            <h1 class="text-4xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight mb-4">
+              {post.title}
+            </h1>
+            <div class="flex flex-wrap gap-4 items-center text-sm mb-4">
+              <time class="inline-flex items-center gap-1 text-slate-500 dark:text-slate-400" dateTime={post.publishedAt}>
+                <svg class="w-4 h-4 text-indigo-400 dark:text-indigo-300" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M8 7V3M16 7V3M3 11h18M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                {new Date(post.publishedAt).toLocaleDateString(lang)}
+              </time>
+
+              {post.categories?.length > 0 && (
+                <div class="flex flex-wrap gap-2">
+                  {post.categories.map(cat => (
+                    <a href={cat.slug ? `/${lang}/blog?category=${cat.slug}` : '#'} class="inline-block px-2 py-1 rounded-full bg-indigo-100 dark:bg-indigo-800 text-indigo-700 dark:text-indigo-200 text-xs font-semibold hover:bg-indigo-200 dark:hover:bg-indigo-700 transition">
+                      {cat.title}
+                    </a>
+                  ))}
+                </div>
+              )}
+
+              {post.tags?.length > 0 && (
+                <div class="flex flex-wrap gap-2">
+                  {post.tags.map(tag => (
+                    <a href={tag.slug ? `/${lang}/blog?tag=${tag.slug}` : '#'} class="inline-block px-2 py-1 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs">
+                      #{tag.title}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {post.excerpt && (
+              <p class="mt-4 text-lg text-slate-700 dark:text-slate-300">{post.excerpt}</p>
+            )}
+          </header>
+
+          {/* COS DEL POST */}
+          <div class="prose prose-slate dark:prose-invert max-w-none">
+            <ProseableText value={post.content} />
+          </div>
+
+          {/* ARTICLES RELACIONATS */}
+          {post.relatedPosts?.length > 0 && (
+            <section class="mt-16">
+              <h2 class="text-2xl font-bold mb-6">{t['blog.relatedPosts']}</h2>
+              <div class="grid md:grid-cols-2 gap-6">
+                {post.relatedPosts.map(rp => (
+                  <a href={`/${lang}/blog/${rp.slug}`} class="block rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-6 hover:border-indigo-400 hover:shadow-lg transition">
+                    <h3 class="text-xl font-semibold text-indigo-700 dark:text-indigo-300 mb-1">{rp.title}</h3>
+                    <p class="text-xs text-slate-500 mb-2">{new Date(rp.publishedAt).toLocaleDateString(lang)}</p>
+                    {rp.excerpt && <p class="text-slate-700 dark:text-slate-300 text-sm">{rp.excerpt}</p>}
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+
+        </article>
+      ) : (
+        <div class="bg-slate-100 dark:bg-slate-800 p-6 rounded-lg text-center">
+          <p>{t['blog.notFound'] || 'No s’ha trobat aquest article.'}</p>
+        </div>
+      )}
+    </main>
+  </div>
+</Layout>
