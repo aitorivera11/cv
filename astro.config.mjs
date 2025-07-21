@@ -11,7 +11,16 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   
-  integrations: [react(), sentry(), spotlightjs()],
+  integrations: [react(), sentry({
+      dsn: "https://28fef328bd65b94006b5de793feb4749@o4509706578165760.ingest.de.sentry.io/4509706581966928",
+      // Setting this option to true will send default PII data to Sentry.
+      // For example, automatic IP address collection on events
+      sendDefaultPii: true,
+      sourceMapsUploadOptions: {
+        project: "javascript-astro",
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+      },
+    }), spotlightjs()],
   i18n: {
     // L'idioma per defecte no tindrà prefix a l'URL (p.ex. /)
     defaultLocale: 'ca',
