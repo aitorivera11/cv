@@ -14,3 +14,13 @@ export function useTranslations(lang: keyof typeof ui) {
 export function normalizeLocale(locale?: string): 'ca' | 'es' | 'en' {
   return locale === 'es' || locale === 'en' ? locale : 'ca'
 }
+
+
+export function localizedUrl(lang: string, path: string) {
+  // Si la llengua és ca, torna la URL sense prefix
+  if (lang === 'ca') {
+    return path.startsWith('/') ? path : `/${path}`;
+  }
+  // Per altres idiomes, prefixa
+  return `/${lang}${path.startsWith('/') ? path : `/${path}`}`;
+}

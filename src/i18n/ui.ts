@@ -124,7 +124,7 @@ export const ui = {
     'nav.education': 'Education',
     'footer.design': 'Designed with Astro, Tailwind CSS and React',
     'footer.content': 'Content managed with Sanity.io',
-    'contact.button': 'Contact me',
+    'contact.button': 'Say hello!',
     'contact.title': 'Get in touch',
     'contact.name': 'Name',
     'contact.email': 'Email',

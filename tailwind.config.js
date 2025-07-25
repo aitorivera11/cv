@@ -12,6 +12,18 @@ export default {
       fontFamily: {
         sans: ['"Space Grotesk"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
+      typography: (theme) => ({
+        slate: {
+          css: {
+            '--tw-prose-bold': theme('colors.indigo.600'),
+            '--tw-prose-invert-bold': theme('colors.indigo.400'),
+            p: {
+              marginBottom: '1.5rem',
+              textAlign: 'justify',
+            },
+          },
+        },
+      }),
     },
   },
   plugins: [
