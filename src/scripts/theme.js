@@ -1,15 +1,7 @@
+// src/scripts/theme.js
+
+
 const getSystemTheme = () => window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-
-const applyInitialTheme = () => {
-  const savedTheme = localStorage.getItem("theme");
-  const themeToApply = savedTheme || getSystemTheme();
-
-  if (themeToApply === "dark") {
-    document.documentElement.classList.add("dark");
-  } else {
-    document.documentElement.classList.remove("dark");
-  }
-};
 
 // Canvi manual amb transició suau
 const handleThemeToggle = () => {
@@ -26,18 +18,30 @@ const handleThemeToggle = () => {
   }, 400);
 };
 
-// Detecta canvis del sistema en temps real (opcional)
+const applyTheme = () => {
+  const savedTheme = localStorage.getItem("theme");
+  const themeToApply = savedTheme || getSystemTheme();
+
+  if (themeToApply === "dark") {
+    document.documentElement.classList.add("dark");
+  } else {
+    document.documentElement.classList.remove("dark");
+  }
+};
+
+
+applyTheme(); // Per la càrrega inicial
+document.addEventListener('astro:after-swap', applyTheme); // Per a les navegacions amb View Transitions
+
+document.addEventListener('click', (event) => {
+  if (event.target.closest('.theme-toggle')) {
+    handleThemeToggle();
+  }
+});
+
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
   const savedTheme = localStorage.getItem("theme");
   if (!savedTheme) {
     document.documentElement.classList.toggle("dark", e.matches);
   }
-});
-
-// Apliquem el tema només carregar la pàgina
-applyInitialTheme();
-
-// Afegim el listener al botó
-document.querySelectorAll(".theme-toggle").forEach((el) => {
-  el.addEventListener("click", handleThemeToggle);
 });

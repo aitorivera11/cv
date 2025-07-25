@@ -50,10 +50,11 @@ const { settings, posts,sidebarSettings, categories, tags, recentPosts } = await
 ---
 
 <Layout
-  title="Blog d’Aitor Rivera"
-  description="Articles sobre desenvolupament web, gestió de projectes i experiències personals."
-  lang={lang}>
-  
+  title={settings?.title || 'Blog d’Aitor Rivera'}
+  description={settings?.description || 'Articles sobre desenvolupament, gestió i experiències personals.'}
+  lang={lang}
+  canonical={`https://aitorivera.com/${lang === 'ca' ? '' : `${lang}/`}blog`}>
+
   <div class="max-w-screen-xl mx-auto lg:flex">
     
     <!-- Sidebar = Hero -->
@@ -69,7 +70,7 @@ const { settings, posts,sidebarSettings, categories, tags, recentPosts } = await
     />
 
     <!-- Àrea central només per posts -->
-    <main class="w-full lg:w-3/5 p-6 lg:p-16">
+    <main transition:name="main-content" class="w-full lg:w-3/5 p-6 lg:p-16">
       <section class="grid gap-8">
         {posts.length > 0 ? (
           posts.map(post => (

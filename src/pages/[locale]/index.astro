@@ -60,7 +60,7 @@ const data = await client.fetch(query)
 <Layout title={data?.nom || 'Aitor Rivera Garcia'} description={data?.resumSidebar} lang={lang}>
   <div class="max-w-screen-xl mx-auto lg:flex">
 		<Sidebar settings={data} t={t} lang={lang}/>
-    <main class="w-full lg:w-3/5 p-8 lg:p-16 lg:py-24">
+    <main transition:name="main-content"  class="w-full lg:w-3/5 p-8 lg:p-16 lg:py-24">
       {data ? (
         <>
           <SobreMi sobremi={data.descripcioSobreMi} />

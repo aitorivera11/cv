@@ -6,6 +6,24 @@ import client from '../../lib/sanity.ts'
 import { PortableText } from 'astro-portabletext'
 import { normalizeLocale, useTranslations } from '../../i18n/utils'
 import { urlFor } from '../../lib/sanity.ts';
+import { 
+  SocialShare, 
+  TwitterShareButton, 
+  LinkedInShareButton, 
+  WhatsAppShareButton, 
+  EmailShareButton,
+  BlueskyShareButton
+} from "astro-social-share";
+import CopyLinkButton from '../../components/CopyLinkButton.astro';
+
+
+const SHARE_BUTTONS = [
+  LinkedInShareButton,
+  TwitterShareButton,
+  WhatsAppShareButton,
+  EmailShareButton,
+  BlueskyShareButton
+];
 
 export async function getStaticPaths() {
   const posts = await client.fetch(`*[_type == "post"]{
@@ -80,16 +98,19 @@ const query = `{
 }`
 
 const { post, sidebarSettings, settings, categories, tags, recentPosts } = await client.fetch(query, { slug })
+
+const shareUrl = `https://aitorivera.com/blog/${slug || ''}`;
+
 ---
 
 <Layout
   title={`${post?.title || 'Article'} | ${sidebarSettings?.nom}`}
   description={post?.excerpt || ''}
   lang={lang}
-  canonical={`https://aitorivera.com/${lang}/blog/${post.slug}`}
+  canonical={`https://aitorivera.com/${lang === 'ca' ? '' : `${lang}/`}blog/${slug}`}
   image={post?.coverImage ? urlFor(post.coverImage).url() : 'https://aitorivera.com/og-image.jpg'}
 >
-  <div class="max-w-screen-xl mx-auto lg:flex">
+  <main class="max-w-screen-xl mx-auto lg:flex" aria-hidden="true">
 
     <!-- ✅ Sidebar del blog -->
     <BlogSidebar
@@ -104,18 +125,18 @@ const { post, sidebarSettings, settings, categories, tags, recentPosts } = await
     />
 
     <!-- ✅ Contingut del post -->
-    <main class="w-full lg:w-3/5 p-6 lg:p-16 lg:py-24 pt-16">
+    <div class="w-full lg:w-3/5 p-6 lg:p-16 lg:py-24 pt-16">
       {post ? (
-        <article>
+        <article transition:name={`post-${slug}`}>
           <!-- Header del post -->
           <header class="mb-10 pb-6 border-b border-slate-200 dark:border-slate-700">
-            <h1 class="text-4xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight mb-4">
+            <h1 transition:name={`title-${slug}`} class="text-4xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight mb-4">
               {post.title}
             </h1>
 
             <!-- Data + categories + tags -->
             <div class="flex flex-wrap gap-4 items-center text-sm mb-4">
-              <time class="inline-flex items-center gap-1 text-slate-500 dark:text-slate-400" dateTime={post.publishedAt}>
+              <time class="inline-flex items-center gap-1 text-slate-600 dark:text-slate-300" dateTime={post.publishedAt}>
                 <svg class="w-4 h-4 text-indigo-400 dark:text-indigo-300" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M8 7V3M16 7V3M3 11h18M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                 {new Date(post.publishedAt).toLocaleDateString(lang)}
               </time>
@@ -146,6 +167,34 @@ const { post, sidebarSettings, settings, categories, tags, recentPosts } = await
             {post.excerpt && (
               <p class="mt-4 text-lg text-slate-700 dark:text-slate-300">{post.excerpt}</p>
             )}
+
+            <!-- Social share -->
+            <div class="mt-3 flex items-center gap-4">
+              <span class="font-semibold text-slate-700 dark:text-slate-300">{t['blog.share'] || 'Comparteix:'}</span>
+              
+              <div class="flex items-center gap-4">
+                <SocialShare
+                  url={shareUrl}
+                  title={post.title}
+                  description={post.excerpt}
+                  buttons={SHARE_BUTTONS}
+                  via="aitorivera"
+                />
+                  <slot name="astro-social-share-css" slot="astro-social-share-css">
+                    <style is:global>
+                      .astro-social-share {
+                        display: flex;
+                        gap: 0.5rem; /* gap-3 */
+                        align-items: center;
+                      }
+                    </style>
+                  </slot>
+
+                <div class="h-6 w-px bg-slate-200 dark:bg-slate-700"></div> 
+                
+                <CopyLinkButton url={shareUrl} t={t} />
+              </div>
+            </div>
           </header>
 
           <!-- Cos del post -->
@@ -164,6 +213,6 @@ const { post, sidebarSettings, settings, categories, tags, recentPosts } = await
           <p>{t['blog.notFound'] || 'No s’ha trobat aquest article.'}</p>
         </div>
       )}
-    </main>
-  </div>
+    </div>
+  </main>
 </Layout>

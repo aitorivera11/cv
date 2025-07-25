@@ -12,7 +12,7 @@ const { settings, t, lang } = Astro.props;
 const fotoUrl = settings?.foto ? urlFor(settings.foto).url() : '';
 ---
 
-<aside class="relative w-full lg:w-2/5 lg:h-screen lg:sticky top-0 bg-slate-50
+<aside transition:name="main-sidebar" class="relative w-full lg:w-2/5 lg:h-screen lg:sticky top-0 bg-slate-50
   dark:bg-gradient-to-b dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 
   p-6 lg:p-10 flex flex-col justify-between 
   border-b lg:border-b-0 lg:border-r lg:border-l border-slate-200 dark:border-slate-700">

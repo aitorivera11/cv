@@ -55,6 +55,9 @@ export const ui = {
     'blog.noPosts': 'Encara no hi ha articles publicats.',
     'blog.readMore': 'Llegeix més',
     'blog.notFound': 'No s\'han trobat articles relacionats.',
+    'blog.share': 'Comparteix:',
+    'blog.copia': 'Copia l\'enllaç al porta-retalls',
+    'blog.copiat': 'Copiat!',
 
     'blog.sidebar.backHome': 'Torna a l\'inici',
     'blog.sidebar.search': 'Cerca articles…',
@@ -110,6 +113,10 @@ export const ui = {
     'blog.notFound': 'No se han encontrado artículos relacionados.',
     'blog.sidebar.backHome': 'Volver al inicio',
     'blog.sidebar.search': 'Buscar artículos…',
+    'blog.share': 'Comparte:',
+    'blog.copia': 'Copia el enlace al portapapeles',
+    'blog.copiat': '¡Copiado!',
+
     'sidebar.language': 'Idioma',
     'sidebar.toggleTheme': 'Cambiar tema',
   },
@@ -159,6 +166,9 @@ export const ui = {
     'blog.noPosts': 'No posts published yet.',
     'blog.readMore': 'Read more',
     'blog.notFound': 'No related posts found.',
+    'blog.share': 'Share:',
+    'blog.copia': 'Copy link to clipboard',
+    'blog.copiat': 'Copied!',
 
     'blog.sidebar.backHome': 'Back to home',
     'blog.sidebar.search': 'Search articles…',
