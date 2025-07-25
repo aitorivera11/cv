@@ -110,7 +110,7 @@ const shareUrl = `https://aitorivera.com/blog/${slug || ''}`;
   canonical={`https://aitorivera.com/${lang === 'ca' ? '' : `${lang}/`}blog/${slug}`}
   image={post?.coverImage ? urlFor(post.coverImage).url() : 'https://aitorivera.com/og-image.jpg'}
 >
-  <main class="max-w-screen-xl mx-auto lg:flex" aria-hidden="true">
+  <div class="max-w-screen-xl mx-auto lg:flex" aria-hidden="true">
 
     <!-- ✅ Sidebar del blog -->
     <BlogSidebar
@@ -125,7 +125,7 @@ const shareUrl = `https://aitorivera.com/blog/${slug || ''}`;
     />
 
     <!-- ✅ Contingut del post -->
-    <div class="w-full lg:w-3/5 p-6 lg:p-16 lg:py-24 pt-16">
+    <main class="w-full lg:w-3/5 p-6 lg:p-16 lg:py-24 pt-16">
       {post ? (
         <article transition:name={`post-${slug}`}>
           <!-- Header del post -->
@@ -213,6 +213,6 @@ const shareUrl = `https://aitorivera.com/blog/${slug || ''}`;
           <p>{t['blog.notFound'] || 'No s’ha trobat aquest article.'}</p>
         </div>
       )}
-    </div>
-  </main>
+    </main>
+  </div>
 </Layout>
