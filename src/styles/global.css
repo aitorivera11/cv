@@ -50,6 +50,34 @@ body {
   }
 }
 
+/*
+  VERSIÓ MILLORADA: EFECTE "EMPUXAR"
+  - Sense canvis d'opacitat per a un efecte més sòlid.
+  - El moviment és del 100% per assegurar que surt del tot.
+  - Una corba d'animació (easing) més professional.
+*/
+
+@keyframes push-up {
+  from { transform: translateY(0); }
+  to { transform: translateY(-100%); }
+}
+
+@keyframes push-in {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* El contingut vell (OLD) és empès cap amunt */
+::view-transition-old(main-content) {
+  animation: 0.5s cubic-bezier(0.76, 0, 0.24, 1) both push-up;
+}
+
+/* El contingut nou (NEW) empeny des de baix */
+::view-transition-new(main-content) {
+  animation: 0.5s cubic-bezier(0.76, 0, 0.24, 1) both push-in;
+}
+
+
 
 
 

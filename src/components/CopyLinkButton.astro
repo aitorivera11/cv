@@ -1,0 +1,46 @@
+---
+import { LinkIcon } from "@heroicons/react/24/solid";
+// src/components/CopyLinkButton.astro
+const { url, t } = Astro.props;
+---
+
+<button id="copy-link-button" title={t['blog.copia']} class="cursor-pointer">
+    <LinkIcon className="h-6 w-6 text-black" aria-hidden="true" />
+  <span id="copy-link-feedback" class="absolute -top-8 left-1/2 -translate-x-1/2 rounded-md bg-slate-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity dark:bg-slate-700">{t['blog.copiat']} </span>
+</button>
+
+<script define:vars={{ url }}>
+  const button = document.getElementById('copy-link-button');
+  const feedback = document.getElementById('copy-link-feedback');
+
+  button.addEventListener('click', () => {
+    navigator.clipboard.writeText(url).then(() => {
+      // Mostra el feedback
+      feedback.style.opacity = '1';
+
+      // Amaga el feedback després de 2 segons
+      setTimeout(() => {
+        feedback.style.opacity = '0';
+      }, 2000);
+    }).catch(err => {
+      console.error('No s\'ha pogut copiar l\'enllaç: ', err);
+    });
+  });
+</script>
+
+<style>
+  #copy-link-button {
+    position: relative;
+    color: #475569; /* text-slate-600 */
+    transition: color 0.2s;
+  }
+  #copy-link-button:hover {
+    color: #1e293b; /* text-slate-800 */
+  }
+  .dark #copy-link-button {
+    color: #94a3b8; /* dark:text-slate-400 */
+  }
+  .dark #copy-link-button:hover {
+    color: #e2e8f0; /* dark:text-slate-200 */
+  }
+</style>
