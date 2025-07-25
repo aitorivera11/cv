@@ -1,14 +1,18 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { ui } from '../i18n/ui.ts';
+import { normalizeLocale, useTranslations } from '../i18n/utils.ts';
 import Escape404 from '../components/Escape404.jsx';
 
-const lang = Astro.currentLocale || 'ca';
-const t = ui[lang];
+const lang = normalizeLocale(Astro.currentLocale || 'ca')
+const t = useTranslations(lang)
 const homePath = lang === 'ca' ? '/' : `/${lang}`;
 ---
 
-<Layout title="404" description="Page not found" lang={lang}>
+<Layout
+  title="404 | Aitor Rivera"
+  description="Page not found"
+  lang={lang}
+>
   <main class="min-h-screen flex flex-col items-center justify-center text-center p-8 gap-6">
     <Escape404 t={t} homePath={homePath} client:load />
   </main>

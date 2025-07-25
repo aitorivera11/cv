@@ -2,6 +2,7 @@
 
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+@config "../../tailwind.config.js";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -38,7 +39,6 @@ html {
 }
 
 body {
-  font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
     transition: background-color 0.6s ease-in-out, 
               color 0.6s ease-in-out;
 }

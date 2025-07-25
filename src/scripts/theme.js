@@ -38,4 +38,6 @@ window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e)
 applyInitialTheme();
 
 // Afegim el listener al botó
-document.getElementById("theme-toggle")?.addEventListener("click", handleThemeToggle);
+document.querySelectorAll(".theme-toggle").forEach((el) => {
+  el.addEventListener("click", handleThemeToggle);
+});

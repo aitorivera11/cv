@@ -2,7 +2,6 @@
 // src/pages/index.astro
 import Layout from '../layouts/Layout.astro';
 import Sidebar from '../components/Sidebar.astro';
-import HomeSidebarContent from '../components/HomeSidebar.astro';
 import client from '../lib/sanity.ts'; 
 import Experiencia from '../components/sections/Experiencia.astro';
 import Habilitats from '../components/sections/Habilitats.astro';
@@ -56,34 +55,29 @@ const query = `*[_type == "siteSettings"][0]{
 }`; 
 const data = await client.fetch(query);
 ---
-<Layout title={data?.nom || 'Portafoli Aitor Rivera'} description={data?.resumSidebar} lang={lang}>
-	<div class="max-w-screen-xl mx-auto lg:flex">
+<Layout title={data?.nom || 'Aitor Rivera Garcia'} description={data?.resumSidebar} lang={lang}>
+  <div class="max-w-screen-xl mx-auto lg:flex">
 		<Sidebar settings={data} t={t} lang={lang}/>
+    <main class="w-full lg:w-3/5 p-8 lg:p-16 lg:py-24">
+      {data ? (
+        <>
+          <SobreMi sobremi={data.descripcioSobreMi} />
+          <Experiencia experiencies={data.experiencies} />
+          <Formacio formacions={data.formacions} />
+          <Habilitats tecniques={data.habilitatsTecniques} clau={data.habilitatsClau} />
+          <Idiomes />
+        </>
+      ) : (
+        <div class="bg-slate-800 text-slate-200 p-8 rounded-lg">
+          <p>Connectant amb Sanity...</p>
+        </div>
+      )}
+    </main>
 
-		<main class="w-full lg:w-3/5 p-8 lg:p-16 lg:py-24 pt-16">
-			{data ? (
-				<>
-					<SobreMi sobremi={data.descripcioSobreMi}/>
-
-                    <Experiencia experiencies={data.experiencies} />
-
-                    <Formacio formacions={data.formacions} />
-
-                    <Habilitats tecniques={data.habilitatsTecniques} clau={data.habilitatsClau} />
-
-                    <Idiomes />
-
-				</>
-			) : (
-				<div class="bg-slate-800 text-slate-200 p-8 rounded-lg"><p>Connectant amb Sanity...</p></div>
-			)}
-		</main>
-        {data && (
-        <footer class="block lg:hidden p-6 text-center bg-slate-50 dark:bg-slate-900 border-t ">
-            <Footer nom={data.nom} t={t} />
-        </footer>
-        )}
-	</div>
-
-
+    {data && (
+      <footer class="block lg:hidden p-6 text-center bg-slate-50 dark:bg-slate-900 border-t">
+        <Footer nom={data.nom} t={t} />
+      </footer>
+    )}
+  </div>
 </Layout>

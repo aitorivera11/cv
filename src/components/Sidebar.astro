@@ -17,27 +17,47 @@ const fotoUrl = settings?.foto ? urlFor(settings.foto).url() : '';
   p-6 lg:p-10 flex flex-col justify-between 
   border-b lg:border-b-0 lg:border-r lg:border-l border-slate-200 dark:border-slate-700">
 
-  <!-- TOP: idioma i tema -->
-  <header class="flex justify-end items-center gap-2 mb-6">
-    <div class="flex items-center gap-2 text-sm font-medium" aria-label="Idioma">
-      <a href={getRelativeLocaleUrl('ca', '/')} class={lang === 'ca' ? 'font-bold text-indigo-600' : ''}>CA</a>
-      <span>|</span>
-      <a href={getRelativeLocaleUrl('es', '/')} class={lang === 'es' ? 'font-bold text-indigo-600' : ''}>ES</a>
-      <span>|</span>
-      <a href={getRelativeLocaleUrl('en', '/')} class={lang === 'en' ? 'font-bold text-indigo-600' : ''}>EN</a>
-    </div>
 
-    <button 
-      id="theme-toggle"
-      aria-label="Canviar tema"
-      type="button"
-      class="relative w-12 h-12 flex items-center justify-center rounded-full text-slate-600 dark:text-indigo-600 hover:bg-slate-200 dark:hover:bg-slate-800 focus:outline-none transition-all duration-300 ease-in-out hover:scale-110"
+  <!-- TOP: idioma i tema -->
+  <header class="flex justify-between items-center gap-2 mb-6">
+    <a aria-label={t['nav.blog']}
+      href={getRelativeLocaleUrl(lang, '/blog')} 
+      class="text-sm font-medium relative w-8 h-8 flex items-center justify-center rounded-full text-slate-600 dark:text-indigo-600 hover:bg-slate-200 dark:hover:bg-slate-800 transition-all duration-300 ease-in-out"
     >
-      <div class="relative w-6 h-6">
-        <SunIcon className="absolute inset-0 text-xl transition-all duration-500 ease-in-out transform dark:-rotate-90 dark:opacity-0" />
-        <MoonIcon className="absolute inset-0 text-xl transition-all duration-500 ease-in-out transform rotate-90 opacity-0 dark:rotate-0 dark:opacity-100" />
+      {t['nav.blog']}
+    </a>
+
+    <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1 text-sm font-medium transition-all duration-300 ease-in-out">
+        <a
+          href={getRelativeLocaleUrl('ca', '/')}
+          class={`w-7 h-7 flex items-center justify-center  rounded-full ${lang === 'ca' ? 'font-bold text-indigo-600' : ''} hover:bg-slate-200 dark:hover:bg-slate-800 transition-all duration-300`}
+        >
+          CA
+        </a>
+        <span>|</span>
+        <a
+          href={getRelativeLocaleUrl('es', '/')}
+          class={`w-7 h-7 flex items-center justify-center  rounded-full ${lang === 'es' ? 'font-bold text-indigo-600' : ''} hover:bg-slate-200 dark:hover:bg-slate-800 transition-all duration-300`}
+        >
+          ES
+        </a>
+        <span>|</span>
+        <a
+          href={getRelativeLocaleUrl('en', '/')}
+          class={`w-7 h-7 flex items-center justify-center  rounded-full ${lang === 'en' ? 'font-bold text-indigo-600' : ''} hover:bg-slate-200 dark:hover:bg-slate-800 transition-all duration-300`}
+        >
+          EN
+        </a>
       </div>
-    </button>
+
+      <button aria-label={t['sidebar.toggleTheme']} class="theme-toggle w-7 h-7 flex items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
+        <div class="relative w-5 h-5">
+          <SunIcon className="absolute inset-0 transition-all duration-500 dark:-rotate-90 dark:opacity-0" />
+          <MoonIcon className="absolute inset-0 transition-all duration-500 rotate-90 opacity-0 dark:rotate-0 dark:opacity-100" />
+        </div>
+      </button>
+    </div>
   </header>
 
   <!-- MIDDLE: HERO + CTA Blog -->
@@ -63,15 +83,6 @@ const fotoUrl = settings?.foto ? urlFor(settings.foto).url() : '';
     <!-- Contacte i navegació -->
     <ContactModal client:visible t={t} />
 
-        <!-- CTA Blog: destacat sota el nom/títol -->
-    <a
-      href={getRelativeLocaleUrl(lang, '/blog')}
-          class="group mt-6 inline-flex items-center justify-center mx-auto bg-slate-800 text-white dark:bg-white dark:text-slate-900 font-semibold py-2 px-6 rounded-full hover:bg-slate-900 dark:hover:bg-slate-100 transition-colors duration-200 shadow-sm"
-      
-    >
-      <BookOpenIcon className="w-5 h-5 mr-2 transition-transform group-hover:-rotate-12" />
-      <span class="tracking-wide">{t['nav.blog']}</span>
-    </a>
 
     <ScrollAwareNav client:load t={t} />
   </div>
