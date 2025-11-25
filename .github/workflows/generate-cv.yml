@@ -23,6 +23,9 @@ jobs:
 
       - name: Generate PDF
         run: npm run cv
+        env:
+          SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
 
       - name: Commit PDF to branch cv
         run: |
