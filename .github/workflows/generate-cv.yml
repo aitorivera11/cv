@@ -2,8 +2,6 @@ name: Generate CV
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 6 * * *" # opcional: cada dia a les 6h
 
 jobs:
   build:
@@ -20,17 +18,11 @@ jobs:
       - name: Install deps
         run: npm install
 
-      - name: Install Playwright browsers
+      - name: Install Playwright
         run: npx playwright install --with-deps
 
       - name: Generate PDF
-        run: node generate-pdf.js
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: cv
-          path: cv-aitor.pdf
+        run: npm run cv
 
       - name: Commit PDF to branch cv
         run: |
@@ -39,5 +31,5 @@ jobs:
           git checkout -B cv
           mv cv-aitor.pdf cv-aitor.pdf
           git add cv-aitor.pdf
-          git commit -m "Update CV"
+          git commit -m "Update CV" || echo "No changes"
           git push --force origin cv
