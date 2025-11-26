@@ -31,23 +31,44 @@ jobs:
           PUBLIC_SANITY_DATASET: ${{ secrets.PUBLIC_SANITY_DATASET }}
           SANITY_TOKEN: ${{ secrets.SANITY_TOKEN }}
 
-      - name: Upload PDFs to Vercel Blob
-        uses: dartilesm/vercel-blob-action@v2
-        with:
-          source: "cv-aitor-ca.pdf"
-          destination: "cv/cv-aitor-ca.pdf"
-          read-write-token: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+      # -------------------------
+      #   CA
+      # -------------------------
+      - name: Encode CA PDF
+        run: base64 cv-aitor-ca.pdf > cv-ca.b64
 
-      - name: Upload ES PDF
-        uses: dartilesm/vercel-blob-action@v2
-        with:
-          source: "cv-aitor-es.pdf"
-          destination: "cv/cv-aitor-es.pdf"
-          read-write-token: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+      - name: Upload CA to Vercel Blob
+        run: |
+          RESPONSE=$(curl -s -X POST "https://aitorivera.com/api/upload-cv" \
+            -H "Content-Type: application/json" \
+            -d "{\"filename\":\"cv-aitor-ca.pdf\", \"content\":\"$(cat cv-ca.b64)\"}" \
+          )
+          echo "Response: $RESPONSE"
 
-      - name: Upload EN PDF
-        uses: dartilesm/vercel-blob-action@v2
-        with:
-          source: "cv-aitor-en.pdf"
-          destination: "cv/cv-aitor-en.pdf"
-          read-write-token: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+      # -------------------------
+      #   ES
+      # -------------------------
+      - name: Encode ES PDF
+        run: base64 cv-aitor-es.pdf > cv-es.b64
+
+      - name: Upload ES to Vercel Blob
+        run: |
+          RESPONSE=$(curl -s -X POST "https://aitorivera.com/api/upload-cv" \
+            -H "Content-Type: application/json" \
+            -d "{\"filename\":\"cv-aitor-es.pdf\", \"content\":\"$(cat cv-es.b64)\"}" \
+          )
+          echo "Response: $RESPONSE"
+
+      # -------------------------
+      #   EN
+      # -------------------------
+      - name: Encode EN PDF
+        run: base64 cv-aitor-en.pdf > cv-en.b64
+
+      - name: Upload EN to Vercel Blob
+        run: |
+          RESPONSE=$(curl -s -X POST "https://aitorivera.com/api/upload-cv" \
+            -H "Content-Type: application/json" \
+            -d "{\"filename\":\"cv-aitor-en.pdf\", \"content\":\"$(cat cv-en.b64)\"}" \
+          )
+          echo "Response: $RESPONSE"
