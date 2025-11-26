@@ -3,15 +3,17 @@ name: Generate CV
 on:
   workflow_dispatch:
 
+# IMPORTANT: dóna permisos per fer push
 permissions:
-  contents: write   # Permet fer push al repo
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -21,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Install Playwright
+      - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
       - name: Generate PDFs
@@ -31,6 +33,50 @@ jobs:
           PUBLIC_SANITY_DATASET: ${{ secrets.PUBLIC_SANITY_DATASET }}
           SANITY_TOKEN: ${{ secrets.SANITY_TOKEN }}
 
+      # -------------------------------
+      # Convertim els PDFs a Base64
+      # -------------------------------
+
+      - name: Encode CA PDF
+        run: base64 cv-aitor-ca.pdf > cv-ca.b64
+
+      - name: Encode ES PDF
+        run: base64 cv-aitor-es.pdf > cv-es.b64
+
+      - name: Encode EN PDF
+        run: base64 cv-aitor-en.pdf > cv-en.b64
+
+      # -------------------------------
+      # Upload VERCEL BLOB
+      # -------------------------------
+
+      - name: Upload CA to Vercel Blob
+        run: |
+          curl -X POST "${{ secrets.CV_UPLOAD_ENDPOINT }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"filename\":\"cv-aitor-ca.pdf\",\"content\":\"$(cat cv-ca.b64)\"}"
+        env:
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+
+      - name: Upload ES to Vercel Blob
+        run: |
+          curl -X POST "${{ secrets.CV_UPLOAD_ENDPOINT }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"filename\":\"cv-aitor-es.pdf\",\"content\":\"$(cat cv-es.b64)\"}"
+        env:
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+
+      - name: Upload EN to Vercel Blob
+        run: |
+          curl -X POST "${{ secrets.CV_UPLOAD_ENDPOINT }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"filename\":\"cv-aitor-en.pdf\",\"content\":\"$(cat cv-en.b64)\"}"
+        env:
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+
+      # -------------------------------
+      # PUSH A LA BRANCA `cv`
+      # -------------------------------
       - name: Commit PDF to branch `cv`
         run: |
           git config user.name "github-actions"
