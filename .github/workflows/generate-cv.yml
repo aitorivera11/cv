@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: write   # Permet fer push al repo
 
 jobs:
   build:
@@ -18,20 +18,20 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Install deps
+      - name: Install dependencies
         run: npm install
 
       - name: Install Playwright
         run: npx playwright install --with-deps
 
-      - name: Generate PDF
+      - name: Generate PDFs
         run: npm run cv
         env:
-          PUBLIC_SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
-          PUBLIC_SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
+          PUBLIC_SANITY_PROJECT_ID: ${{ secrets.PUBLIC_SANITY_PROJECT_ID }}
+          PUBLIC_SANITY_DATASET: ${{ secrets.PUBLIC_SANITY_DATASET }}
           SANITY_TOKEN: ${{ secrets.SANITY_TOKEN }}
 
-      - name: Commit PDF to branch cv
+      - name: Commit PDF to branch `cv`
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
