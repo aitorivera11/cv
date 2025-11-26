@@ -3,9 +3,9 @@ export const config = {
 };
 
 import { chromium } from "playwright";
-import { client } from "../../../pdf/sanity.js";
-import { getCVQuery } from "../../../pdf/queries.js";
-import { cvTemplate } from "../../../pdf/template.js";
+import { client } from "../pdf/sanity.js";
+import { getCVQuery } from "../pdf/queries.js";
+import { cvTemplate } from "../pdf/template.js";
 import imageUrlBuilder from "@sanity/image-url";
 import { put } from "@vercel/blob";
 
