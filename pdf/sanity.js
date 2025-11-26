@@ -1,5 +1,4 @@
 // pdf/sanity.js
-import 'dotenv/config';
 import { createClient } from "@sanity/client";
 
 export const client = createClient({
