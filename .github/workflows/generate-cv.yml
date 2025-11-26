@@ -1,18 +1,20 @@
-name: Generate CV
+name: Generate and Upload CVs
 
 on:
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: "18"
 
@@ -22,7 +24,7 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Generate CV PDFs (ca, es, en)
+      - name: Generate PDFs
         run: npm run cv
         env:
           PUBLIC_SANITY_PROJECT_ID: ${{ secrets.PUBLIC_SANITY_PROJECT_ID }}
@@ -30,15 +32,22 @@ jobs:
           SANITY_TOKEN: ${{ secrets.SANITY_TOKEN }}
 
       - name: Upload PDFs to Vercel Blob
-        run: |
-          npx vercel@latest blob put cv-aitor-ca.pdf \
-            --rw-token "${{ secrets.BLOB_READ_WRITE_TOKEN }}" \
-            --pathname cv/cv-aitor-ca.pdf
+        uses: dartilesm/vercel-blob-action@v2
+        with:
+          source: "cv-aitor-ca.pdf"
+          destination: "cv/cv-aitor-ca.pdf"
+          read-write-token: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
 
-          npx vercel@latest blob put cv-aitor-es.pdf \
-            --rw-token "${{ secrets.BLOB_READ_WRITE_TOKEN }}" \
-            --pathname cv/cv-aitor-es.pdf
+      - name: Upload ES PDF
+        uses: dartilesm/vercel-blob-action@v2
+        with:
+          source: "cv-aitor-es.pdf"
+          destination: "cv/cv-aitor-es.pdf"
+          read-write-token: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
 
-          npx vercel@latest blob put cv-aitor-en.pdf \
-            --rw-token "${{ secrets.BLOB_READ_WRITE_TOKEN }}" \
-            --pathname cv/cv-aitor-en.pdf
+      - name: Upload EN PDF
+        uses: dartilesm/vercel-blob-action@v2
+        with:
+          source: "cv-aitor-en.pdf"
+          destination: "cv/cv-aitor-en.pdf"
+          read-write-token: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
