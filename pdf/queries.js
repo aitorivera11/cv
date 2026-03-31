@@ -1,6 +1,7 @@
 // pdf/queries.js
 export function getCVQuery(lang = "ca") {
   return `*[_type == "siteSettings"][0]{
+    _updatedAt,
     nom,
     foto,
     "fotoUrl": foto.asset->url,
