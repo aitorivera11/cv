@@ -3,8 +3,6 @@
 import '../styles/global.css';
 import { ClientRouter  } from 'astro:transitions';
 import themeScript from '../scripts/theme.js?raw';
-import Analytics from '@vercel/analytics/astro'
-import  SpeedInsights  from "@vercel/speed-insights/astro"
 import { SEO } from 'astro-seo';
 import BackToTop from '../components/BackToTop.jsx';
 
@@ -69,7 +67,5 @@ const {
     <slot />
     <BackToTop client:idle />
     <script is:inline set:html={themeScript}></script>
-    <Analytics />
-    <SpeedInsights />
   </body>
 </html>

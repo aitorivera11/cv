@@ -1,47 +1,71 @@
-# Astro Starter Kit: Minimal
+# CV Aitor - Deploy en VPS/Coolify
 
-```sh
-npm create astro@latest -- --template minimal
+Este proyecto ya no depende de Vercel ni de `@vercel/blob`.
+
+## Cambios clave
+
+- Build en modo servidor (`@astrojs/node` + `output: server`) para poder exponer API routes en el VPS.
+- Eliminadas integraciones de Vercel Analytics/Speed Insights.
+- Nueva generación y almacenamiento local de CV PDFs en el servidor.
+- Descarga del botón de CV conectada al endpoint local del servidor.
+
+## Endpoints API
+
+### `POST /api/generate-upload-cv`
+Genera los 3 CV (`ca`, `es`, `en`) y los guarda en disco.
+
+Respuesta ejemplo:
+
+```json
+{
+  "ok": true,
+  "results": [
+    { "lang": "ca", "filename": "cv-aitor-ca.pdf", "filePath": "...", "url": "/api/cv/ca" },
+    { "lang": "es", "filename": "cv-aitor-es.pdf", "filePath": "...", "url": "/api/cv/es" },
+    { "lang": "en", "filename": "cv-aitor-en.pdf", "filePath": "...", "url": "/api/cv/en" }
+  ]
+}
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/minimal)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/minimal)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/minimal/devcontainer.json)
+### `GET /api/cv/:lang`
+Descarga el CV en PDF almacenado en el servidor.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Idiomas válidos: `ca`, `es`, `en`.
 
-## 🚀 Project Structure
+### `POST /api/upload-cv`
+Guarda un CV enviado en base64.
 
-Inside of your Astro project, you'll see the following folders and files:
+Body JSON:
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```json
+{
+  "lang": "es",
+  "content": "<base64-pdf>"
+}
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Almacenamiento de PDFs
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Por defecto se guardan en:
 
-Any static assets, like images, can be placed in the `public/` directory.
+- `./storage/cv`
 
-## 🧞 Commands
+Puedes cambiarlo con variable de entorno:
 
-All commands are run from the root of the project, from a terminal:
+- `CV_STORAGE_DIR=/ruta/persistente/cv`
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+> Recomendación para Coolify: monta un volumen persistente y usa esa ruta en `CV_STORAGE_DIR`.
 
-## 👀 Want to learn more?
+## Comandos
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+```bash
+npm install
+npm run build
+npm run preview
+```
+
+Para generar los CV en servidor:
+
+```bash
+curl -X POST http://localhost:4321/api/generate-upload-cv
+```

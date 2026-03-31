@@ -6,10 +6,11 @@ import Footer from './Footer.astro';
 import ContactModal from './ContactModal.jsx';
 import ScrollAwareNav from './ScrollAwareNav.jsx';
 import HeroShrinkHeader from './HeroShrinkHeader.jsx';
-import { SunIcon, MoonIcon, BookOpenIcon } from '@heroicons/react/24/solid';
+import { SunIcon, MoonIcon } from '@heroicons/react/24/solid';
 
 const { settings, t, lang } = Astro.props;
 const fotoUrl = settings?.foto ? urlFor(settings.foto).url() : '';
+const cvDownloadUrl = `/api/cv/${lang}`;
 ---
 
 <aside transition:name="main-sidebar" class="relative w-full lg:w-2/5 lg:h-screen lg:sticky top-0 bg-slate-50
@@ -89,11 +90,9 @@ const fotoUrl = settings?.foto ? urlFor(settings.foto).url() : '';
 
   <!-- BOTTOM: accions i footer -->
   <div class="mt-6 flex justify-center gap-4 text-xl">
-    {settings?.cvPdf && (
-      <a href={settings.cvPdf} target="_blank" download title="Descarregar CV" class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-        <i class="fa-solid fa-file-arrow-down"></i>
-      </a>
-    )}
+    <a href={cvDownloadUrl} target="_blank" download title="Descarregar CV" class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+      <i class="fa-solid fa-file-arrow-down"></i>
+    </a>
     {settings?.linkedinUrl && (
       <a href={settings.linkedinUrl} aria-label={`LinkedIn de ${settings.nom}`} target="_blank" class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
         <i class="fa-brands fa-linkedin"></i>
