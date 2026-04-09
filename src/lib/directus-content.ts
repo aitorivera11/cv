@@ -37,7 +37,18 @@ function getRawAssetId(value: unknown): string {
   return ''
 }
 
-export function getDirectusAssetUrl(file: unknown): string {
+function getDirectusBaseUrl(): string {
+  const rawUrl = typeof import.meta.env.DIRECTUS_URL === 'string' ? import.meta.env.DIRECTUS_URL : ''
+  return rawUrl.replace(/\/+$/, '')
+}
+
+function getDirectusAssetProxyUrl(assetPath: string, search?: string): string {
+  const encodedPath = encodeURIComponent(assetPath.replace(/^\/+/, ''))
+  const query = search && search.trim() ? `?${search.replace(/^\?/, '')}` : ''
+  return `/api/directus-assets/${encodedPath}${query}`
+}
+
+export function getDirectusAssetOriginUrl(file: unknown): string {
   const rawId = getRawAssetId(file)
   if (!rawId) return ''
 
@@ -45,7 +56,24 @@ export function getDirectusAssetUrl(file: unknown): string {
     return rawId
   }
 
-  return `${import.meta.env.DIRECTUS_URL}/assets/${rawId}`
+  return `${getDirectusBaseUrl()}/assets/${rawId}`
+}
+
+export function getDirectusAssetUrl(file: unknown): string {
+  const rawId = getRawAssetId(file)
+  if (!rawId) return ''
+
+  if (rawId.startsWith('http://') || rawId.startsWith('https://')) {
+    try {
+      const parsed = new URL(rawId)
+      const assetPath = parsed.pathname.replace(/^\/+/, '')
+      return getDirectusAssetProxyUrl(assetPath, parsed.search)
+    } catch {
+      return rawId
+    }
+  }
+
+  return getDirectusAssetProxyUrl(`assets/${rawId}`)
 }
 
 function getLocalizedField(record: Record<string, unknown>, baseField: string, lang: SupportedLang): string {
@@ -371,7 +399,7 @@ export async function getCategories(lang: SupportedLang): Promise<Category[]> {
     ),
     directus.request(
       readItems('post', {
-        fields: ['categories.category.slug', 'categories.category_id.slug', 'categories.slug'],
+        fields: ['categories.category.slug', 'categories.category_id.slug'],
       }),
     ),
   ])
