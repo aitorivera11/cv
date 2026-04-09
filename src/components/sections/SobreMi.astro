@@ -1,6 +1,5 @@
 ---
 import AnimateOnScroll from '../AnimateOnScroll.jsx';
-import { PortableText } from 'astro-portabletext'; 
 import { ui } from '../../i18n/ui.ts';
 
 const getLangFromUrl = (url: URL) => url.pathname.split('/')[1] || 'ca';
@@ -14,7 +13,7 @@ const { sobremi } = Astro.props;
   <section id="sobre-mi" class="mb-24 scroll-mt-24">
 
     <div class="prose prose-slate dark:prose-invert max-w-none">
-          <PortableText value={sobremi} />
+          <div set:html={sobremi}></div>
     </div>
   </section>
 </AnimateOnScroll>

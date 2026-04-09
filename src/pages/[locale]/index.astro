@@ -1,7 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro'
 import Sidebar from '../../components/Sidebar.astro'
-import client from '../../lib/sanity.ts'
 import Experiencia from '../../components/sections/Experiencia.astro'
 import Habilitats from '../../components/sections/Habilitats.astro'
 import Idiomes from '../../components/sections/Idiomes.astro'
@@ -9,6 +8,7 @@ import Formacio from '../../components/sections/Formacio.astro'
 import SobreMi from '../../components/sections/SobreMi.astro'
 import { useTranslations, normalizeLocale } from '../../i18n/utils'
 import Footer from '../../components/Footer.astro'
+import { getExperiencia, getFormacio, getHabilitats, getSiteSettings } from '../../lib/directus-content'
 
 const lang = normalizeLocale(Astro.params.locale)
 const t = useTranslations(lang)
@@ -20,44 +20,25 @@ export async function getStaticPaths() {
   ]
 }
 
-const query = `*[_type == "siteSettings"][0]{
-  // Camps NO traduïts
-  nom,
-  foto,
-  "cvPdf": cvPdf.asset->url,
-  linkedinUrl,
-  githubUrl,
-  email,
+const [settings, experiencies, formacions, habilitats] = await Promise.all([
+  getSiteSettings(lang),
+  getExperiencia(lang),
+  getFormacio(lang),
+  getHabilitats(lang),
+])
 
-  // Camps traduïts
-  "titol": titol.${lang},
-  "resumSidebar": resumSidebar.${lang},
-  "descripcioSobreMi": descripcioSobreMi.${lang},
-
-  // Sub-consultes traduïdes
-  "experiencies": *[_type == "experiencia"] | order(ordre asc) {
-      empresa,
-      dates,
-      tecnologies,
-      "titol": titol.${lang},
-      "descripcio": descripcio.${lang}
-  },
-  "formacions": *[_type == "formacio"] | order(ordre asc) {
-      centre,
-      dates,
-      "titulacio": titulacio.${lang}
-  },
-  "habilitatsTecniques": *[_type == "habilitat" && categoria == "tecnica"] | order(nom asc) {
-      "nom": nom.${lang}
-  },
-  "habilitatsClau": *[_type == "habilitat" && categoria == "clau"] | order(nom asc) {
-      "nom": nom.${lang}
-  }
-}`
-const data = await client.fetch(query)
+const data = settings
+  ? {
+      ...settings,
+      experiencies,
+      formacions,
+      habilitatsTecniques: habilitats.tecniques,
+      habilitatsClau: habilitats.clau,
+    }
+  : null
 ---
 
-<Layout title={data?.nom || 'Aitor Rivera Garcia'} description={data?.resumSidebar} lang={lang}>
+<Layout title={data?.nom || 'Aitor Rivera Garcia'} description={data?.resumSidebar || ''} lang={lang}>
   <div class="max-w-screen-xl mx-auto lg:flex">
 		<Sidebar settings={data} t={t} lang={lang}/>
     <main transition:name="main-content"  class="w-full lg:w-3/5 p-8 lg:p-16 lg:py-24">
@@ -71,7 +52,7 @@ const data = await client.fetch(query)
         </>
       ) : (
         <div class="bg-slate-800 text-slate-200 p-8 rounded-lg">
-          <p>Connectant amb Sanity...</p>
+          <p>No s'han trobat dades de Directus.</p>
         </div>
       )}
     </main>
