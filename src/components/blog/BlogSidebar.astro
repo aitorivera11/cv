@@ -5,6 +5,7 @@ import { getRelativeLocaleUrl } from 'astro:i18n';
 import Footer from '../Footer.astro';
 import ContactModal from '../ContactModal.jsx';
 import { HomeIcon, SunIcon, MoonIcon, Bars3Icon } from '@heroicons/react/24/solid';
+import AppIcon from '../icons/AppIcon.astro';
 
 const { lang = 'ca', settings, blogTitle, blogDescription, categories = [], tags = [], recentPosts = [], t } = Astro.props;
 ---
@@ -101,13 +102,13 @@ const { lang = 'ca', settings, blogTitle, blogDescription, categories = [], tags
           <!-- Xarxes socials -->
           <div class="flex justify-center gap-4 text-lg mt-2">
             {settings?.linkedinUrl && (
-              <a href={settings.linkedinUrl} target="_blank" class="hover:text-indigo-500"><i class="fa-brands fa-linkedin"></i></a>
+              <a href={settings.linkedinUrl} target="_blank" class="hover:text-indigo-500"><AppIcon name="linkedin" /></a>
             )}
             {settings?.githubUrl && (
-              <a href={settings.githubUrl} target="_blank" class="hover:text-indigo-500"><i class="fa-brands fa-github"></i></a>
+              <a href={settings.githubUrl} target="_blank" class="hover:text-indigo-500"><AppIcon name="github" /></a>
             )}
             {settings?.email && (
-              <a href={`mailto:${settings.email}`} class="hover:text-indigo-500"><i class="fa-solid fa-envelope"></i></a>
+              <a href={`mailto:${settings.email}`} class="hover:text-indigo-500"><AppIcon name="email" /></a>
             )}
           </div>
         </div>
@@ -258,17 +259,17 @@ const { lang = 'ca', settings, blogTitle, blogDescription, categories = [], tags
   <div class="mt-3 lg:mt-6 flex justify-center gap-4 text-lg lg:text-xl">
     {settings?.linkedinUrl && (
       <a href={settings.linkedinUrl} aria-label={`LinkedIn de ${settings.nom}`} target="_blank" class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-        <i class="fa-brands fa-linkedin"></i>
+        <AppIcon name="linkedin" />
       </a>
     )}
     {settings?.githubUrl && (
       <a href={settings.githubUrl} aria-label={`GitHub de ${settings.nom}`} target="_blank" class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
-        <i class="fa-brands fa-github"></i>
+        <AppIcon name="github" />
       </a>
     )}
     {settings?.email && (
       <a href={`mailto:${settings.email}`} aria-label={`Email de ${settings.nom}`} class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-        <i class="fa-solid fa-envelope"></i>
+        <AppIcon name="email" />
       </a>
     )}
   </div>

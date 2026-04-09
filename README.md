@@ -6,6 +6,7 @@ Este proyecto ya no depende de Vercel ni de `@vercel/blob`.
 
 - Build en modo servidor (`@astrojs/node` + `output: server`) para poder exponer API routes en el VPS.
 - Eliminadas integraciones de Vercel Analytics/Speed Insights.
+- Eliminada dependencia de Font Awesome (icons SVG locals).
 - Nueva generación y almacenamiento local de CV PDFs en el servidor.
 - Descarga del botón de CV conectada al endpoint local del servidor.
 
@@ -79,3 +80,33 @@ Aquest projecte necessita Directus:
 - `DIRECTUS_TOKEN`: token estàtic amb permisos de lectura
 
 Pots partir de `.env.example`.
+
+## Analítica de visites (opcional)
+
+Ara es pot injectar un script d’analítica sense dependre de llibreries externes.
+
+Variables disponibles:
+
+- `PUBLIC_ANALYTICS_PROVIDER`: `umami`, `plausible` o `custom`
+- `PUBLIC_ANALYTICS_SRC`: URL completa del script (pots apuntar al teu servidor)
+- `PUBLIC_ANALYTICS_WEBSITE_ID`: necessari en Umami
+- `PUBLIC_ANALYTICS_DOMAIN`: recomanat en Plausible
+
+### Exemple amb Umami autoallotjat
+
+```env
+PUBLIC_ANALYTICS_PROVIDER=umami
+PUBLIC_ANALYTICS_SRC=https://stats.example.com/script.js
+PUBLIC_ANALYTICS_WEBSITE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+```
+
+### Exemple amb Plausible autoallotjat
+
+```env
+PUBLIC_ANALYTICS_PROVIDER=plausible
+PUBLIC_ANALYTICS_SRC=https://analytics.example.com/js/script.js
+PUBLIC_ANALYTICS_DOMAIN=aitorivera.com
+```
+
+Si no defineixes aquestes variables, no es carrega cap script d’analítica.
+
