@@ -1,8 +1,5 @@
 import type { APIRoute } from 'astro';
 import { chromium } from 'playwright';
-import imageUrlBuilder from '@sanity/image-url';
-import { getCVQuery } from '../../../../pdf/queries.js';
-import { client } from '../../../../pdf/sanity.js';
 import { cvTemplate } from '../../../../pdf/template.js';
 import {
   getCvFilename,
@@ -12,15 +9,15 @@ import {
   saveCv,
   saveCvMeta,
 } from '../../../lib/cv-storage';
-
-const builder = imageUrlBuilder(client);
+import { getCvData, getDirectusAssetUrl, type SupportedLang } from '../../../lib/directus-content';
 
 function getPhotoUrl(photo: unknown) {
-  if (!photo) {
+  const photoUrl = getDirectusAssetUrl(photo)
+  if (!photoUrl) {
     return '';
   }
 
-  return builder.image(photo).width(400).height(400).fit('crop').url();
+  return `${photoUrl}?width=400&height=400&fit=cover`;
 }
 
 async function generatePdfBuffer(data: Record<string, any>, lang: string): Promise<Buffer> {
@@ -66,10 +63,10 @@ export const GET: APIRoute = async ({ params }) => {
     });
   }
 
-  const data = await client.fetch<Record<string, any> | null>(getCVQuery(lang));
+  const data = await getCvData(lang as SupportedLang)
 
   if (!data) {
-    return new Response(JSON.stringify({ error: 'No hay datos del CV en Sanity' }), {
+    return new Response(JSON.stringify({ error: 'No hay datos del CV en Directus' }), {
       status: 404,
       headers: { 'Content-Type': 'application/json' },
     });

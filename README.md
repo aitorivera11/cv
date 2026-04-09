@@ -69,3 +69,13 @@ Para generar los CV en servidor:
 ```bash
 curl -X POST http://localhost:4321/api/generate-upload-cv
 ```
+
+
+## Variables d'entorn CMS
+
+Aquest projecte necessita Directus:
+
+- `DIRECTUS_URL`: URL base de Directus (sense barra final)
+- `DIRECTUS_TOKEN`: token estàtic amb permisos de lectura
+
+Pots partir de `.env.example`.

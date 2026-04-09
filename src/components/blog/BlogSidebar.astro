@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import { urlFor } from '../../lib/sanity.ts';
+import { getDirectusAssetUrl } from '../../lib/directus-content';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import Footer from '../Footer.astro';
 import ContactModal from '../ContactModal.jsx';
@@ -15,7 +15,7 @@ const { lang = 'ca', settings, blogTitle, blogDescription, categories = [], tags
     <!-- Foto petita -->
     {settings?.foto && (
       <Image
-        src={urlFor(settings.foto).url()}
+        src={settings?.fotoUrl || getDirectusAssetUrl(settings.foto)}
         width={32}
         height={32}
         alt={`Foto de ${settings.nom}`}
@@ -174,7 +174,7 @@ const { lang = 'ca', settings, blogTitle, blogDescription, categories = [], tags
   <div class="flex-grow flex flex-col justify-center">
     {settings?.foto && (
       <Image
-        src={urlFor(settings.foto).url()}
+        src={settings?.fotoUrl || getDirectusAssetUrl(settings.foto)}
         width={96}
         height={96}
         alt={`Foto de ${settings.nom}`}

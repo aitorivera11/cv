@@ -1,22 +1,27 @@
 import type { APIRoute } from 'astro';
 import { chromium } from 'playwright';
-import { client } from '../../../pdf/sanity.js';
-import { getCVQuery } from '../../../pdf/queries.js';
 import { cvTemplate } from '../../../pdf/template.js';
-import imageUrlBuilder from '@sanity/image-url';
 import { saveCv } from '../../lib/cv-storage';
+import { getCvData, getDirectusAssetUrl, type SupportedLang } from '../../lib/directus-content';
 
-const builder = imageUrlBuilder(client);
+function getPhotoUrl(photo: unknown) {
+  const photoUrl = getDirectusAssetUrl(photo)
+  if (!photoUrl) {
+    return ''
+  }
 
-function urlFor(source: any) {
-  return builder.image(source).width(400).height(400).fit('crop').url();
+  return `${photoUrl}?width=400&height=400&fit=cover`
 }
 
-async function generatePdfBuffer(lang: string): Promise<Buffer> {
-  const data = await client.fetch(getCVQuery(lang));
-  const fotoUrl = data.foto ? urlFor(data.foto) : '';
+async function generatePdfBuffer(lang: SupportedLang): Promise<Buffer> {
+  const data = await getCvData(lang)
 
-  const html = cvTemplate(data, fotoUrl, lang);
+  if (!data) {
+    throw new Error(`No s'han trobat dades del CV per a ${lang}`)
+  }
+
+  const fotoUrl = getPhotoUrl(data.foto)
+  const html = cvTemplate(data, fotoUrl, lang)
 
   const browser = await chromium.launch();
   const page = await browser.newPage();
@@ -33,7 +38,7 @@ async function generatePdfBuffer(lang: string): Promise<Buffer> {
 }
 
 export const POST: APIRoute = async () => {
-  const langs = ['ca', 'es', 'en'];
+  const langs: SupportedLang[] = ['ca', 'es', 'en'];
 
   try {
     const results = [];
