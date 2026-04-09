@@ -5,6 +5,7 @@ import { ClientRouter  } from 'astro:transitions';
 import themeScript from '../scripts/theme.js?raw';
 import { SEO } from 'astro-seo';
 import BackToTop from '../components/BackToTop.jsx';
+import Analytics from '../components/Analytics.astro';
 
 
 interface Props {
@@ -60,8 +61,8 @@ const {
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta name="viewport" content="width=device-width" />
 
-    <script src="https://kit.fontawesome.com/4933c02f67.js" crossorigin="anonymous" defer></script>
     <ClientRouter />
+    <Analytics />
   </head>
   <body class="font-sans bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-300 transition-colors duration-300">
     <slot />

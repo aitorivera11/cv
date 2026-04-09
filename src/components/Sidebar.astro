@@ -7,6 +7,7 @@ import ContactModal from './ContactModal.jsx';
 import ScrollAwareNav from './ScrollAwareNav.jsx';
 import HeroShrinkHeader from './HeroShrinkHeader.jsx';
 import { SunIcon, MoonIcon } from '@heroicons/react/24/solid';
+import AppIcon from './icons/AppIcon.astro';
 
 const { settings, t, lang } = Astro.props;
 const fotoUrl = settings?.fotoUrl || getDirectusAssetUrl(settings?.foto);
@@ -91,21 +92,21 @@ const cvDownloadUrl = `/api/cv/${lang}`;
   <!-- BOTTOM: accions i footer -->
   <div class="mt-6 flex justify-center gap-4 text-xl">
     <a href={cvDownloadUrl} target="_blank" rel="noopener noreferrer" title="Descarregar CV" class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-      <i class="fa-solid fa-file-arrow-down"></i>
+      <AppIcon name="download" />
     </a>
     {settings?.linkedinUrl && (
       <a href={settings.linkedinUrl} aria-label={`LinkedIn de ${settings.nom}`} target="_blank" class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-        <i class="fa-brands fa-linkedin"></i>
+        <AppIcon name="linkedin" />
       </a>
     )}
     {settings?.githubUrl && (
       <a href={settings.githubUrl} aria-label={`GitHub de ${settings.nom}`} target="_blank" class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
-        <i class="fa-brands fa-github"></i>
+        <AppIcon name="github" />
       </a>
     )}
     {settings?.email && (
       <a href={`mailto:${settings.email}`} aria-label={`Email de ${settings.nom}`} class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-        <i class="fa-solid fa-envelope"></i>
+        <AppIcon name="email" />
       </a>
     )}
   </div>
