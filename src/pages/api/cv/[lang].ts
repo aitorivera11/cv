@@ -9,10 +9,10 @@ import {
   saveCv,
   saveCvMeta,
 } from '../../../lib/cv-storage';
-import { getCvData, getDirectusAssetUrl, type SupportedLang } from '../../../lib/directus-content';
+import { getCvData, getDirectusAssetOriginUrl, type SupportedLang } from '../../../lib/directus-content';
 
 function getPhotoUrl(photo: unknown) {
-  const photoUrl = getDirectusAssetUrl(photo)
+  const photoUrl = getDirectusAssetOriginUrl(photo)
   if (!photoUrl) {
     return '';
   }
