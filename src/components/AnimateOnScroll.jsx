@@ -1,9 +1,12 @@
 // src/components/AnimateOnScroll.jsx
 import { useState, useEffect, useRef } from 'react';
 
-// Afegim la nova prop 'triggerOnce' amb valor per defecte 'true'
 const AnimateOnScroll = ({ children, className = '', threshold = 0.1, delay = 0, triggerOnce = true }) => {
-  const [isVisible, setIsVisible] = useState(false);
+  const prefersReducedMotion =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const [isVisible, setIsVisible] = useState(prefersReducedMotion);
   const elementRef = useRef(null);
 
   useEffect(() => {
@@ -40,14 +43,12 @@ const AnimateOnScroll = ({ children, className = '', threshold = 0.1, delay = 0,
   }, [threshold, triggerOnce]); // Afegim triggerOnce a les dependències del useEffect
 
   const classes = `
-    transition-all duration-700 ease-out
+    ${prefersReducedMotion ? '' : 'transition-all duration-700 ease-out'}
     ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}
     ${className}
   `;
-  
-  const style = {
-      transitionDelay: `${delay}ms`
-  };
+
+  const style = prefersReducedMotion ? {} : { transitionDelay: `${delay}ms` };
 
   return (
     <div ref={elementRef} className={classes} style={style}>
