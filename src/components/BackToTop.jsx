@@ -28,12 +28,14 @@ export default function BackToTopRocketProgress() {
           className="fixed bottom-4 right-4 z-50 w-12 h-12 md:w-14 md:h-14 rounded-full bg-indigo-900 text-white shadow-lg flex items-center justify-center hover:bg-indigo-950"
           aria-label="Pujar a l'inici"
         >
-          <RocketLaunchIcon className="w-5 h-5 md:w-6 md:h-6 z-10 rotate-315" />
+          <RocketLaunchIcon className="w-5 h-5 md:w-6 md:h-6 z-10 rotate-315" aria-hidden="true" />
 
           <motion.svg
             className="absolute inset-0 w-full h-full"
             viewBox="0 0 100 100"
             fill="none"
+            aria-hidden="true"
+            focusable="false"
           >
             <circle cx="50" cy="50" r="45" stroke="" strokeWidth="8" />
             

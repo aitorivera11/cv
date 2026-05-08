@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function HeroShrinkHeader({ fotoUrl, nom, titol }) {
+export default function HeroShrinkHeader({ fotoUrl, nom, titol, t = {} }) {
   const [shrink, setShrink] = useState(false);
   const [activeSection, setActiveSection] = useState(null);
 
@@ -38,6 +38,8 @@ useEffect(() => {
       className={`lg:hidden fixed top-0 inset-x-0 z-50 px-4 py-2 flex items-center justify-between bg-white dark:bg-slate-950 shadow transition-all duration-300 ease-in-out ${
         shrink ? "h-14 opacity-100" : "h-[120px] opacity-0 pointer-events-none"
       }`}
+      aria-hidden={!shrink}
+      {...(!shrink ? { inert: "" } : {})}
     >
       {/* FOTO + NOM */}
       <div className="flex items-center gap-3">
@@ -72,7 +74,7 @@ useEffect(() => {
               }}
               className="absolute right-0 text-xs font-medium text-indigo-600 dark:text-indigo-400"
             >
-              {formatSectionName(activeSection)}
+              {formatSectionName(activeSection, t)}
             </motion.span>
           )}
         </AnimatePresence>
@@ -81,13 +83,13 @@ useEffect(() => {
   );
 }
 
-function formatSectionName(sectionId) {
+function formatSectionName(sectionId, t) {
   const mapping = {
-    "sobre-mi": "Sobre mi",
-    experiencia: "Experiència",
-    habilitats: "Habilitats",
-    idiomes: "Idiomes",
-    formacio: "Formació",
+    "sobre-mi": t["nav.about"],
+    experiencia: t["nav.experience"],
+    habilitats: t["nav.skills"],
+    idiomes: t["nav.languages"],
+    formacio: t["nav.education"],
   };
   return mapping[sectionId] || sectionId;
 }

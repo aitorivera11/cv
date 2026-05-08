@@ -33,15 +33,32 @@ html.theme-transition {
 
 
 html {
-  transition: background-color 0.6s ease-in-out, 
+  transition: background-color 0.6s ease-in-out,
               color 0.6s ease-in-out,
               filter 0.6s ease-in-out,
               transform 0.4s ease-in-out;
 }
 
 body {
-    transition: background-color 0.6s ease-in-out, 
+    transition: background-color 0.6s ease-in-out,
               color 0.6s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+    transition: none;
+    animation: none;
+  }
+
+  body {
+    transition: none;
+  }
+
+  ::view-transition-old(main-content),
+  ::view-transition-new(main-content) {
+    animation: none;
+  }
 }
 
 

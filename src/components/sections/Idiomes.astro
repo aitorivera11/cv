@@ -21,21 +21,28 @@ const idiomes = [
     </h3>
 
     <ul class="space-y-5">
-      {idiomes.map((lang) => (
-        <li key={lang.nom} class="flex items-center gap-1">
+      {idiomes.map((idioma) => (
+        <li class="flex items-center gap-1">
           <span class="flex items-center w-28 text-sm font-medium text-slate-800 dark:text-slate-200 group">
-            <GlobeAltIcon className="w-4 h-4 mr-2 text-slate-400 dark:text-slate-500 group-hover:rotate-12 transition-transform duration-300" />
-            {lang.nom}
+            <GlobeAltIcon className="w-4 h-4 mr-2 text-slate-400 dark:text-slate-500 group-hover:rotate-12 transition-transform duration-300" aria-hidden="true" />
+            {idioma.nom}
           </span>
 
-          <div class="flex-1 bg-slate-200 dark:bg-slate-700 rounded-full h-2">
-            <BarraIdiomes client:visible percent={lang.percent} />
+          <div
+            class="flex-1 bg-slate-200 dark:bg-slate-700 rounded-full h-2"
+            role="progressbar"
+            aria-valuenow={idioma.percent}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`${idioma.nom}: ${idioma.nivell} (${idioma.percent}%)`}
+          >
+            <BarraIdiomes client:visible percent={idioma.percent} />
           </div>
 
-          <span class="w-20 text-xs text-slate-500 dark:text-slate-400 text-right group relative cursor-default">
-            {lang.nivell}
+          <span class="w-20 text-xs text-slate-500 dark:text-slate-400 text-right group relative cursor-default" aria-hidden="true">
+            {idioma.nivell}
             <span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 rounded bg-indigo-600 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-lg">
-              {lang.percent}%
+              {idioma.percent}%
             </span>
           </span>
         </li>
