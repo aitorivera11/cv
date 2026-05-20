@@ -17,6 +17,7 @@ interface Props {
   lang?: string;
   canonical?: string;
   image?: string;
+  ogType?: 'website' | 'article';
   jsonLd?: object[];
   hreflangUrls?: HreflangUrl[];
 }
@@ -27,6 +28,7 @@ const {
   lang = 'ca',
   canonical = `https://aitorivera.com/`,
   image = 'https://aitorivera.com/og-image.jpg',
+  ogType = 'website',
   jsonLd = [],
   hreflangUrls = [],
 } = Astro.props;
@@ -63,7 +65,7 @@ const hreflangLinks = [
       openGraph={{
         basic: {
           title: title,
-          type: 'website',
+          type: ogType,
           image: image,
           url: canonical,
         },

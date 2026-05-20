@@ -56,16 +56,49 @@ const [post, sidebarSettings, settings, categories, tags, recentPosts] = await P
   getPosts(lang),
 ])
 
-const shareUrl = `https://aitorivera.com/${lang}/blog/${slug}`;
-const seoImage = post?.coverImageUrl || settings?.defaultCoverUrl || 'https://aitorivera.com/og-image.jpg'
+const siteUrl = 'https://aitorivera.com'
+const shareUrl = `${siteUrl}/${lang}/blog/${slug}`
+const seoImage = post?.coverImageUrl || settings?.defaultCoverUrl || `${siteUrl}/og-image.jpg`
+const canonicalUrl = `${siteUrl}/${lang === 'ca' ? '' : `${lang}/`}blog/${slug}`
+
+const hreflangUrls = [
+  { lang: 'ca-ES', url: `${siteUrl}/blog/${slug}` },
+  { lang: 'es-ES', url: `${siteUrl}/es/blog/${slug}` },
+  { lang: 'en-US', url: `${siteUrl}/en/blog/${slug}` },
+]
+
+const articleSchema = post ? {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.title,
+  description: post.excerpt,
+  image: seoImage,
+  url: canonicalUrl,
+  datePublished: post.publishedAt,
+  author: {
+    '@type': 'Person',
+    name: sidebarSettings?.nom || 'Aitor Rivera Garcia',
+    url: siteUrl,
+  },
+  publisher: {
+    '@type': 'Person',
+    name: sidebarSettings?.nom || 'Aitor Rivera Garcia',
+    url: siteUrl,
+  },
+  inLanguage: lang === 'ca' ? 'ca-ES' : lang === 'es' ? 'es-ES' : 'en-US',
+  mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalUrl },
+} : null
 ---
 
 <Layout
   title={`${post?.title || 'Article'} | ${sidebarSettings?.nom || 'Aitor Rivera'}`}
   description={post?.excerpt || ''}
   lang={lang}
-  canonical={`https://aitorivera.com/${lang === 'ca' ? '' : `${lang}/`}blog/${slug}`}
+  canonical={canonicalUrl}
   image={seoImage}
+  ogType="article"
+  hreflangUrls={hreflangUrls}
+  jsonLd={articleSchema ? [articleSchema] : []}
 >
   <div class="max-w-screen-xl mx-auto lg:flex">
     <BlogSidebar
