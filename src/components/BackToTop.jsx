@@ -2,9 +2,17 @@ import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import { useEffect, useState } from "react";
 import { RocketLaunchIcon } from "@heroicons/react/24/solid";
 
+const LABELS = {
+  ca: 'Pujar a l\'inici',
+  es: 'Subir al inicio',
+  en: 'Back to top',
+};
+
 export default function BackToTopRocketProgress() {
   const [show, setShow] = useState(false);
   const { scrollYProgress } = useScroll();
+  const lang = typeof document !== 'undefined' ? (document.documentElement.lang || 'ca') : 'ca';
+  const label = LABELS[lang] || LABELS.ca;
 
   const pathLength = useTransform(scrollYProgress, [0, 1], [1, 0]);
 
@@ -26,7 +34,7 @@ export default function BackToTopRocketProgress() {
           
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           className="fixed bottom-4 right-4 z-50 w-12 h-12 md:w-14 md:h-14 rounded-full bg-indigo-900 text-white shadow-lg flex items-center justify-center hover:bg-indigo-950"
-          aria-label="Pujar a l'inici"
+          aria-label={label}
         >
           <RocketLaunchIcon className="w-5 h-5 md:w-6 md:h-6 z-10 rotate-315" aria-hidden="true" />
 
