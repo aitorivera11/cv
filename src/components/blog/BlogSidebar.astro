@@ -107,7 +107,7 @@ const langItems = [
                     <a
                       href={getRelativeLocaleUrl(code, '/blog')}
                       aria-label={aria}
-                      aria-current={lang === code ? 'true' : undefined}
+                      aria-current={lang === code ? 'page' : undefined}
                       class={`w-7 h-7 flex items-center justify-center rounded-full transition-all duration-200
                         focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500
                         ${lang === code
@@ -234,7 +234,7 @@ const langItems = [
                 <a
                   href={getRelativeLocaleUrl(code, '/blog')}
                   aria-label={aria}
-                  aria-current={lang === code ? 'true' : undefined}
+                  aria-current={lang === code ? 'page' : undefined}
                   class={`w-7 h-7 flex items-center justify-center rounded-full transition-all duration-200
                     focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500
                     ${lang === code
@@ -303,10 +303,13 @@ const langItems = [
   <!-- ── BOTTOM: Search + Categories + Tags + Recent + Social ── -->
   <div class="relative space-y-6 mt-6">
     <!-- Search -->
-    <div>
+    <div role="search">
+      <label for="blog-search" class="sr-only">{t['blog.sidebar.search']}</label>
       <input
+        id="blog-search"
         type="search"
         placeholder={t['blog.sidebar.search']}
+        aria-label={t['blog.sidebar.search']}
         class="w-full rounded-xl border border-slate-200 dark:border-slate-800
           bg-slate-50 dark:bg-slate-900
           px-4 py-2.5 text-sm text-slate-800 dark:text-white

@@ -37,7 +37,7 @@ const recentPosts = posts.slice(0, 5)
       t={t}
     />
 
-    <main transition:name="main-content" class="w-full lg:w-3/5 p-6 lg:p-16">
+    <main id="main-content" transition:name="main-content" class="w-full lg:w-3/5 p-6 lg:p-16">
       <section class="grid gap-8">
         {posts.length > 0 ? (
           posts.map(post => (
