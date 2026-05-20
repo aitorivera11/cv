@@ -67,7 +67,7 @@ const seoImage = post?.coverImageUrl || settings?.defaultCoverUrl || 'https://ai
   canonical={`https://aitorivera.com/${lang === 'ca' ? '' : `${lang}/`}blog/${slug}`}
   image={seoImage}
 >
-  <div class="max-w-screen-xl mx-auto lg:flex" aria-hidden="true">
+  <div class="max-w-screen-xl mx-auto lg:flex">
     <BlogSidebar
       lang={lang}
       settings={sidebarSettings}
