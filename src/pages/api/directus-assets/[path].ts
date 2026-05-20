@@ -12,7 +12,9 @@ export const GET: APIRoute = async ({ params, request }) => {
   }
 
   const decodedPath = decodeURIComponent(encodedPath).replace(/^\/+/, '')
-  if (!decodedPath.startsWith('assets/')) {
+
+  // Reject path traversal attempts and non-asset paths
+  if (!decodedPath.startsWith('assets/') || decodedPath.includes('..') || /[<>"{}|\\^`]/.test(decodedPath)) {
     return new Response('Invalid asset path', { status: 400 })
   }
 
@@ -44,10 +46,16 @@ export const GET: APIRoute = async ({ params, request }) => {
   const cacheControl = upstreamResponse.headers.get('cache-control')
 
   if (contentType) {
+    // Only allow safe media content types through the proxy
+    const safeTypes = ['image/', 'video/', 'audio/', 'font/', 'application/pdf', 'application/octet-stream']
+    if (!safeTypes.some(t => contentType.startsWith(t))) {
+      return new Response('Unsupported asset type', { status: 400 })
+    }
     responseHeaders.set('Content-Type', contentType)
   }
 
   responseHeaders.set('Cache-Control', cacheControl || 'public, max-age=3600')
+  responseHeaders.set('X-Content-Type-Options', 'nosniff')
 
   return new Response(upstreamResponse.body, {
     status: upstreamResponse.status,
