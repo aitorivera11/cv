@@ -1,12 +1,12 @@
 ---
-// src/components/Footer.astro
 const { nom, t } = Astro.props
-
 ---
-<footer class="text-slate-500 dark:text-slate-400 text-xs border-t border-slate-200 dark:border-slate-700 pt-4 ">
+<footer class="text-slate-400 dark:text-slate-500 text-xs border-t border-slate-100 dark:border-slate-800 pt-4">
   <div class="flex flex-col gap-1 items-center lg:items-start">
-    <p class="italic">{t['footer.design']}</p>
-    <p>{t['footer.content']}</p>
-    <p class="font-semibold">&copy; {new Date().getFullYear()} {nom}</p>
+    <p class="italic text-slate-400 dark:text-slate-600">{t['footer.design']}</p>
+    <p class="font-semibold text-slate-500 dark:text-slate-400">
+      &copy; {new Date().getFullYear()}
+      <span class="text-indigo-600 dark:text-indigo-400">{nom}</span>
+    </p>
   </div>
 </footer>

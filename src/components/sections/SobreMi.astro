@@ -11,10 +11,15 @@ const { sobremi } = Astro.props;
 
 <AnimateOnScroll client:visible triggerOnce={false}>
   <section id="sobre-mi" class="mb-24 scroll-mt-24">
-    <h3 class="text-sm lg:text-base font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-8 border-b border-slate-200 dark:border-slate-700 pb-2">
+    <h2 class="section-heading">
       {t['nav.about']}
-    </h3>
-    <div class="prose prose-slate dark:prose-invert max-w-none">
+    </h2>
+    <div class="prose prose-slate dark:prose-invert max-w-none
+      prose-p:text-slate-600 dark:prose-p:text-slate-300
+      prose-p:leading-relaxed prose-p:text-base
+      prose-strong:text-indigo-600 dark:prose-strong:text-indigo-400
+      prose-a:text-indigo-600 dark:prose-a:text-indigo-400
+      prose-a:no-underline hover:prose-a:underline">
       <div set:html={sobremi}></div>
     </div>
   </section>

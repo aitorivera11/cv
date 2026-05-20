@@ -1,47 +1,42 @@
-// src/scripts/theme.js
-
-
-const getSystemTheme = () => window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-
-// Canvi manual amb transició suau
-const handleThemeToggle = () => {
-  // Afegim classe per activar animació
-  document.documentElement.classList.add('theme-transition');
-
-  // Canviem el tema realment
-  const isDark = document.documentElement.classList.toggle('dark');
-  localStorage.setItem('theme', isDark ? 'dark' : 'light');
-
-  // Després de 400ms traiem la classe
-  setTimeout(() => {
-    document.documentElement.classList.remove('theme-transition');
-  }, 400);
-};
+// Applies saved or system theme immediately (prevents FOUT)
+(function () {
+  const saved = localStorage.getItem('theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (saved === 'dark' || (!saved && prefersDark)) {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+})();
 
 const applyTheme = () => {
-  const savedTheme = localStorage.getItem("theme");
-  const themeToApply = savedTheme || getSystemTheme();
-
-  if (themeToApply === "dark") {
-    document.documentElement.classList.add("dark");
+  const saved = localStorage.getItem('theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (saved === 'dark' || (!saved && prefersDark)) {
+    document.documentElement.classList.add('dark');
   } else {
-    document.documentElement.classList.remove("dark");
+    document.documentElement.classList.remove('dark');
   }
 };
 
+const handleThemeToggle = () => {
+  document.documentElement.classList.add('theme-transition');
+  const isDark = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  setTimeout(() => document.documentElement.classList.remove('theme-transition'), 350);
+};
 
-applyTheme(); // Per la càrrega inicial
-document.addEventListener('astro:after-swap', applyTheme); // Per a les navegacions amb View Transitions
+// Re-apply on Astro View Transitions navigation
+document.addEventListener('astro:after-swap', applyTheme);
 
-document.addEventListener('click', (event) => {
-  if (event.target.closest('.theme-toggle')) {
-    handleThemeToggle();
-  }
+// Theme toggle button
+document.addEventListener('click', (e) => {
+  if (e.target.closest('.theme-toggle')) handleThemeToggle();
 });
 
-window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
-  const savedTheme = localStorage.getItem("theme");
-  if (!savedTheme) {
-    document.documentElement.classList.toggle("dark", e.matches);
+// Sync with OS theme changes (only if user hasn't set a preference)
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+  if (!localStorage.getItem('theme')) {
+    document.documentElement.classList.toggle('dark', e.matches);
   }
 });
