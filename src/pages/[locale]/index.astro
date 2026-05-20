@@ -36,12 +36,53 @@ const data = settings
       habilitatsClau: habilitats.clau,
     }
   : null
+
+const siteUrl = 'https://aitorivera.com'
+const localePath = lang === 'ca' ? '' : `${lang}/`
+
+const hreflangUrls = [
+  { lang: 'ca-ES', url: `${siteUrl}/` },
+  { lang: 'es-ES', url: `${siteUrl}/es/` },
+  { lang: 'en-US', url: `${siteUrl}/en/` },
+]
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: data?.nom || 'Aitor Rivera Garcia',
+  jobTitle: data?.titol || '',
+  url: `${siteUrl}/`,
+  image: data?.fotoUrl || `${siteUrl}/og-image.jpg`,
+  sameAs: [data?.linkedinUrl, data?.githubUrl].filter(Boolean),
+  email: data?.email ? `mailto:${data.email}` : undefined,
+  knowsLanguage: ['ca', 'es', 'en-US'],
+}
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: data?.nom || 'Aitor Rivera Garcia',
+  url: `${siteUrl}/`,
+  description: data?.resumSidebar || '',
+  inLanguage: ['ca-ES', 'es-ES', 'en-US'],
+  author: { '@type': 'Person', name: data?.nom || 'Aitor Rivera Garcia' },
+}
 ---
 
-<Layout title={data?.nom || 'Aitor Rivera Garcia'} description={data?.resumSidebar || ''} lang={lang}>
+<Layout
+  title={data?.nom || 'Aitor Rivera Garcia'}
+  description={data?.resumSidebar || ''}
+  lang={lang}
+  canonical={`${siteUrl}/${localePath}`}
+  hreflangUrls={hreflangUrls}
+  jsonLd={[personSchema, websiteSchema]}
+>
   <div class="max-w-screen-xl mx-auto lg:flex">
-		<Sidebar settings={data} t={t} lang={lang}/>
-    <main transition:name="main-content"  class="w-full lg:w-3/5 p-8 lg:p-16 lg:py-24">
+    <Sidebar settings={data} t={t} lang={lang} />
+    <main
+      transition:name="main-content"
+      class="w-full lg:w-3/5 p-8 lg:p-16 lg:py-24"
+    >
       {data ? (
         <>
           <SobreMi sobremi={data.descripcioSobreMi} />
@@ -51,14 +92,14 @@ const data = settings
           <Idiomes />
         </>
       ) : (
-        <div class="bg-slate-800 text-slate-200 p-8 rounded-lg">
+        <div class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 p-8 rounded-2xl border border-slate-200 dark:border-slate-700">
           <p>No s'han trobat dades de Directus.</p>
         </div>
       )}
     </main>
 
     {data && (
-      <footer class="block lg:hidden p-6 text-center bg-slate-50 dark:bg-slate-900 border-t">
+      <footer class="block lg:hidden p-6 text-center bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
         <Footer nom={data.nom} t={t} />
       </footer>
     )}
