@@ -115,6 +115,8 @@ const langItems = [
           height={104}
           alt={`Foto de ${settings.nom}`}
           class="h-24 w-24 rounded-full object-cover pulse-ring-anim"
+          fetchpriority="high"
+          loading="eager"
         />
       </div>
     )}
@@ -133,7 +135,7 @@ const langItems = [
     </div>
 
     <!-- Nav sections -->
-    <ScrollAwareNav client:load t={t} />
+    <ScrollAwareNav client:idle t={t} />
   </div>
 
   <!-- ── BOTTOM: social + download + footer ─────────────── -->

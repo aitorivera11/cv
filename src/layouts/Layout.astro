@@ -44,6 +44,15 @@ const hreflangLinks = [
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    <!-- Font preload to eliminate render-blocking font flash -->
+    <link
+      rel="preload"
+      href="/fonts/SpaceGrotesk-VariableFont_wght.ttf"
+      as="font"
+      type="font/truetype"
+      crossorigin="anonymous"
+    />
+
     <!-- Inline theme script first to prevent FOUT -->
     <script is:inline set:html={themeScript}></script>
 
