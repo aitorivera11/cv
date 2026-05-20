@@ -25,26 +25,26 @@ const [settings, posts, sidebarSettings, categories, tags] = await Promise.all([
 
 const recentPosts = posts.slice(0, 5)
 
-const siteUrl = ‘https://aitorivera.com’
+const siteUrl = 'https://aitorivera.com'
 const hreflangUrls = [
-  { lang: ‘ca-ES’, url: `${siteUrl}/blog` },
-  { lang: ‘es-ES’, url: `${siteUrl}/es/blog` },
-  { lang: ‘en-US’, url: `${siteUrl}/en/blog` },
+  { lang: 'ca-ES', url: `${siteUrl}/blog` },
+  { lang: 'es-ES', url: `${siteUrl}/es/blog` },
+  { lang: 'en-US', url: `${siteUrl}/en/blog` },
 ]
 ---
 
 <Layout
-  title={settings?.title || "Blog d’Aitor Rivera"}
-  description={settings?.description || ‘Articles sobre desenvolupament, gestió i experiències personals.’}
+  title={settings?.title || "Blog d'Aitor Rivera"}
+  description={settings?.description || 'Articles sobre desenvolupament, gestió i experiències personals.'}
   lang={lang}
-  canonical={`${siteUrl}/${lang === ‘ca’ ? ‘’ : `${lang}/`}blog`}
+  canonical={`${siteUrl}/${lang === 'ca' ? '' : `${lang}/`}blog`}
   hreflangUrls={hreflangUrls}>
   <div class="max-w-screen-xl mx-auto lg:flex">
     <BlogSidebar
       lang={lang}
       settings={sidebarSettings}
-      blogTitle={settings?.title || "Blog d’Aitor Rivera"}
-      blogDescription={settings?.description || ‘Articles sobre desenvolupament, gestió i experiències personals.’}
+      blogTitle={settings?.title || "Blog d'Aitor Rivera"}
+      blogDescription={settings?.description || 'Articles sobre desenvolupament, gestió i experiències personals.'}
       categories={categories}
       tags={tags}
       recentPosts={recentPosts}

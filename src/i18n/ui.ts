@@ -158,7 +158,7 @@ export const ui = {
     '404.dragKey': "Drag me to the house!",
     '404.dropHere': "Drop the key here to escape.",
     '404.clue': "// Hint: Drag the key to the door...",
-    '404.success': "Congrats! You’ve found your way home. Redirecting...",
+    '404.success': "Congrats! You've found your way home. Redirecting...",
 
     'languages.catalan': 'Catalan',
     'languages.spanish': 'Spanish',
