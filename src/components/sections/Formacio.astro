@@ -1,11 +1,10 @@
 ---
 import AnimateOnScroll from '../AnimateOnScroll.jsx';
-import { ui } from '../../i18n/ui.ts';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils.ts';
 import { AcademicCapIcon } from '@heroicons/react/24/solid';
 
-const getLangFromUrl = (url: URL) => url.pathname.split('/')[1] || 'ca';
-const lang = getLangFromUrl(Astro.url) as keyof typeof ui;
-const t = ui[lang];
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 const { formacions } = Astro.props;
 ---

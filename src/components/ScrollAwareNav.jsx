@@ -32,7 +32,7 @@ export default function ScrollAwareNav({ t }) {
   return (
     <nav
       className="mt-10 hidden lg:flex justify-center gap-4 text-sm font-medium"
-      aria-label="Seccions principals"
+      aria-label={t['nav.mainSections'] || 'Seccions principals'}
     >
       <ul className="flex gap-4">
         <li>

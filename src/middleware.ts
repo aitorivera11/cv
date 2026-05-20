@@ -10,5 +10,11 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
     response.headers.set('Cache-Control', `public, max-age=${ONE_YEAR_IN_SECONDS}, immutable`);
   }
 
+  // Security headers for all responses
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-Frame-Options', 'SAMEORIGIN');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+
   return response;
 };

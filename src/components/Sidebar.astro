@@ -61,7 +61,7 @@ const langItems = [
                 <a
                   href={getRelativeLocaleUrl(code, '/')}
                   aria-label={aria}
-                  aria-current={lang === code ? 'true' : undefined}
+                  aria-current={lang === code ? 'page' : undefined}
                   class={`w-7 h-7 flex items-center justify-center rounded-full transition-all duration-200
                     focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500
                     ${lang === code
@@ -115,6 +115,8 @@ const langItems = [
           height={104}
           alt={`Foto de ${settings.nom}`}
           class="h-24 w-24 rounded-full object-cover pulse-ring-anim"
+          fetchpriority="high"
+          loading="eager"
         />
       </div>
     )}
@@ -133,7 +135,7 @@ const langItems = [
     </div>
 
     <!-- Nav sections -->
-    <ScrollAwareNav client:load t={t} />
+    <ScrollAwareNav client:idle t={t} />
   </div>
 
   <!-- ── BOTTOM: social + download + footer ─────────────── -->

@@ -17,13 +17,21 @@ const [settings, posts, sidebarSettings, categories, tags] = await Promise.all([
 ])
 
 const recentPosts = posts.slice(0, 5)
+
+const siteUrl = ‘https://aitorivera.com’
+const hreflangUrls = [
+  { lang: ‘ca-ES’, url: `${siteUrl}/blog` },
+  { lang: ‘es-ES’, url: `${siteUrl}/es/blog` },
+  { lang: ‘en-US’, url: `${siteUrl}/en/blog` },
+]
 ---
 
 <Layout
-  title={settings?.title || 'Blog d’Aitor Rivera'}
-  description={settings?.description || 'Articles sobre desenvolupament, gestió i experiències personals.'}
+  title={settings?.title || ‘Blog d\’Aitor Rivera’}
+  description={settings?.description || ‘Articles sobre desenvolupament, gestió i experiències personals.’}
   lang={lang}
-  canonical={`https://aitorivera.com/${lang === 'ca' ? '' : `${lang}/`}blog`}>
+  canonical={`${siteUrl}/${lang === ‘ca’ ? ‘’ : `${lang}/`}blog`}
+  hreflangUrls={hreflangUrls}>
 
   <div class="max-w-screen-xl mx-auto lg:flex">
     <BlogSidebar
@@ -37,8 +45,8 @@ const recentPosts = posts.slice(0, 5)
       t={t}
     />
 
-    <main transition:name="main-content" class="w-full lg:w-3/5 p-6 lg:p-16">
-      <section class="grid gap-8">
+    <main id="main-content" transition:name="main-content" class="w-full lg:w-3/5 p-6 lg:p-16">
+      <section class="grid gap-8" aria-label={settings?.title || 'Blog'}>
         {posts.length > 0 ? (
           posts.map(post => (
             <PostCard

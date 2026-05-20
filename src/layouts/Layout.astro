@@ -17,6 +17,7 @@ interface Props {
   lang?: string;
   canonical?: string;
   image?: string;
+  ogType?: 'website' | 'article';
   jsonLd?: object[];
   hreflangUrls?: HreflangUrl[];
 }
@@ -27,6 +28,7 @@ const {
   lang = 'ca',
   canonical = `https://aitorivera.com/`,
   image = 'https://aitorivera.com/og-image.jpg',
+  ogType = 'website',
   jsonLd = [],
   hreflangUrls = [],
 } = Astro.props;
@@ -44,6 +46,19 @@ const hreflangLinks = [
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    <!-- Font preload to eliminate render-blocking font flash -->
+    <link
+      rel="preload"
+      href="/fonts/SpaceGrotesk-VariableFont_wght.ttf"
+      as="font"
+      type="font/truetype"
+      crossorigin="anonymous"
+    />
+
+    <!-- DNS prefetch for external services -->
+    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+    <link rel="preconnect" href="https://a.emailjs.com" crossorigin />
+
     <!-- Inline theme script first to prevent FOUT -->
     <script is:inline set:html={themeScript}></script>
 
@@ -54,7 +69,7 @@ const hreflangLinks = [
       openGraph={{
         basic: {
           title: title,
-          type: 'website',
+          type: ogType,
           image: image,
           url: canonical,
         },
@@ -101,6 +116,14 @@ const hreflangLinks = [
     <Analytics />
   </head>
   <body class="font-sans bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-300 antialiased">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100]
+             focus:px-4 focus:py-2 focus:rounded-lg focus:bg-indigo-600 focus:text-white
+             focus:font-semibold focus:shadow-lg focus:outline-none"
+    >
+      {lang === 'ca' ? 'Salta al contingut' : lang === 'es' ? 'Saltar al contenido' : 'Skip to content'}
+    </a>
     <slot />
     <BackToTop client:idle />
   </body>

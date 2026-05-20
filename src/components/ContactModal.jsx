@@ -35,8 +35,7 @@ export default function ContactModal({ t }) {
       {/* BOTÓ TRIGGER */}
       <Dialog.Trigger asChild>
         <button
-          aria-label="Obrir formulari de contacte"
-          title={t['contact.button']}
+          aria-label={t['contact.button']}
           className="group mt-6 inline-flex items-center justify-center mx-auto bg-slate-800 text-white dark:bg-white dark:text-slate-900 font-semibold py-2 px-6 rounded-full hover:bg-slate-900 dark:hover:bg-slate-100 transition-colors duration-200 shadow-sm"
         >
           <EnvelopeIcon className="w-5 h-5 mr-2 transition-transform group-hover:-rotate-12" />
