@@ -1,7 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro'
 import Sidebar from '../../components/Sidebar.astro'
-import client from '../../lib/sanity.ts'
 import Experiencia from '../../components/sections/Experiencia.astro'
 import Habilitats from '../../components/sections/Habilitats.astro'
 import Idiomes from '../../components/sections/Idiomes.astro'
@@ -9,6 +8,7 @@ import Formacio from '../../components/sections/Formacio.astro'
 import SobreMi from '../../components/sections/SobreMi.astro'
 import { useTranslations, normalizeLocale } from '../../i18n/utils'
 import Footer from '../../components/Footer.astro'
+import { getExperiencia, getFormacio, getHabilitats, getSiteSettings } from '../../lib/directus-content'
 
 const lang = normalizeLocale(Astro.params.locale)
 const t = useTranslations(lang)
@@ -20,47 +20,70 @@ export async function getStaticPaths() {
   ]
 }
 
-const query = `*[_type == "siteSettings"][0]{
-  // Camps NO traduïts
-  nom,
-  foto,
-  "cvPdf": cvPdf.asset->url,
-  linkedinUrl,
-  githubUrl,
-  email,
+const [settings, experiencies, formacions, habilitats] = await Promise.all([
+  getSiteSettings(lang),
+  getExperiencia(lang),
+  getFormacio(lang),
+  getHabilitats(lang),
+])
 
-  // Camps traduïts
-  "titol": titol.${lang},
-  "resumSidebar": resumSidebar.${lang},
-  "descripcioSobreMi": descripcioSobreMi.${lang},
+const data = settings
+  ? {
+      ...settings,
+      experiencies,
+      formacions,
+      habilitatsTecniques: habilitats.tecniques,
+      habilitatsClau: habilitats.clau,
+    }
+  : null
 
-  // Sub-consultes traduïdes
-  "experiencies": *[_type == "experiencia"] | order(ordre asc) {
-      empresa,
-      dates,
-      tecnologies,
-      "titol": titol.${lang},
-      "descripcio": descripcio.${lang}
-  },
-  "formacions": *[_type == "formacio"] | order(ordre asc) {
-      centre,
-      dates,
-      "titulacio": titulacio.${lang}
-  },
-  "habilitatsTecniques": *[_type == "habilitat" && categoria == "tecnica"] | order(nom asc) {
-      "nom": nom.${lang}
-  },
-  "habilitatsClau": *[_type == "habilitat" && categoria == "clau"] | order(nom asc) {
-      "nom": nom.${lang}
-  }
-}`
-const data = await client.fetch(query)
+const siteUrl = 'https://aitorivera.com'
+const localePath = lang === 'ca' ? '' : `${lang}/`
+
+const hreflangUrls = [
+  { lang: 'ca-ES', url: `${siteUrl}/` },
+  { lang: 'es-ES', url: `${siteUrl}/es/` },
+  { lang: 'en-US', url: `${siteUrl}/en/` },
+]
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: data?.nom || 'Aitor Rivera Garcia',
+  jobTitle: data?.titol || '',
+  url: `${siteUrl}/`,
+  image: data?.fotoUrl || `${siteUrl}/og-image.jpg`,
+  sameAs: [data?.linkedinUrl, data?.githubUrl].filter(Boolean),
+  email: data?.email ? `mailto:${data.email}` : undefined,
+  knowsLanguage: ['ca', 'es', 'en-US'],
+}
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: data?.nom || 'Aitor Rivera Garcia',
+  url: `${siteUrl}/`,
+  description: data?.resumSidebar || '',
+  inLanguage: ['ca-ES', 'es-ES', 'en-US'],
+  author: { '@type': 'Person', name: data?.nom || 'Aitor Rivera Garcia' },
+}
 ---
 
-<Layout title={data?.nom || 'Aitor Rivera Garcia'} description={data?.resumSidebar} lang={lang}>
+<Layout
+  title={data?.nom || 'Aitor Rivera Garcia'}
+  description={data?.resumSidebar || ''}
+  lang={lang}
+  canonical={`${siteUrl}/${localePath}`}
+  hreflangUrls={hreflangUrls}
+  jsonLd={[personSchema, websiteSchema]}
+>
   <div class="max-w-screen-xl mx-auto lg:flex">
-		<Sidebar settings={data} t={t} lang={lang}/>
-    <main transition:name="main-content"  class="w-full lg:w-3/5 p-8 lg:p-16 lg:py-24">
+    <Sidebar settings={data} t={t} lang={lang} />
+    <main
+      id="main-content"
+      transition:name="main-content"
+      class="w-full lg:w-3/5 p-8 lg:p-16 lg:py-24"
+    >
       {data ? (
         <>
           <SobreMi sobremi={data.descripcioSobreMi} />
@@ -70,14 +93,14 @@ const data = await client.fetch(query)
           <Idiomes />
         </>
       ) : (
-        <div class="bg-slate-800 text-slate-200 p-8 rounded-lg">
-          <p>Connectant amb Sanity...</p>
+        <div class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 p-8 rounded-2xl border border-slate-200 dark:border-slate-700">
+          <p>No s'han trobat dades de Directus.</p>
         </div>
       )}
     </main>
 
     {data && (
-      <footer class="block lg:hidden p-6 text-center bg-slate-50 dark:bg-slate-900 border-t">
+      <footer class="block lg:hidden p-6 text-center bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
         <Footer nom={data.nom} t={t} />
       </footer>
     )}

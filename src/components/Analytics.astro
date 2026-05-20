@@ -1,0 +1,26 @@
+---
+const analyticsProvider = import.meta.env.PUBLIC_ANALYTICS_PROVIDER;
+const analyticsSrc = import.meta.env.PUBLIC_ANALYTICS_SRC;
+const analyticsDomain = import.meta.env.PUBLIC_ANALYTICS_DOMAIN;
+const analyticsWebsiteId = import.meta.env.PUBLIC_ANALYTICS_WEBSITE_ID;
+
+const supportedProviders = ['umami', 'plausible', 'custom'];
+const isProviderSupported = supportedProviders.includes(analyticsProvider);
+
+const shouldLoadScript =
+  Boolean(analyticsProvider) &&
+  isProviderSupported &&
+  Boolean(analyticsSrc) &&
+  (analyticsProvider === 'custom' || Boolean(analyticsWebsiteId) || Boolean(analyticsDomain));
+---
+
+{
+  shouldLoadScript && (
+    <script
+      defer
+      data-website-id={analyticsWebsiteId}
+      data-domain={analyticsDomain}
+      src={analyticsSrc}
+    ></script>
+  )
+}

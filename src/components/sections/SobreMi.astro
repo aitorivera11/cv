@@ -1,20 +1,25 @@
 ---
 import AnimateOnScroll from '../AnimateOnScroll.jsx';
-import { PortableText } from 'astro-portabletext'; 
-import { ui } from '../../i18n/ui.ts';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils.ts';
 
-const getLangFromUrl = (url: URL) => url.pathname.split('/')[1] || 'ca';
-const lang = getLangFromUrl(Astro.url) as keyof typeof ui;
-const t = ui[lang];
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 const { sobremi } = Astro.props;
 ---
 
 <AnimateOnScroll client:visible triggerOnce={false}>
   <section id="sobre-mi" class="mb-24 scroll-mt-24">
-
-    <div class="prose prose-slate dark:prose-invert max-w-none">
-          <PortableText value={sobremi} />
+    <h2 class="section-heading">
+      {t['nav.about']}
+    </h2>
+    <div class="prose prose-slate dark:prose-invert max-w-none
+      prose-p:text-slate-600 dark:prose-p:text-slate-300
+      prose-p:leading-relaxed prose-p:text-base
+      prose-strong:text-indigo-600 dark:prose-strong:text-indigo-400
+      prose-a:text-indigo-600 dark:prose-a:text-indigo-400
+      prose-a:no-underline hover:prose-a:underline">
+      <div set:html={sobremi}></div>
     </div>
   </section>
 </AnimateOnScroll>

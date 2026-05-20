@@ -1,12 +1,11 @@
 ---
 import AnimateOnScroll from '../AnimateOnScroll.jsx';
-import { ui } from '../../i18n/ui.ts';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils.ts';
 import { GlobeAltIcon } from '@heroicons/react/24/solid';
 import BarraIdiomes from '../BarraIdiomes.jsx';
 
-const getLangFromUrl = (url: URL) => url.pathname.split('/')[1] || 'ca';
-const lang = getLangFromUrl(Astro.url) as keyof typeof ui;
-const t = ui[lang];
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 const idiomes = [
   { nom: t['languages.catalan'], nivell: t['languages.native'], percent: 100 },
@@ -14,29 +13,40 @@ const idiomes = [
   { nom: t['languages.english'], nivell: t['languages.basic'], percent: 30 },
 ];
 ---
+
 <AnimateOnScroll client:visible triggerOnce={false}>
   <section id="idiomes" class="mb-24 scroll-mt-24">
-    <h3 class="text-sm lg:text-base font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-8 border-b border-slate-200 dark:border-slate-700 pb-2">
+    <h2 class="section-heading">
       {t['nav.languages']}
-    </h3>
+    </h2>
 
     <ul class="space-y-5">
-      {idiomes.map((lang) => (
-        <li key={lang.nom} class="flex items-center gap-1">
-          <span class="flex items-center w-28 text-sm font-medium text-slate-800 dark:text-slate-200 group">
-            <GlobeAltIcon className="w-4 h-4 mr-2 text-slate-400 dark:text-slate-500 group-hover:rotate-12 transition-transform duration-300" />
-            {lang.nom}
+      {idiomes.map((idioma) => (
+        <li class="flex items-center gap-3">
+          <span class="flex items-center gap-2 w-28 shrink-0 text-sm font-semibold text-slate-700 dark:text-slate-200">
+            <GlobeAltIcon
+              className="w-4 h-4 text-indigo-400 dark:text-indigo-500 shrink-0"
+              aria-hidden="true"
+            />
+            {idioma.nom}
           </span>
 
-          <div class="flex-1 bg-slate-200 dark:bg-slate-700 rounded-full h-2">
-            <BarraIdiomes client:visible percent={lang.percent} />
+          <div
+            class="flex-1 bg-slate-200 dark:bg-slate-800 rounded-full h-1.5"
+            role="progressbar"
+            aria-valuenow={idioma.percent}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`${idioma.nom}: ${idioma.nivell} (${idioma.percent}%)`}
+          >
+            <BarraIdiomes client:visible percent={idioma.percent} />
           </div>
 
-          <span class="w-20 text-xs text-slate-500 dark:text-slate-400 text-right group relative cursor-default">
-            {lang.nivell}
-            <span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 rounded bg-indigo-600 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-lg">
-              {lang.percent}%
-            </span>
+          <span
+            class="w-16 shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400 text-right"
+            aria-hidden="true"
+          >
+            {idioma.nivell}
           </span>
         </li>
       ))}

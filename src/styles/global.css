@@ -6,78 +6,422 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ─── Fonts ─────────────────────────────────────────── */
 @font-face {
   font-family: 'Space Grotesk';
   src: url('/fonts/SpaceGrotesk-VariableFont_wght.ttf') format('truetype');
-  font-weight: 300 700; 
+  font-weight: 300 700;
   font-optical-sizing: auto;
   font-style: normal;
+  font-display: swap;
 }
 
-html.theme-transition {
-  transition: none;
-  animation: themeFade 0.4s ease-in-out;
+/* ─── CSS Custom Properties ──────────────────────────── */
+:root {
+  --brand: 99 102 241;       /* indigo-500 */
+  --brand-dark: 129 140 248; /* indigo-400 */
+  --radius-card: 0.875rem;
+  --shadow-glow: 0 0 0 3px rgba(var(--brand) / 0.25);
+  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-@keyframes themeFade {
-  0% {
-    opacity: 0.7;
-    filter: blur(2px);
+/* ─── Selection ──────────────────────────────────────── */
+::selection {
+  background-color: rgba(var(--brand) / 0.2);
+  color: rgb(var(--brand));
+}
+
+.dark ::selection {
+  background-color: rgba(var(--brand-dark) / 0.25);
+  color: rgb(var(--brand-dark));
+}
+
+/* ─── Scrollbar (Webkit) ─────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--brand) / 0.35);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--brand) / 0.6);
+}
+
+/* ─── Theme Transition ───────────────────────────────── */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease !important;
+  animation: none !important;
+}
+
+/* ─── Gradient Text Utility ──────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, rgb(var(--brand)) 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark .gradient-text {
+  background: linear-gradient(135deg, rgb(var(--brand-dark)) 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Glow Ring ──────────────────────────────────────── */
+.glow-ring {
+  box-shadow: 0 0 0 2px white, 0 0 0 4px rgb(var(--brand)), 0 0 20px rgba(var(--brand) / 0.4);
+}
+
+.dark .glow-ring {
+  box-shadow: 0 0 0 2px #0f172a, 0 0 0 4px rgb(var(--brand-dark)), 0 0 20px rgba(var(--brand-dark) / 0.35);
+}
+
+/* ─── Animated Glow Ring (photo) ─────────────────────── */
+@keyframes pulse-ring {
+  0%, 100% {
+    box-shadow: 0 0 0 2px white, 0 0 0 4px rgb(var(--brand)), 0 0 20px rgba(var(--brand) / 0.4);
   }
-  100% {
-    opacity: 1;
-    filter: blur(0);
+  50% {
+    box-shadow: 0 0 0 2px white, 0 0 0 5px rgb(var(--brand)), 0 0 32px rgba(var(--brand) / 0.6);
   }
 }
 
-
-html {
-  transition: background-color 0.6s ease-in-out, 
-              color 0.6s ease-in-out,
-              filter 0.6s ease-in-out,
-              transform 0.4s ease-in-out;
+.pulse-ring-anim {
+  animation: pulse-ring 3s ease-in-out infinite;
 }
 
-body {
-    transition: background-color 0.6s ease-in-out, 
-              color 0.6s ease-in-out;
+.dark .pulse-ring-anim {
+  animation: pulse-ring-dark 3s ease-in-out infinite;
 }
 
-
-@media (max-width: 1024px) {
-  main {
-    padding-top: 4rem; /* Ajustable segons mida del header */
+@keyframes pulse-ring-dark {
+  0%, 100% {
+    box-shadow: 0 0 0 2px #0f172a, 0 0 0 4px rgb(var(--brand-dark)), 0 0 20px rgba(var(--brand-dark) / 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 2px #0f172a, 0 0 0 5px rgb(var(--brand-dark)), 0 0 32px rgba(var(--brand-dark) / 0.55);
   }
 }
 
-/*
-  VERSIÓ MILLORADA: EFECTE "EMPUXAR"
-  - Sense canvis d'opacitat per a un efecte més sòlid.
-  - El moviment és del 100% per assegurar que surt del tot.
-  - Una corba d'animació (easing) més professional.
-*/
+/* ─── CTA Button ─────────────────────────────────────── */
+.btn-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  background: linear-gradient(135deg, rgb(var(--brand)) 0%, #8b5cf6 100%);
+  color: white;
+  box-shadow: 0 4px 14px rgba(var(--brand) / 0.4);
+  transition: transform var(--transition-spring), box-shadow var(--transition-base), filter var(--transition-base);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
 
+.btn-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #8b5cf6 0%, rgb(var(--brand)) 100%);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.btn-cta:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(var(--brand) / 0.5);
+  filter: brightness(1.05);
+}
+
+.btn-cta:hover::before {
+  opacity: 1;
+}
+
+.btn-cta span {
+  position: relative;
+  z-index: 1;
+}
+
+.btn-cta:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--brand) / 0.5);
+}
+
+/* ─── Social Icon Buttons ────────────────────────────── */
+.social-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  color: rgb(100 116 139); /* slate-500 */
+  background: transparent;
+  transition: transform var(--transition-spring), background var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.social-icon-btn:hover {
+  transform: translateY(-3px) scale(1.15);
+  background: rgba(var(--brand) / 0.1);
+  color: rgb(var(--brand));
+  box-shadow: 0 4px 12px rgba(var(--brand) / 0.25);
+}
+
+.dark .social-icon-btn {
+  color: rgb(148 163 184); /* slate-400 */
+}
+
+.dark .social-icon-btn:hover {
+  background: rgba(var(--brand-dark) / 0.15);
+  color: rgb(var(--brand-dark));
+  box-shadow: 0 4px 12px rgba(var(--brand-dark) / 0.25);
+}
+
+.social-icon-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-glow);
+}
+
+/* ─── Section Heading ────────────────────────────────── */
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgb(100 116 139);
+  margin-bottom: 2rem;
+  padding-bottom: 0.625rem;
+  border-bottom: 1px solid rgb(226 232 240);
+}
+
+.dark .section-heading {
+  color: rgb(100 116 139);
+  border-bottom-color: rgb(30 41 59);
+}
+
+.section-heading::before {
+  content: '';
+  display: block;
+  width: 3px;
+  height: 1em;
+  border-radius: 99px;
+  background: linear-gradient(to bottom, rgb(var(--brand)), #8b5cf6);
+  flex-shrink: 0;
+}
+
+/* ─── Experience Card ────────────────────────────────── */
+.experience-card {
+  position: relative;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-card);
+  border: 1px solid transparent;
+  transition: background var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.experience-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) scaleY(0);
+  width: 3px;
+  height: 60%;
+  background: linear-gradient(to bottom, rgb(var(--brand)), #8b5cf6);
+  border-radius: 0 3px 3px 0;
+  transition: transform var(--transition-spring);
+}
+
+.experience-card:hover::before {
+  transform: translateY(-50%) scaleY(1);
+}
+
+.experience-card:hover {
+  background: rgba(255 255 255 / 0.6);
+  border-color: rgb(203 213 225);
+  box-shadow: 0 4px 24px rgba(0 0 0 / 0.05);
+}
+
+.dark .experience-card:hover {
+  background: rgba(30 41 59 / 0.6);
+  border-color: rgb(51 65 85);
+  box-shadow: 0 4px 24px rgba(0 0 0 / 0.2);
+}
+
+/* ─── Skill Pill ─────────────────────────────────────── */
+.skill-pill-tech {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  background: rgb(241 245 249);
+  color: rgb(51 65 85);
+  border: 1px solid rgb(226 232 240);
+  transition: transform var(--transition-spring), background var(--transition-base), color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.skill-pill-tech:hover {
+  transform: translateY(-2px) scale(1.05);
+  background: rgba(var(--brand) / 0.08);
+  color: rgb(var(--brand));
+  border-color: rgba(var(--brand) / 0.3);
+  box-shadow: 0 4px 12px rgba(var(--brand) / 0.15);
+}
+
+.dark .skill-pill-tech {
+  background: rgb(30 41 59);
+  color: rgb(203 213 225);
+  border-color: rgb(51 65 85);
+}
+
+.dark .skill-pill-tech:hover {
+  background: rgba(var(--brand-dark) / 0.12);
+  color: rgb(var(--brand-dark));
+  border-color: rgba(var(--brand-dark) / 0.35);
+  box-shadow: 0 4px 12px rgba(var(--brand-dark) / 0.2);
+}
+
+.skill-pill-soft {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  background: rgba(var(--brand) / 0.08);
+  color: rgb(67 56 202);
+  border: 1px solid rgba(var(--brand) / 0.2);
+  transition: transform var(--transition-spring), background var(--transition-base), box-shadow var(--transition-base);
+}
+
+.skill-pill-soft:hover {
+  transform: translateY(-2px) scale(1.05);
+  background: rgba(var(--brand) / 0.15);
+  box-shadow: 0 4px 12px rgba(var(--brand) / 0.2);
+}
+
+.dark .skill-pill-soft {
+  background: rgba(var(--brand-dark) / 0.12);
+  color: rgb(var(--brand-dark));
+  border-color: rgba(var(--brand-dark) / 0.25);
+}
+
+.dark .skill-pill-soft:hover {
+  background: rgba(var(--brand-dark) / 0.22);
+  box-shadow: 0 4px 12px rgba(var(--brand-dark) / 0.2);
+}
+
+/* ─── Tag Pill (experience tags) ─────────────────────── */
+.tag-pill {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(var(--brand) / 0.08);
+  color: rgb(67 56 202);
+  border: 1px solid rgba(var(--brand) / 0.15);
+  transition: transform var(--transition-spring), background var(--transition-base);
+}
+
+.tag-pill:hover {
+  transform: scale(1.05);
+  background: rgba(var(--brand) / 0.14);
+}
+
+.dark .tag-pill {
+  background: rgba(var(--brand-dark) / 0.1);
+  color: rgb(var(--brand-dark));
+  border-color: rgba(var(--brand-dark) / 0.2);
+}
+
+.dark .tag-pill:hover {
+  background: rgba(var(--brand-dark) / 0.18);
+}
+
+/* ─── Education Card ─────────────────────────────────── */
+.education-card {
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-card);
+  border: 1px solid rgb(226 232 240);
+  background: rgb(255 255 255 / 0.5);
+  transition: border-color var(--transition-base), background var(--transition-base), box-shadow var(--transition-base), transform var(--transition-spring);
+}
+
+.education-card:hover {
+  border-color: rgba(var(--brand) / 0.4);
+  background: rgb(255 255 255 / 0.8);
+  box-shadow: 0 4px 20px rgba(var(--brand) / 0.1);
+  transform: translateX(4px);
+}
+
+.dark .education-card {
+  border-color: rgb(30 41 59);
+  background: rgba(15 23 42 / 0.4);
+}
+
+.dark .education-card:hover {
+  border-color: rgba(var(--brand-dark) / 0.4);
+  background: rgba(30 41 59 / 0.6);
+  box-shadow: 0 4px 20px rgba(var(--brand-dark) / 0.12);
+}
+
+/* ─── View Transitions ───────────────────────────────── */
 @keyframes push-up {
   from { transform: translateY(0); }
-  to { transform: translateY(-100%); }
+  to   { transform: translateY(-100%); }
 }
 
 @keyframes push-in {
   from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+  to   { transform: translateY(0); }
 }
 
-/* El contingut vell (OLD) és empès cap amunt */
 ::view-transition-old(main-content) {
-  animation: 0.5s cubic-bezier(0.76, 0, 0.24, 1) both push-up;
+  animation: 0.45s cubic-bezier(0.76, 0, 0.24, 1) both push-up;
 }
 
-/* El contingut nou (NEW) empeny des de baix */
 ::view-transition-new(main-content) {
-  animation: 0.5s cubic-bezier(0.76, 0, 0.24, 1) both push-in;
+  animation: 0.45s cubic-bezier(0.76, 0, 0.24, 1) both push-in;
 }
 
+/* ─── Reduced Motion ─────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 
+  ::view-transition-old(main-content),
+  ::view-transition-new(main-content) {
+    animation: none;
+  }
+}
 
-
+/* ─── Mobile layout padding ──────────────────────────── */
+@media (max-width: 1024px) {
+  main {
+    padding-top: 4rem;
+  }
+}

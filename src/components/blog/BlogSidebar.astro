@@ -1,279 +1,422 @@
 ---
 import { Image } from 'astro:assets';
-import { urlFor } from '../../lib/sanity.ts';
+import { getDirectusAssetUrl } from '../../lib/directus-content';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import Footer from '../Footer.astro';
 import ContactModal from '../ContactModal.jsx';
-import { HomeIcon, SunIcon, MoonIcon, Bars3Icon } from '@heroicons/react/24/solid';
+import AppIcon from '../icons/AppIcon.astro';
+import { HomeIcon, SunIcon, MoonIcon, Bars3Icon, ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 
-const { lang = 'ca', settings, blogTitle, blogDescription, categories = [], tags = [], recentPosts = [], t } = Astro.props;
+const {
+  lang = 'ca',
+  settings,
+  blogTitle,
+  blogDescription,
+  categories = [],
+  tags = [],
+  recentPosts = [],
+  t,
+} = Astro.props;
+
+const fotoUrl = settings?.fotoUrl || getDirectusAssetUrl(settings?.foto);
+
+const langItems = [
+  { code: 'ca', label: 'CA', aria: 'Català' },
+  { code: 'es', label: 'ES', aria: 'Español' },
+  { code: 'en', label: 'EN', aria: 'English' },
+];
 ---
 
-<!-- ✅ HEADER MÒBIL: Foto - Títol - Home - Drawer -->
-<header class="lg:hidden sticky top-0 z-50 flex items-center justify-between px-4 py-3 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
-  <div class="flex items-center gap-2">
-    <!-- Foto petita -->
-    {settings?.foto && (
-      <Image
-        src={urlFor(settings.foto).url()}
-        width={32}
-        height={32}
-        alt={`Foto de ${settings.nom}`}
-        class="h-8 w-8 rounded-full object-cover ring-1 ring-indigo-400"
-      />
-    )}
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- MÒBIL: Header sticky + mini-hero descriptiu           -->
+<!-- ══════════════════════════════════════════════════════ -->
+<header class="lg:hidden sticky top-0 z-50
+  bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl
+  border-b border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+  <div class="flex items-center justify-between px-4 py-2.5 h-14">
+    <!-- Foto + títol del blog -->
+    <div class="flex items-center gap-2.5 min-w-0">
+      {settings?.foto && (
+        <Image
+          src={fotoUrl}
+          width={32}
+          height={32}
+          alt={`Foto de ${settings.nom}`}
+          class="h-8 w-8 rounded-full object-cover ring-2 ring-indigo-500/60 flex-shrink-0"
+        />
+      )}
+      <span class="text-sm font-bold text-slate-900 dark:text-white truncate">{blogTitle}</span>
+    </div>
 
-    <!-- Nom curt del blog -->
-    <span class="text-sm font-semibold text-slate-800 dark:text-white truncate">{blogTitle}</span>
-  </div>
-  <div class="flex items-center gap-2">
-    <!-- Botó Home -->
-    <a href={getRelativeLocaleUrl(lang, '/')} class="flex items-center justify-center w-8 h-8 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800">
-      <HomeIcon className="w-5 h-5 text-slate-700 dark:text-slate-300" />
-    </a>
+    <!-- Accions -->
+    <div class="flex items-center gap-1 flex-shrink-0">
+      <!-- Botó Home -->
+      <a
+        href={getRelativeLocaleUrl(lang, '/')}
+        aria-label={t['blog.sidebar.backHome']}
+        class="w-8 h-8 flex items-center justify-center rounded-full
+          text-slate-500 dark:text-slate-400
+          hover:bg-slate-100 dark:hover:bg-slate-800
+          hover:text-indigo-600 dark:hover:text-indigo-400
+          transition-colors duration-200"
+      >
+        <HomeIcon className="w-4.5 h-4.5" />
+      </a>
 
-    <!-- Drawer toggle -->
-    <details class="relative group">
-      <summary class="cursor-pointer w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-800">
-        <Bars3Icon/>
-      </summary>
-      <!-- Drawer desplegable -->
-        <div
-          class="absolute right-0 mt-2 w-64 max-h-[80vh] overflow-y-auto p-4 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700
-                bg-white dark:bg-slate-800 text-left 
-                opacity-0 scale-95 origin-top-right translate-y-1 transition-all duration-200 ease-out 
-                group-open:opacity-100 group-open:scale-100 group-open:translate-y-0"
-        >    
-        <div class="space-y-4">
-          <!-- Idiomes + Theme -->
-          <div class="flex justify-between items-center">
-            <!-- Idiomes -->
-            <div class="flex gap-2 text-sm font-medium" aria-label={t['sidebar.language']}>
-              <a href={getRelativeLocaleUrl('ca', '/blog')} class={lang === 'ca' ? 'font-bold text-indigo-600' : ''}>CA</a>
-              <span>|</span>
-              <a href={getRelativeLocaleUrl('es', '/blog')} class={lang === 'es' ? 'font-bold text-indigo-600' : ''}>ES</a>
-              <span>|</span>
-              <a href={getRelativeLocaleUrl('en', '/blog')} class={lang === 'en' ? 'font-bold text-indigo-600' : ''}>EN</a>
-            </div>
-            <!-- Theme toggle -->
-            <button  aria-label={t['sidebar.toggleTheme']} class="theme-toggle w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
-              <div class="relative w-5 h-5">
-                <SunIcon className="absolute inset-0 transition-all duration-500 dark:-rotate-90 dark:opacity-0" />
-                <MoonIcon className="absolute inset-0 transition-all duration-500 rotate-90 opacity-0 dark:rotate-0 dark:opacity-100" />
-              </div>
-            </button>
-          </div>
+      <!-- Toggle tema -->
+      <button
+        aria-label={t['sidebar.toggleTheme']}
+        class="theme-toggle w-8 h-8 flex items-center justify-center rounded-full
+          text-slate-500 dark:text-slate-400
+          hover:bg-slate-100 dark:hover:bg-slate-800
+          hover:text-indigo-600 dark:hover:text-indigo-400
+          transition-colors duration-200"
+      >
+        <div class="relative w-4 h-4">
+          <SunIcon className="absolute inset-0 w-full h-full transition-all duration-500 dark:-rotate-90 dark:opacity-0" aria-hidden="true" />
+          <MoonIcon className="absolute inset-0 w-full h-full transition-all duration-500 rotate-90 opacity-0 dark:rotate-0 dark:opacity-100" aria-hidden="true" />
+        </div>
+      </button>
+
+      <!-- Menú desplegable -->
+      <details class="relative group">
+        <summary
+          class="cursor-pointer w-8 h-8 flex items-center justify-center rounded-full list-none
+            text-slate-500 dark:text-slate-400
+            hover:bg-slate-100 dark:hover:bg-slate-800
+            hover:text-indigo-600 dark:hover:text-indigo-400
+            transition-colors duration-200"
+          aria-label="Menú"
+        >
+          <Bars3Icon className="w-4.5 h-4.5" />
+        </summary>
+
+        <div class="absolute right-0 top-full mt-2 w-64 max-h-[80vh] overflow-y-auto
+          rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800
+          bg-white dark:bg-slate-950 p-4 z-50
+          opacity-0 scale-95 origin-top-right translate-y-1
+          transition-all duration-200 ease-out
+          group-open:opacity-100 group-open:scale-100 group-open:translate-y-0">
+
+          <!-- Idiomes -->
+          <nav aria-label={t['sidebar.language']} class="mb-4">
+            <ul class="flex items-center gap-0.5 text-xs font-semibold">
+              {langItems.map(({ code, label, aria }, i) => (
+                <>
+                  <li>
+                    <a
+                      href={getRelativeLocaleUrl(code, '/blog')}
+                      aria-label={aria}
+                      aria-current={lang === code ? 'page' : undefined}
+                      class={`w-7 h-7 flex items-center justify-center rounded-full transition-all duration-200
+                        focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500
+                        ${lang === code
+                          ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 font-bold'
+                          : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                        }`}
+                    >
+                      {label}
+                    </a>
+                  </li>
+                  {i < langItems.length - 1 && (
+                    <li aria-hidden="true">
+                      <span class="text-slate-200 dark:text-slate-700 text-xs select-none">|</span>
+                    </li>
+                  )}
+                </>
+              ))}
+            </ul>
+          </nav>
 
           <!-- Categories -->
           {categories.length > 0 && (
-            <div>
-              <h3 class="text-xs uppercase font-semibold text-slate-500 dark:text-slate-400 mb-1">{t['blog.categories']}</h3>
-              <ul class="space-y-1 text-sm">
+            <div class="mb-4">
+              <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">{t['blog.categories']}</h3>
+              <ul class="space-y-1.5 text-sm">
                 {categories.map(cat => (
-                  <li class="flex justify-between">
-                    <a href={getRelativeLocaleUrl(lang, `/blog?category=${cat.slug}`)} class="hover:text-indigo-500">{cat.title}</a>
-                    <span class="text-xs text-slate-400">{cat.count}</span>
+                  <li class="flex justify-between items-center">
+                    <a href={getRelativeLocaleUrl(lang, `/blog?category=${cat.slug}`)}
+                      class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                      {cat.title}
+                    </a>
+                    <span class="text-xs text-slate-400 dark:text-slate-500">{cat.count}</span>
                   </li>
                 ))}
               </ul>
             </div>
           )}
 
-          <!-- Etiquetes -->
+          <!-- Tags -->
           {tags.length > 0 && (
-            <div>
-              <h3 class="text-xs uppercase font-semibold text-slate-500 dark:text-slate-400 mb-1">{t['blog.tags']}</h3>
-              <div class="flex flex-wrap gap-2">
+            <div class="mb-4">
+              <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">{t['blog.tags']}</h3>
+              <div class="flex flex-wrap gap-1.5">
                 {tags.map(tag => (
-                  <a href={getRelativeLocaleUrl(lang, `/blog?tag=${tag.slug}`)} class="text-xs px-2 py-1 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
-                    #{tag.title}
-                  </a>
+                  <a href={getRelativeLocaleUrl(lang, `/blog?tag=${tag.slug}`)}
+                    class="tag-pill text-xs">{`#${tag.title}`}</a>
                 ))}
               </div>
             </div>
           )}
 
-          <!-- Contacta'm -->
-          <div class="flex justify-center">
+          <!-- Contacte -->
+          <div class="flex justify-center mt-2">
             <ContactModal client:visible t={t} />
           </div>
 
           <!-- Xarxes socials -->
-          <div class="flex justify-center gap-4 text-lg mt-2">
+          <div class="flex justify-center gap-1 mt-3">
             {settings?.linkedinUrl && (
-              <a href={settings.linkedinUrl} target="_blank" class="hover:text-indigo-500"><i class="fa-brands fa-linkedin"></i></a>
+              <a href={settings.linkedinUrl} target="_blank" rel="noopener noreferrer"
+                aria-label={`LinkedIn de ${settings.nom}`}
+                class="social-icon-btn"><AppIcon name="linkedin" /></a>
             )}
             {settings?.githubUrl && (
-              <a href={settings.githubUrl} target="_blank" class="hover:text-indigo-500"><i class="fa-brands fa-github"></i></a>
+              <a href={settings.githubUrl} target="_blank" rel="noopener noreferrer"
+                aria-label={`GitHub de ${settings.nom}`}
+                class="social-icon-btn"><AppIcon name="github" /></a>
             )}
             {settings?.email && (
-              <a href={`mailto:${settings.email}`} class="hover:text-indigo-500"><i class="fa-solid fa-envelope"></i></a>
+              <a href={`mailto:${settings.email}`}
+                aria-label={`Email de ${settings.nom}`}
+                class="social-icon-btn"><AppIcon name="email" /></a>
             )}
           </div>
         </div>
-      </div>
-    </details>
+      </details>
+    </div>
   </div>
 </header>
 
-<!-- ✅ HERO MINIMAL sota el header (mòbil) -->
-<div class="lg:hidden p-4 text-center border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
-  {blogDescription && (
-    <p class="text-xs text-slate-500">{blogDescription}</p>
-  )}
-</div>
 
-<!-- ✅ DESKTOP: Sidebar completa com abans -->
-<aside transition:name="main-sidebar" class="hidden lg:flex lg:flex-col lg:justify-between lg:w-2/5 lg:h-screen lg:sticky top-0 bg-slate-50
-  dark:bg-gradient-to-b dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 
-  p-6 lg:p-10 border-r border-slate-200 dark:border-slate-700">
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- DESKTOP: Sidebar completa amb nou disseny             -->
+<!-- ══════════════════════════════════════════════════════ -->
+<aside
+  transition:name="main-sidebar"
+  class="hidden lg:flex lg:flex-col lg:justify-between
+    lg:w-2/5 lg:h-screen lg:sticky top-0
+    bg-white dark:bg-slate-950
+    border-r border-slate-200 dark:border-slate-800
+    p-10 overflow-hidden"
+>
+  <!-- Blobs decoratius -->
+  <div aria-hidden="true"
+    class="pointer-events-none absolute -top-32 -left-32 w-96 h-96 rounded-full
+      bg-indigo-400/10 dark:bg-indigo-500/8 blur-3xl">
+  </div>
+  <div aria-hidden="true"
+    class="pointer-events-none absolute -bottom-24 -right-24 w-72 h-72 rounded-full
+      bg-violet-400/10 dark:bg-violet-500/8 blur-3xl">
+  </div>
 
-  <!-- TOP: idioma, tema, tornar a Home -->
-  <header class="flex justify-between items-center gap-2 mb-6">
-    <a aria-label={t['nav.blog']}
-      href={getRelativeLocaleUrl(lang, '/')} 
-      class="text-sm font-medium relative w-7 h-7 flex items-center justify-center rounded-full text-slate-600 dark:text-indigo-600 hover:bg-slate-200 dark:hover:bg-slate-800 transition-all duration-300 ease-in-out"
+  <!-- ── TOP: idioma + tema + Home ──────────────────── -->
+  <header class="relative flex justify-between items-center gap-2 mb-6">
+    <a
+      href={getRelativeLocaleUrl(lang, '/')}
+      aria-label={t['blog.sidebar.backHome']}
+      class="w-8 h-8 flex items-center justify-center rounded-full
+        text-slate-500 dark:text-slate-400
+        hover:bg-slate-100 dark:hover:bg-slate-800
+        hover:text-indigo-600 dark:hover:text-indigo-400
+        transition-colors duration-200
+        focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
     >
-      <HomeIcon className="w-5 h-5" />
+      <HomeIcon className="w-4.5 h-4.5" />
     </a>
 
-    <div class="flex items-center gap-2">
-      <div class="flex items-center gap-1 text-sm font-medium transition-all duration-300 ease-in-out">
-        <a
-          href={getRelativeLocaleUrl('ca', '/blog')}
-          class={`w-7 h-7 flex items-center justify-center  rounded-full ${lang === 'ca' ? 'font-bold text-indigo-600' : ''} hover:bg-slate-200 dark:hover:bg-slate-800 transition-all duration-300`}
-        >
-          CA
-        </a>
-        <span>|</span>
-        <a
-          href={getRelativeLocaleUrl('es', '/blog')}
-          class={`w-7 h-7 flex items-center justify-center  rounded-full ${lang === 'es' ? 'font-bold text-indigo-600' : ''} hover:bg-slate-200 dark:hover:bg-slate-800 transition-all duration-300`}
-        >
-          ES
-        </a>
-        <span>|</span>
-        <a
-          href={getRelativeLocaleUrl('en', '/blog')}
-          class={`w-7 h-7 flex items-center justify-center  rounded-full ${lang === 'en' ? 'font-bold text-indigo-600' : ''} hover:bg-slate-200 dark:hover:bg-slate-800 transition-all duration-300`}
-        >
-          EN
-        </a>
-      </div>
+    <div class="flex items-center gap-3">
+      <nav aria-label={t['sidebar.language']}>
+        <ul class="flex items-center gap-0.5 text-xs font-semibold">
+          {langItems.map(({ code, label, aria }, i) => (
+            <>
+              <li>
+                <a
+                  href={getRelativeLocaleUrl(code, '/blog')}
+                  aria-label={aria}
+                  aria-current={lang === code ? 'page' : undefined}
+                  class={`w-7 h-7 flex items-center justify-center rounded-full transition-all duration-200
+                    focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500
+                    ${lang === code
+                      ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 font-bold'
+                      : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
+                    }`}
+                >
+                  {label}
+                </a>
+              </li>
+              {i < langItems.length - 1 && (
+                <li aria-hidden="true">
+                  <span class="text-slate-200 dark:text-slate-700 select-none text-xs">|</span>
+                </li>
+              )}
+            </>
+          ))}
+        </ul>
+      </nav>
 
-      <button aria-label={t['sidebar.toggleTheme']} class="theme-toggle w-7 h-7 flex items-center justify-center rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
-        <div class="relative w-5 h-5">
-          <SunIcon className="absolute inset-0 transition-all duration-500 dark:-rotate-90 dark:opacity-0" />
-          <MoonIcon className="absolute inset-0 transition-all duration-500 rotate-90 opacity-0 dark:rotate-0 dark:opacity-100" />
+      <button
+        aria-label={t['sidebar.toggleTheme']}
+        class="theme-toggle w-8 h-8 flex items-center justify-center rounded-full
+          text-slate-500 dark:text-slate-400
+          hover:bg-slate-100 dark:hover:bg-slate-800
+          hover:text-indigo-600 dark:hover:text-indigo-400
+          transition-all duration-200
+          focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+      >
+        <div class="relative w-4.5 h-4.5">
+          <SunIcon className="absolute inset-0 w-full h-full transition-all duration-500 dark:-rotate-90 dark:opacity-0" aria-hidden="true" />
+          <MoonIcon className="absolute inset-0 w-full h-full transition-all duration-500 rotate-90 opacity-0 dark:rotate-0 dark:opacity-100" aria-hidden="true" />
         </div>
       </button>
     </div>
   </header>
 
-  <!-- HERO DEL BLOG complet -->
-  <div class="flex-grow flex flex-col justify-center">
+  <!-- ── MIDDLE: Hero del blog ──────────────────────── -->
+  <div class="relative flex-grow flex flex-col justify-center items-center text-center">
     {settings?.foto && (
-      <Image
-        src={urlFor(settings.foto).url()}
-        width={96}
-        height={96}
-        alt={`Foto de ${settings.nom}`}
-        class="h-16 w-16 lg:h-24 lg:w-24 rounded-full object-cover mb-3 lg:mb-6 ring-2 ring-indigo-500 shadow-xl mx-auto"
-      />
-    )}
-    <h2 class="text-xl lg:text-3xl font-extrabold text-center text-slate-900 dark:text-white leading-tight tracking-tight">
-      {blogTitle}
-    </h2>
-    <p class="text-xs lg:text-sm font-medium text-center text-indigo-600 dark:text-indigo-400 mt-1 lg:mt-2 tracking-wide">
-      {blogDescription}
-    </p>
-
-    <ContactModal client:visible t={t} />
-  </div>
-
-  <!-- SEARCH -->
-  <div class="mt-6">
-    <input 
-      type="text" 
-      placeholder={t['blog.sidebar.search']}
-      class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-    />
-  </div>
-
-  <!-- CATEGORIES -->
-  {categories.length > 0 && (
-    <div class="mt-3 lg:mt-6">
-      <h3 class="text-[10px] lg:text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-1 lg:mb-2">
-        {t['blog.categories']}
-      </h3>
-      <ul class="space-y-1 text-sm">
-        {categories.map(cat => (
-          <li class="flex justify-between items-center">
-            <a href={getRelativeLocaleUrl(lang, `/blog?category=${cat.slug}`)} class="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-              {cat.title}
-            </a>
-            <span class="text-xs text-slate-500">{cat.count}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )}
-
-  <!-- TAGS -->
-  {tags.length > 0 && (
-    <div class="mt-6">
-      <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">
-        {t['blog.tags']}
-      </h3>
-      <div class="flex flex-wrap gap-2 text-xs">
-        {tags.map(tag => (
-          <a href={getRelativeLocaleUrl(lang, `/blog?tag=${tag.slug}`)} class="px-2 py-1 rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-indigo-100 dark:hover:bg-indigo-800 hover:text-indigo-700 dark:hover:text-indigo-200 transition">
-            #{tag.title}
-          </a>
-        ))}
+      <div class="mb-6">
+        <Image
+          src={fotoUrl}
+          width={96}
+          height={96}
+          alt={`Foto de ${settings.nom}`}
+          class="h-24 w-24 rounded-full object-cover pulse-ring-anim"
+        />
       </div>
-    </div>
-  )}
+    )}
 
-  <!-- RECENT POSTS -->
-  {recentPosts.length > 0 && (
-    <div class="mt-6">
-      <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-2">
-        {t['blog.recent']}
-      </h3>
-      <ul class="space-y-2 text-sm">
-        {recentPosts.map(post => (
-          <li>
-            <a href={getRelativeLocaleUrl(lang, `/blog/${post.slug}`)} class="block hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-              {post.title}
-            </a>
-            <p class="text-xs text-slate-500">{new Date(post.publishedAt).toLocaleDateString(lang)}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  )}
+    <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight">
+      {blogTitle}
+    </h1>
+    {blogDescription && (
+      <p class="mt-2 text-sm gradient-text font-semibold tracking-wide">
+        {blogDescription}
+      </p>
+    )}
 
-  <!-- BOTTOM: Xarxes socials + Footer -->
-  <div class="mt-3 lg:mt-6 flex justify-center gap-4 text-lg lg:text-xl">
-    {settings?.linkedinUrl && (
-      <a href={settings.linkedinUrl} aria-label={`LinkedIn de ${settings.nom}`} target="_blank" class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-        <i class="fa-brands fa-linkedin"></i>
-      </a>
-    )}
-    {settings?.githubUrl && (
-      <a href={settings.githubUrl} aria-label={`GitHub de ${settings.nom}`} target="_blank" class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
-        <i class="fa-brands fa-github"></i>
-      </a>
-    )}
-    {settings?.email && (
-      <a href={`mailto:${settings.email}`} aria-label={`Email de ${settings.nom}`} class="text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-        <i class="fa-solid fa-envelope"></i>
-      </a>
-    )}
+    <div class="mt-8 w-full flex justify-center">
+      <ContactModal client:visible t={t} />
+    </div>
   </div>
 
-  <div class="hidden lg:block pt-10">
-    <Footer nom={settings.nom} t={t} />
+  <!-- ── BOTTOM: Search + Categories + Tags + Recent + Social ── -->
+  <div class="relative space-y-6 mt-6">
+    <!-- Search -->
+    <div role="search">
+      <label for="blog-search" class="sr-only">{t['blog.sidebar.search']}</label>
+      <input
+        id="blog-search"
+        type="search"
+        placeholder={t['blog.sidebar.search']}
+        aria-label={t['blog.sidebar.search']}
+        class="w-full rounded-xl border border-slate-200 dark:border-slate-800
+          bg-slate-50 dark:bg-slate-900
+          px-4 py-2.5 text-sm text-slate-800 dark:text-white
+          placeholder-slate-400 dark:placeholder-slate-500
+          focus:outline-none focus:ring-2 focus:ring-indigo-500/50
+          transition-colors duration-200"
+      />
+    </div>
+
+    <!-- Categories -->
+    {categories.length > 0 && (
+      <div>
+        <h2 class="section-heading">{t['blog.categories']}</h2>
+        <ul class="space-y-2 text-sm">
+          {categories.map(cat => (
+            <li class="flex justify-between items-center">
+              <a
+                href={getRelativeLocaleUrl(lang, `/blog?category=${cat.slug}`)}
+                class="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-200"
+              >
+                {cat.title}
+              </a>
+              <span class="text-xs text-slate-400 dark:text-slate-500 tabular-nums">{cat.count}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    <!-- Tags -->
+    {tags.length > 0 && (
+      <div>
+        <h2 class="section-heading">{t['blog.tags']}</h2>
+        <div class="flex flex-wrap gap-1.5">
+          {tags.map(tag => (
+            <a href={getRelativeLocaleUrl(lang, `/blog?tag=${tag.slug}`)} class="tag-pill">
+              #{tag.title}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Recent posts -->
+    {recentPosts.length > 0 && (
+      <div>
+        <h2 class="section-heading">{t['blog.recent']}</h2>
+        <ul class="space-y-3 text-sm">
+          {recentPosts.map(post => (
+            <li>
+              <a
+                href={getRelativeLocaleUrl(lang, `/blog/${post.slug}`)}
+                class="block font-medium text-slate-700 dark:text-slate-200
+                  hover:text-indigo-600 dark:hover:text-indigo-400
+                  transition-colors duration-200 leading-snug"
+              >
+                {post.title}
+              </a>
+              <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                {new Date(post.publishedAt).toLocaleDateString(lang, { year: 'numeric', month: 'short', day: 'numeric' })}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    <!-- Social icons + CV + Footer -->
+    <div class="flex flex-col items-center gap-4 pt-2">
+      <div class="flex items-center gap-1" role="list" aria-label="Xarxes socials">
+        <a
+          href={`/api/cv/${lang}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={t['button.downloadCV']}
+          class="btn-cta mr-1"
+          role="listitem"
+        >
+          <span aria-hidden="true">
+            <ArrowDownTrayIcon className="w-4 h-4" />
+          </span>
+          <span>{t['button.downloadCV']}</span>
+        </a>
+
+        {settings?.linkedinUrl && (
+          <a href={settings.linkedinUrl} aria-label={`LinkedIn de ${settings.nom}`}
+            target="_blank" rel="noopener noreferrer"
+            class="social-icon-btn" role="listitem">
+            <AppIcon name="linkedin" />
+          </a>
+        )}
+        {settings?.githubUrl && (
+          <a href={settings.githubUrl} aria-label={`GitHub de ${settings.nom}`}
+            target="_blank" rel="noopener noreferrer"
+            class="social-icon-btn" role="listitem">
+            <AppIcon name="github" />
+          </a>
+        )}
+        {settings?.email && (
+          <a href={`mailto:${settings.email}`} aria-label={`Email de ${settings.nom}`}
+            class="social-icon-btn" role="listitem">
+            <AppIcon name="email" />
+          </a>
+        )}
+      </div>
+
+      <Footer nom={settings?.nom} t={t} />
+    </div>
   </div>
 </aside>

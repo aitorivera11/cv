@@ -1,36 +1,48 @@
 ---
-// src/components/sections/Experiencia.astro
-import AnimateOnScroll from '../AnimateOnScroll.jsx'; 
-import { ui } from '../../i18n/ui.ts';
+import AnimateOnScroll from '../AnimateOnScroll.jsx';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils.ts';
 
-const getLangFromUrl = (url: URL) => url.pathname.split('/')[1] || 'ca';
-const lang = getLangFromUrl(Astro.url) as keyof typeof ui;
-const t = ui[lang];
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 const { experiencies } = Astro.props;
 ---
 
 <AnimateOnScroll client:visible triggerOnce={false}>
-  <section id="experiencia" class="mb-24 scroll-mt-24 ">
-    <h3 class="text-sm lg:text-base font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-8 border-b border-slate-200 dark:border-slate-700 pb-2">
+  <section id="experiencia" class="mb-24 scroll-mt-24">
+    <h2 class="section-heading">
       {t['nav.experience']}
-    </h3>
-    <ul class="space-y-6">
+    </h2>
+
+    <ul class="space-y-3">
       {experiencies?.map((feina) => (
-        <li class="group block p-6 rounded-xl border border-transparent hover:border-slate-300 dark:hover:border-slate-700 hover:bg-white/60 dark:hover:bg-slate-800/60 transition-shadow" >
-          <div class="grid sm:grid-cols-8 gap-6">
-            <p class="sm:col-span-2 text-sm text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wide leading-relaxed">{feina.dates}</p>
+        <li class="experience-card group">
+          <div class="grid sm:grid-cols-8 gap-4 sm:gap-6">
+            <!-- Date badge -->
+            <div class="sm:col-span-2 flex sm:flex-col sm:items-start items-center gap-2">
+              <span class="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 leading-relaxed">
+                {feina.dates}
+              </span>
+            </div>
+
+            <!-- Content -->
             <div class="sm:col-span-6 space-y-2">
-              <h4 class="text-lg font-semibold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white
+                group-hover:text-indigo-600 dark:group-hover:text-indigo-400
+                transition-colors duration-200 leading-snug">
                 {feina.titol}
-              </h4>              
-              <h5 class="text-base text-slate-600 dark:text-slate-300">{feina.empresa}</h5>
-              <div class="prose prose-slate dark:prose-invert max-w-none">
-                <p>{feina.descripcio} </p>
+              </h3>
+              <p class="text-sm font-medium text-slate-500 dark:text-slate-400">
+                {feina.empresa}
+              </p>
+              <div class="prose prose-sm prose-slate dark:prose-invert max-w-none
+                prose-p:text-slate-600 dark:prose-p:text-slate-300
+                prose-p:leading-relaxed prose-p:my-0">
+                <p>{feina.descripcio}</p>
               </div>
               {feina.tecnologies?.length > 0 && (
-                <ul class="mt-3 flex flex-wrap gap-2">
+                <ul class="mt-3 flex flex-wrap gap-1.5" aria-label="Tecnologies">
                   {feina.tecnologies.map(tag => (
-                    <li class="rounded-full bg-indigo-100/60 dark:bg-indigo-900/50 px-3 py-1 text-xs font-medium text-indigo-700 dark:text-indigo-300 backdrop-blur-sm shadow-sm hover:scale-105 transition-transform">{tag}</li>
+                    <li class="tag-pill">{tag}</li>
                   ))}
                 </ul>
               )}
