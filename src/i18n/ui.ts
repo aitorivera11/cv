@@ -59,6 +59,7 @@ export const ui = {
     'blog.share': 'Comparteix:',
     'blog.copia': 'Copia l\'enllaç al porta-retalls',
     'blog.copiat': 'Copiat!',
+    'blog.readTime': 'min de lectura',
 
     'blog.sidebar.backHome': 'Torna a l\'inici',
     'blog.sidebar.search': 'Cerca articles…',
@@ -118,6 +119,7 @@ export const ui = {
     'blog.share': 'Comparte:',
     'blog.copia': 'Copia el enlace al portapapeles',
     'blog.copiat': '¡Copiado!',
+    'blog.readTime': 'min de lectura',
 
     'sidebar.language': 'Idioma',
     'sidebar.toggleTheme': 'Cambiar tema',
@@ -172,6 +174,7 @@ export const ui = {
     'blog.share': 'Share:',
     'blog.copia': 'Copy link to clipboard',
     'blog.copiat': 'Copied!',
+    'blog.readTime': 'min read',
 
     'blog.sidebar.backHome': 'Back to home',
     'blog.sidebar.search': 'Search articles…',
