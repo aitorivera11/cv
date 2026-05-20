@@ -5,74 +5,69 @@ export default function HeroShrinkHeader({ fotoUrl, nom, titol, t = {} }) {
   const [shrink, setShrink] = useState(false);
   const [activeSection, setActiveSection] = useState(null);
 
-useEffect(() => {
-  const handleScroll = () => setShrink(window.scrollY > 550);
-  window.addEventListener("scroll", handleScroll);
+  useEffect(() => {
+    const handleScroll = () => setShrink(window.scrollY > 550);
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveSection(entry.target.id);
-        }
-      });
-    },
-    {
-      root: null,
-      rootMargin: "-50% 0px -50% 0px", // centre del viewport
-      threshold: 0,
-    }
-  );
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveSection(entry.target.id);
+        });
+      },
+      { root: null, rootMargin: "-50% 0px -50% 0px", threshold: 0 }
+    );
 
-  document.querySelectorAll("section[id]").forEach((section) => observer.observe(section));
+    document.querySelectorAll("section[id]").forEach((s) => observer.observe(s));
 
-  return () => {
-    window.removeEventListener("scroll", handleScroll);
-    observer.disconnect();
-  };
-}, []);
-
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      observer.disconnect();
+    };
+  }, []);
 
   return (
     <div
-      className={`lg:hidden fixed top-0 inset-x-0 z-50 px-4 py-2 flex items-center justify-between bg-white dark:bg-slate-950 shadow transition-all duration-300 ease-in-out ${
-        shrink ? "h-14 opacity-100" : "h-[120px] opacity-0 pointer-events-none"
-      }`}
+      className={`lg:hidden fixed top-0 inset-x-0 z-50 h-14 px-4
+        flex items-center justify-between
+        bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl
+        border-b border-slate-200/80 dark:border-slate-800/80
+        shadow-sm
+        transition-transform transition-opacity duration-300 ease-in-out
+        ${shrink ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"}`}
       aria-hidden={!shrink}
       {...(!shrink ? { inert: "" } : {})}
     >
-      {/* FOTO + NOM */}
-      <div className="flex items-center gap-3">
-        <img
-          src={fotoUrl}
-          alt={`Foto de ${nom}`}
-          className={`rounded-full object-cover transition-all duration-300 ${
-            shrink ? "w-10 h-10" : "w-0 h-0"
-          }`}
-        />
-        <div className={`transition-opacity duration-300 ${shrink ? "opacity-100" : "opacity-0"}`}>
-          <p className="text-sm font-semibold text-slate-900 dark:text-white">{nom}</p>
-          <p className="text-xs text-indigo-600 dark:text-indigo-400">{titol}</p>
+      {/* Foto + Nom */}
+      <div className="flex items-center gap-3 min-w-0">
+        {fotoUrl && (
+          <img
+            src={fotoUrl}
+            alt={`Foto de ${nom}`}
+            className="w-8 h-8 rounded-full object-cover ring-2 ring-indigo-500/60 flex-shrink-0"
+          />
+        )}
+        <div className="min-w-0">
+          <p className="text-sm font-bold text-slate-900 dark:text-white truncate leading-tight">
+            {nom}
+          </p>
+          <p className="text-xs text-indigo-600 dark:text-indigo-400 truncate leading-tight">
+            {titol}
+          </p>
         </div>
       </div>
 
-      {/* SECCIÓ ACTIVA AMB ANIMACIÓ */}
-      <div className="relative overflow-hidden h-5 w-32 text-right">
+      {/* Secció activa amb animació */}
+      <div className="relative overflow-hidden h-5 w-28 text-right flex-shrink-0">
         <AnimatePresence mode="sync">
           {shrink && activeSection && (
             <motion.span
               key={activeSection}
-              // La nova entra des de baix...
-              initial={{ y: "100%", opacity: 0.6 }}
-              // ...es col·loca al centre
+              initial={{ y: "100%", opacity: 0 }}
               animate={{ y: "0%", opacity: 1 }}
-              // ...i la vella surt cap amunt
-              exit={{ y: "-100%", opacity: 0.6 }}
-              transition={{
-                duration: 0.45,
-                ease: [0.4, 0, 0.2, 1], // suau i natural
-              }}
-              className="absolute right-0 text-xs font-medium text-indigo-600 dark:text-indigo-400"
+              exit={{ y: "-100%", opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+              className="absolute right-0 text-xs font-semibold text-indigo-600 dark:text-indigo-400 whitespace-nowrap"
             >
               {formatSectionName(activeSection, t)}
             </motion.span>
