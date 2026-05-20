@@ -102,7 +102,7 @@ const articleSchema = post ? {
     <BlogSidebar
       lang={lang}
       settings={sidebarSettings}
-      blogTitle={settings?.title || 'Blog d'Aitor Rivera'}
+      blogTitle={settings?.title || "Blog d'Aitor Rivera"}
       blogDescription={settings?.description || 'Articles sobre desenvolupament, gestió i experiències personals.'}
       categories={categories}
       tags={tags}
@@ -212,7 +212,7 @@ const articleSchema = post ? {
         </article>
       ) : (
         <div class="bg-slate-100 dark:bg-slate-800 p-6 rounded-lg text-center">
-          <p>{t['blog.notFound'] || 'No s'ha trobat aquest article.'}</p>
+          <p>{t['blog.notFound'] || "No s'ha trobat aquest article."}</p>
         </div>
       )}
     </main>
