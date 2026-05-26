@@ -9,6 +9,7 @@ import Formacio from '../../components/sections/Formacio.astro'
 import SobreMi from '../../components/sections/SobreMi.astro'
 import { useTranslations, normalizeLocale } from '../../i18n/utils'
 import Footer from '../../components/Footer.astro'
+import SectionIndicator from '../../components/SectionIndicator.jsx'
 import { getExperiencia, getFormacio, getHabilitats, getSiteSettings } from '../../lib/directus-content'
 
 const lang = normalizeLocale(Astro.params.locale)
@@ -78,24 +79,36 @@ const websiteSchema = {
   hreflangUrls={hreflangUrls}
   jsonLd={[personSchema, websiteSchema]}
 >
-  <div class="max-w-screen-xl mx-auto lg:flex">
+  <div class="max-w-screen-xl mx-auto lg:flex lg:h-screen">
     <Sidebar settings={data} t={t} lang={lang} />
     <main
       id="main-content"
       transition:name="main-content"
-      class="w-full lg:w-3/5 p-8 lg:p-16 lg:py-24"
+      class="w-full lg:w-3/5 lg:h-screen lg:overflow-y-scroll lg:snap-y lg:snap-mandatory scroll-smooth"
     >
       {data ? (
         <>
-          <SobreMi sobremi={data.descripcioSobreMi} />
-          <Experiencia experiencies={data.experiencies} />
-          <Formacio formacions={data.formacions} />
-          <Habilitats tecniques={data.habilitatsTecniques} clau={data.habilitatsClau} />
-          <Idiomes />
+          <div class="snap-section">
+            <SobreMi sobremi={data.descripcioSobreMi} />
+          </div>
+          <div class="snap-section">
+            <Experiencia experiencies={data.experiencies} />
+          </div>
+          <div class="snap-section">
+            <Formacio formacions={data.formacions} />
+          </div>
+          <div class="snap-section">
+            <Habilitats tecniques={data.habilitatsTecniques} clau={data.habilitatsClau} />
+          </div>
+          <div class="snap-section">
+            <Idiomes />
+          </div>
         </>
       ) : (
-        <div class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 p-8 rounded-2xl border border-slate-200 dark:border-slate-700">
-          <p>No s'han trobat dades de Directus.</p>
+        <div class="p-8 lg:p-16">
+          <div class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 p-8 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <p>No s'han trobat dades de Directus.</p>
+          </div>
         </div>
       )}
     </main>
@@ -106,4 +119,17 @@ const websiteSchema = {
       </footer>
     )}
   </div>
+
+  {data && (
+    <SectionIndicator
+      client:load
+      sections={[
+        { id: 'sobre-mi',    label: t['nav.about'] },
+        { id: 'experiencia', label: t['nav.experience'] },
+        { id: 'formacio',    label: t['nav.education'] },
+        { id: 'habilitats',  label: t['nav.skills'] },
+        { id: 'idiomes',     label: t['nav.languages'] },
+      ]}
+    />
+  )}
 </Layout>

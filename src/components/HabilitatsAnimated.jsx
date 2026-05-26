@@ -29,7 +29,7 @@ const headingVariant = {
 
 export default function HabilitatsAnimated({ tecniques, clau, t }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.1 });
+  const isInView = useInView(ref, { once: false, amount: 0.1 });
 
   return (
     <section id="habilitats" ref={ref} className="mb-24 scroll-mt-24">
