@@ -417,6 +417,32 @@ html.theme-transition *::after {
   ::view-transition-new(main-content) {
     animation: none;
   }
+
+  .blob-animated,
+  .blob-animated-reverse {
+    animation: none;
+  }
+}
+
+/* ─── Animated Blobs ─────────────────────────────────── */
+@keyframes blob-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(18px, -14px) scale(1.05); }
+  66%       { transform: translate(-10px, 10px) scale(0.96); }
+}
+
+@keyframes blob-drift-reverse {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(-14px, 12px) scale(0.95); }
+  66%       { transform: translate(12px, -8px) scale(1.04); }
+}
+
+.blob-animated {
+  animation: blob-drift 14s ease-in-out infinite;
+}
+
+.blob-animated-reverse {
+  animation: blob-drift-reverse 18s ease-in-out infinite;
 }
 
 /* ─── Mobile layout padding ──────────────────────────── */

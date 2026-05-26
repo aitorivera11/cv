@@ -1,11 +1,9 @@
 ---
-import { Image } from 'astro:assets';
 import { getDirectusAssetUrl } from '../lib/directus-content';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import Footer from './Footer.astro';
-import ContactModal from './ContactModal.jsx';
-import ScrollAwareNav from './ScrollAwareNav.jsx';
 import HeroShrinkHeader from './HeroShrinkHeader.jsx';
+import SidebarHeroAnimated from './SidebarHeroAnimated.jsx';
 import { SunIcon, MoonIcon, ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 import AppIcon from './icons/AppIcon.astro';
 
@@ -27,16 +25,16 @@ const langItems = [
     border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-800
     p-6 lg:p-10 overflow-hidden"
 >
-  <!-- Decorative gradient blob (background) -->
+  <!-- Decorative gradient blobs (animated) -->
   <div
     aria-hidden="true"
     class="pointer-events-none absolute -top-32 -left-32 w-96 h-96 rounded-full
-      bg-indigo-400/10 dark:bg-indigo-500/8 blur-3xl"
+      bg-indigo-400/10 dark:bg-indigo-500/8 blur-3xl blob-animated"
   ></div>
   <div
     aria-hidden="true"
     class="pointer-events-none absolute -bottom-24 -right-24 w-72 h-72 rounded-full
-      bg-violet-400/10 dark:bg-violet-500/8 blur-3xl"
+      bg-violet-400/10 dark:bg-violet-500/8 blur-3xl blob-animated-reverse"
   ></div>
 
   <!-- ── TOP: language + theme ─────────────────────────── -->
@@ -105,38 +103,14 @@ const langItems = [
     </div>
   </header>
 
-  <!-- ── MIDDLE: hero ───────────────────────────────────── -->
-  <div class="relative flex-grow flex flex-col justify-center items-center text-center">
-    {settings?.foto && (
-      <div class="mb-6">
-        <Image
-          src={settings?.fotoUrl || getDirectusAssetUrl(settings.foto)}
-          width={104}
-          height={104}
-          alt={`Foto de ${settings.nom}`}
-          class="h-24 w-24 rounded-full object-cover pulse-ring-anim"
-          fetchpriority="high"
-          loading="eager"
-        />
-      </div>
-    )}
-
-    <h1 class="text-4xl lg:text-[2.6rem] font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight">
-      {settings?.nom}
-    </h1>
-
-    <p class="mt-2 text-base font-semibold gradient-text tracking-wide">
-      {settings?.titol}
-    </p>
-
-    <!-- CTA: Contacte -->
-    <div class="mt-8 w-full flex justify-center">
-      <ContactModal client:visible t={t} />
-    </div>
-
-    <!-- Nav sections -->
-    <ScrollAwareNav client:idle t={t} />
-  </div>
+  <!-- ── MIDDLE: hero (staggered entrance) ─────────────── -->
+  <SidebarHeroAnimated
+    client:load
+    fotoUrl={fotoUrl}
+    nom={settings?.nom}
+    titol={settings?.titol}
+    t={t}
+  />
 
   <!-- ── BOTTOM: social + download + footer ─────────────── -->
   <div class="relative mt-8 flex flex-col items-center gap-6">
