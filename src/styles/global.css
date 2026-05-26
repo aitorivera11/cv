@@ -452,17 +452,36 @@ html.theme-transition *::after {
   padding: 1.5rem;
 }
 .snap-section:first-child {
-  padding-top: 5rem; /* clears HeroShrinkHeader (h-14 = 56px) */
+  padding-top: 5rem;
 }
 
-/* Desktop: each section fills exactly one viewport-height "page"          */
-/* Tall sections (Experiència) get internal scroll via overflow-y: auto.   */
-/* When the inner scroll hits its boundary, the outer snap kicks in.        */
+/* Desktop: each section fills exactly one viewport-height "page" */
 @media (min-width: 1024px) {
   .snap-section {
     scroll-snap-align: start;
-    height: 100%;      /* = main's 100vh — one page per section */
-    overflow-y: auto;  /* tall sections scroll inside before advancing */
+    height: 100%;
+    overflow-y: auto;
     padding: 3.5rem 4rem;
+
+    /* Vertically center short content; fall back to flex-start if content overflows */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;   /* safe fallback */
+    justify-content: safe center;  /* modern browsers */
   }
+
+  /* Remove mb-24 spacers — snap sections are their own pages */
+  .snap-section section[id] {
+    margin-bottom: 0;
+  }
+}
+
+/* ─── Hide snap scrollbars (keep scroll functionality) ── */
+#main-content,
+.snap-section {
+  scrollbar-width: none; /* Firefox */
+}
+#main-content::-webkit-scrollbar,
+.snap-section::-webkit-scrollbar {
+  display: none; /* Chrome / Safari / Edge */
 }
