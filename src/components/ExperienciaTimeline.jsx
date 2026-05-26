@@ -4,7 +4,7 @@ import { motion, useInView } from 'framer-motion';
 
 export default function ExperienciaTimeline({ experiencies, heading }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.05 });
+  const isInView = useInView(ref, { once: false, amount: 0.05 });
 
   return (
     <section id="experiencia" className="mb-24 scroll-mt-24">

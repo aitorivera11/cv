@@ -445,9 +445,24 @@ html.theme-transition *::after {
   animation: blob-drift-reverse 18s ease-in-out infinite;
 }
 
-/* ─── Mobile layout padding ──────────────────────────── */
-@media (max-width: 1024px) {
-  main {
-    padding-top: 4rem;
+/* ─── Snap sections ──────────────────────────────────── */
+
+/* Mobile: normal flow with top clearance for the sticky nav */
+.snap-section {
+  padding: 1.5rem;
+}
+.snap-section:first-child {
+  padding-top: 5rem; /* clears HeroShrinkHeader (h-14 = 56px) */
+}
+
+/* Desktop: each section fills exactly one viewport-height "page"          */
+/* Tall sections (Experiència) get internal scroll via overflow-y: auto.   */
+/* When the inner scroll hits its boundary, the outer snap kicks in.        */
+@media (min-width: 1024px) {
+  .snap-section {
+    scroll-snap-align: start;
+    height: 100%;      /* = main's 100vh — one page per section */
+    overflow-y: auto;  /* tall sections scroll inside before advancing */
+    padding: 3.5rem 4rem;
   }
 }
