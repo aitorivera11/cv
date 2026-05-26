@@ -28,7 +28,7 @@ export default function SectionIndicator({ sections }) {
 
   return (
     <nav
-      className="hidden lg:flex fixed right-5 top-1/2 -translate-y-1/2 z-40 flex-col gap-3"
+      className="hidden lg:flex fixed right-4 top-1/2 -translate-y-1/2 z-40 flex-col gap-2.5"
       aria-label="Navegació per seccions"
     >
       {sections.map((section, i) => (
@@ -38,12 +38,12 @@ export default function SectionIndicator({ sections }) {
           aria-label={section.label}
           title={section.label}
           aria-current={active === i ? 'true' : undefined}
-          className={`w-2 h-2 rounded-full transition-all duration-300
+          className={`w-1.5 h-1.5 rounded-full transition-all duration-300
             focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500
             ${
               active === i
-                ? 'bg-indigo-500 scale-[2] shadow-[0_0_6px_rgba(99,102,241,0.7)]'
-                : 'bg-slate-300 dark:bg-slate-600 hover:bg-indigo-400 dark:hover:bg-indigo-500 hover:scale-[1.5]'
+                ? 'bg-indigo-500 scale-[2.2] shadow-[0_0_5px_rgba(99,102,241,0.6)]'
+                : 'bg-slate-300/70 dark:bg-slate-600/70 hover:bg-indigo-400/80 hover:scale-[1.4]'
             }`}
         />
       ))}
