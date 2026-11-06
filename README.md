@@ -48,7 +48,21 @@ npm install
 npm run dev        # servidor de desarrollo
 npm run build      # build de producción (necesita Directus accesible)
 node docker-entrypoint.mjs   # arranca el build (usa HOST y PORT)
+npm run check      # tipos (astro check)
 ```
+
+### Probar sin Directus
+
+`scripts/mock-directus.mjs` levanta un Directus simulado con datos de ejemplo, y `scripts/smoke-test.mjs` comprueba las rutas principales contra un servidor ya arrancado. Es lo mismo que ejecuta el CI (`.github/workflows/ci.yml`: tipos, build y prueba de humo):
+
+```bash
+node scripts/mock-directus.mjs &
+DIRECTUS_URL=http://127.0.0.1:8055 DIRECTUS_TOKEN=x npm run build
+DIRECTUS_URL=http://127.0.0.1:8055 DIRECTUS_TOKEN=x PORT=4321 node docker-entrypoint.mjs &
+node scripts/smoke-test.mjs http://127.0.0.1:4321
+```
+
+Dependabot propone actualizaciones mensuales agrupadas. La versión de Playwright se excluye a propósito: debe coincidir con la etiqueta de la imagen del Dockerfile y se actualiza a mano.
 
 ## API
 
@@ -80,7 +94,7 @@ Todas las páginas (portada, blog y posts, en los tres idiomas) se renderizan en
 - En memoria en el servidor (`DIRECTUS_CACHE_TTL_MS`, 60 s por defecto).
 - Cabecera `Cache-Control: s-maxage=60, stale-while-revalidate=300` en las páginas HTML, por si Cloudflare las cachea.
 
-Un post que no existe responde con **404**, y un idioma no soportado (`/fr`) también. El mapa del sitio es dinámico: `/sitemap.xml` (con alternativas de idioma por URL); `/sitemap-index.xml` redirige a él.
+Si Directus falla, se sirve el último valor bueno de la caché; si no hay ninguno, la página responde **503** con `Retry-After`. Un post que no existe responde con **404**, y un idioma no soportado (`/fr`) también. El mapa del sitio es dinámico: `/sitemap.xml` (con alternativas de idioma por URL); `/sitemap-index.xml` redirige a él.
 
 ## Seguridad
 

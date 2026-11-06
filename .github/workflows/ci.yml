@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DIRECTUS_URL: http://127.0.0.1:8055
+      DIRECTUS_TOKEN: ci-token
+      PUBLIC_EMAILJS_SERVICE_ID: ci
+      PUBLIC_EMAILJS_TEMPLATE_ID: ci
+      PUBLIC_EMAILJS_PUBLIC_KEY: ci
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Tipos (astro check)
+        run: npm run check
+
+      - name: Build
+        run: npm run build
+
+      - name: Prueba de humo (Directus simulado)
+        run: |
+          node scripts/mock-directus.mjs &
+          HOST=127.0.0.1 PORT=4321 node docker-entrypoint.mjs > server.log 2>&1 &
+          npx --yes wait-on@8 -t 30000 http://127.0.0.1:8055/items/post http://127.0.0.1:4321/robots.txt
+          node scripts/smoke-test.mjs http://127.0.0.1:4321 || { echo '--- server.log'; cat server.log; exit 1; }
