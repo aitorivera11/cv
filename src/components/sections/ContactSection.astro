@@ -11,7 +11,7 @@ const t = useTranslations(lang);
 const { email, linkedinUrl } = Astro.props;
 ---
 
-<AnimateOnScroll client:visible triggerOnce={false}>
+<AnimateOnScroll client:visible>
   <section id="contacte" class="mb-24 scroll-mt-24">
     <h2 class="section-heading">{t['nav.contact']}</h2>
 
@@ -56,7 +56,7 @@ const { email, linkedinUrl } = Astro.props;
 
     {email && (
       <div class="mt-8">
-        <p class="mb-1 text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+        <p class="mb-1 text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
           {t['contact.section.email']}
         </p>
         <CopyEmail email={email} t={t} />

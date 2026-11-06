@@ -1,29 +1,20 @@
 import { useEffect, useState } from "react";
 import { sizedImageUrl } from "../lib/image";
+import { useActiveSections } from "./useActiveSections.js";
 import { LazyMotion, domAnimation, MotionConfig, m, AnimatePresence } from "framer-motion";
+
+const SECTION_IDS = ['sobre-mi', 'experiencia', 'formacio', 'habilitats', 'idiomes', 'contacte'];
 
 function HeroShrinkHeaderInner({ fotoUrl, nom, titol, t = {} }) {
   const [shrink, setShrink] = useState(false);
-  const [activeSection, setActiveSection] = useState(null);
+  const { current: activeSection } = useActiveSections(SECTION_IDS);
 
   useEffect(() => {
     const handleScroll = () => setShrink(window.scrollY > 550);
     window.addEventListener("scroll", handleScroll, { passive: true });
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveSection(entry.target.id);
-        });
-      },
-      { root: null, rootMargin: "-50% 0px -50% 0px", threshold: 0 }
-    );
-
-    document.querySelectorAll("section[id]").forEach((s) => observer.observe(s));
-
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      observer.disconnect();
     };
   }, []);
 
@@ -89,6 +80,7 @@ function formatSectionName(sectionId, t) {
     habilitats: t["nav.skills"],
     idiomes: t["nav.languages"],
     formacio: t["nav.education"],
+    contacte: t["nav.contact"],
   };
   return mapping[sectionId] || sectionId;
 }

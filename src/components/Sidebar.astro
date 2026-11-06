@@ -43,7 +43,7 @@ const langItems = [
     <a
       aria-label={t['nav.blog']}
       href={getRelativeLocaleUrl(lang, '/blog')}
-      class="text-sm font-semibold text-slate-500 dark:text-slate-400
+      class="text-sm font-semibold text-slate-600 dark:text-slate-400
         hover:text-indigo-600 dark:hover:text-indigo-400
         transition-colors duration-200
         focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-sm"
@@ -65,7 +65,7 @@ const langItems = [
                     focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500
                     ${lang === code
                       ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 font-bold'
-                      : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
                     }`}
                 >
                   {label}
@@ -84,7 +84,7 @@ const langItems = [
       <button
         aria-label={t['sidebar.toggleTheme']}
         class="theme-toggle w-8 h-8 flex items-center justify-center rounded-full
-          text-slate-500 dark:text-slate-400
+          text-slate-600 dark:text-slate-400
           hover:bg-slate-100 dark:hover:bg-slate-800
           hover:text-indigo-600 dark:hover:text-indigo-400
           transition-all duration-200
@@ -116,7 +116,7 @@ const langItems = [
   <!-- ── BOTTOM: social + download + footer ─────────────── -->
   <div class="relative mt-8 flex flex-col items-center gap-6">
     <!-- Social icons -->
-    <div class="flex items-center gap-1" role="list" aria-label={t['a11y.social']}>
+    <div class="flex items-center gap-1" role="group" aria-label={t['a11y.social']}>
       <!-- Download CV — primary CTA -->
       <a
         href={cvDownloadUrl} data-track="cv-download" data-track-source="sidebar"
@@ -124,7 +124,6 @@ const langItems = [
         rel="noopener noreferrer"
         aria-label={t['button.downloadCV']}
         class="btn-cta mr-2"
-        role="listitem"
       >
         <span aria-hidden="true">
           <ArrowDownTrayIcon className="w-4 h-4" />
@@ -139,7 +138,6 @@ const langItems = [
           target="_blank"
           rel="noopener noreferrer"
           class="social-icon-btn"
-          role="listitem"
         >
           <AppIcon name="linkedin" />
         </a>
@@ -151,7 +149,6 @@ const langItems = [
           target="_blank"
           rel="noopener noreferrer"
           class="social-icon-btn"
-          role="listitem"
         >
           <AppIcon name="github" />
         </a>
@@ -161,7 +158,6 @@ const langItems = [
           href={`mailto:${settings.email}`} data-track="email-click" data-track-source="sidebar"
           aria-label={format(t['a11y.emailOf'], { name: settings.nom })}
           class="social-icon-btn"
-          role="listitem"
         >
           <AppIcon name="email" />
         </a>

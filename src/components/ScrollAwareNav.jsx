@@ -1,30 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useActiveSections } from './useActiveSections.js';
+
+const SECTIONS = [
+  ['sobre-mi', 'nav.about'],
+  ['experiencia', 'nav.experience'],
+  ['formacio', 'nav.education'],
+  ['habilitats', 'nav.skills'],
+  ['idiomes', 'nav.languages'],
+  ['contacte', 'nav.contact'],
+];
 
 export default function ScrollAwareNav({ t }) {
-  const [activeSection, setActiveSection] = useState(null);
+  const { active } = useActiveSections(SECTIONS.map(([id]) => id));
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      entries => {
-        const visible = entries.find(entry => entry.isIntersecting);
-        if (visible) setActiveSection(visible.target.id);
-      },
-      {
-        threshold: 0.05,
-        rootMargin: '-20% 0px -70% 0px',
-      }
-    );
-
-    document.querySelectorAll('section[id]').forEach(section => {
-      observer.observe(section);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  const linkClass = id =>
+  const linkClass = (id) =>
     `whitespace-nowrap transition-colors hover:underline ${
-      activeSection === id
+      active.includes(id)
         ? 'text-indigo-600 dark:text-indigo-400 font-semibold'
         : 'text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400'
     }`;
@@ -35,36 +25,13 @@ export default function ScrollAwareNav({ t }) {
       aria-label={t['nav.mainSections'] || 'Seccions principals'}
     >
       <ul className="flex flex-wrap justify-center gap-x-4 gap-y-1">
-        <li>
-          <a href="#sobre-mi" className={linkClass('sobre-mi')} aria-current={activeSection === 'sobre-mi' ? 'page' : undefined}>
-            {t['nav.about']}
-          </a>
-        </li>
-        <li>
-          <a href="#experiencia" className={linkClass('experiencia')} aria-current={activeSection === 'experiencia' ? 'page' : undefined}>
-            {t['nav.experience']}
-          </a>
-        </li>
-        <li>
-          <a href="#formacio" className={linkClass('formacio')} aria-current={activeSection === 'formacio' ? 'page' : undefined}>
-            {t['nav.education']}
-          </a>
-        </li>
-        <li>
-          <a href="#habilitats" className={linkClass('habilitats')} aria-current={activeSection === 'habilitats' ? 'page' : undefined}>
-            {t['nav.skills']}
-          </a>
-        </li>
-        <li>
-          <a href="#idiomes" className={linkClass('idiomes')} aria-current={activeSection === 'idiomes' ? 'page' : undefined}>
-            {t['nav.languages']}
-          </a>
-        </li>
-        <li>
-          <a href="#contacte" className={linkClass('contacte')} aria-current={activeSection === 'contacte' ? 'page' : undefined}>
-            {t['nav.contact']}
-          </a>
-        </li>
+        {SECTIONS.map(([id, key]) => (
+          <li key={id}>
+            <a href={`#${id}`} className={linkClass(id)} aria-current={active[0] === id ? 'true' : undefined}>
+              {t[key]}
+            </a>
+          </li>
+        ))}
       </ul>
     </nav>
   );

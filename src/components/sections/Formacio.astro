@@ -14,7 +14,7 @@ const t = useTranslations(lang);
 const { formacions } = Astro.props;
 ---
 
-<AnimateOnScroll client:visible triggerOnce={false}>
+<AnimateOnScroll client:visible>
   <section id="formacio" class="mb-24 scroll-mt-24">
     <h2 class="section-heading">
       {t['nav.education']}
@@ -36,7 +36,7 @@ const { formacions } = Astro.props;
                 transition-colors duration-200 leading-snug">
                 {estudi.titulacio}
               </h3>
-              <p class="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
+              <p class="mt-0.5 text-sm text-slate-600 dark:text-slate-400">
                 {estudi.centre}
                 <span aria-hidden="true" class="mx-1.5 text-slate-300 dark:text-slate-600">·</span>
                 <span class="sr-only">, </span>
