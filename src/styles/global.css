@@ -9,7 +9,7 @@
 /* ─── Fonts ─────────────────────────────────────────── */
 @font-face {
   font-family: 'Space Grotesk';
-  src: url('/fonts/SpaceGrotesk-VariableFont_wght.ttf') format('truetype');
+  src: url('/fonts/SpaceGrotesk-latin.woff2') format('woff2');
   font-weight: 300 700;
   font-optical-sizing: auto;
   font-style: normal;

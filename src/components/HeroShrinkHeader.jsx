@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { sizedImageUrl } from "../lib/image";
 import { MotionConfig, motion, AnimatePresence } from "framer-motion";
 
 function HeroShrinkHeaderInner({ fotoUrl, nom, titol, t = {} }) {
@@ -42,7 +43,10 @@ function HeroShrinkHeaderInner({ fotoUrl, nom, titol, t = {} }) {
       <div className="flex items-center gap-3 min-w-0">
         {fotoUrl && (
           <img
-            src={fotoUrl}
+            src={sizedImageUrl(fotoUrl, 32)}
+            width={32}
+            height={32}
+            decoding="async"
             alt={`Foto de ${nom}`}
             className="w-8 h-8 rounded-full object-cover ring-2 ring-indigo-500/60 flex-shrink-0"
           />

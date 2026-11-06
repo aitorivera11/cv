@@ -18,6 +18,7 @@ const {
   t,
 } = Astro.props;
 
+import { sizedImageUrl } from '../../lib/image';
 const fotoUrl = settings?.fotoUrl || getDirectusAssetUrl(settings?.foto);
 
 const langItems = [
@@ -38,7 +39,7 @@ const langItems = [
     <div class="flex items-center gap-2.5 min-w-0">
       {settings?.foto && (
         <Image
-          src={fotoUrl}
+          src={sizedImageUrl(fotoUrl, 32)}
           width={32}
           height={32}
           alt={`Foto de ${settings.nom}`}
@@ -277,7 +278,7 @@ const langItems = [
     {settings?.foto && (
       <div class="mb-6">
         <Image
-          src={fotoUrl}
+          src={sizedImageUrl(fotoUrl, 96)}
           width={96}
           height={96}
           alt={`Foto de ${settings.nom}`}

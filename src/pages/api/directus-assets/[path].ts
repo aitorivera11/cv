@@ -75,7 +75,7 @@ export const GET: APIRoute = async ({ params, request }) => {
     responseHeaders.set('Content-Type', contentType)
   }
 
-  responseHeaders.set('Cache-Control', cacheControl || 'public, max-age=3600')
+  responseHeaders.set('Cache-Control', cacheControl || 'public, max-age=86400')
   responseHeaders.set('X-Content-Type-Options', 'nosniff')
 
   return new Response(upstreamResponse.body, {
