@@ -5,6 +5,8 @@ import Experiencia from '../../components/sections/Experiencia.astro'
 import Habilitats from '../../components/sections/Habilitats.astro'
 import Idiomes from '../../components/sections/Idiomes.astro'
 import Formacio from '../../components/sections/Formacio.astro'
+import ContactSection from '../../components/sections/ContactSection.astro'
+import StickyContact from '../../components/StickyContact.jsx'
 import SobreMi from '../../components/sections/SobreMi.astro'
 import { useTranslations, normalizeLocale } from '../../i18n/utils'
 import { isValidLocaleParam } from '../../lib/locale'
@@ -107,6 +109,9 @@ const websiteSchema = {
           <div class="snap-section">
             <Idiomes />
           </div>
+          <div class="snap-section">
+            <ContactSection email={data.email} linkedinUrl={data.linkedinUrl} />
+          </div>
         </>
       ) : (
         <div class="p-8 lg:p-16">
@@ -124,6 +129,8 @@ const websiteSchema = {
     )}
   </div>
 
+  {data && <StickyContact client:idle t={t} />}
+
   {data && (
     <SectionIndicator
       client:load
@@ -134,6 +141,7 @@ const websiteSchema = {
         { id: 'formacio',    label: t['nav.education'] },
         { id: 'habilitats',  label: t['nav.skills'] },
         { id: 'idiomes',     label: t['nav.languages'] },
+        { id: 'contacte',    label: t['nav.contact'] },
       ]}
     />
   )}

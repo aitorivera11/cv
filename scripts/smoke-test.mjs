@@ -29,6 +29,9 @@ check(html.includes('rel="canonical" href="https://aitorivera.com/es/"'), '/es t
 check(Boolean(home.headers.get('content-security-policy')), '/es envía Content-Security-Policy');
 check(Boolean(home.headers.get('strict-transport-security')), '/es envía Strict-Transport-Security');
 
+check(html.includes('id="contacte"'), '/es incluye la sección de contacto final');
+check(html.includes('href="mailto:'), '/es muestra el correo con enlace mailto');
+
 const post = await (await fetch(base + '/es/blog/hola')).text();
 const og = post.match(/<meta property="og:image" content="([^"]+)"/)?.[1] ?? '';
 check(og.startsWith('https://'), `og:image del post es una URL absoluta (${og.slice(0, 60)}…)`);

@@ -19,7 +19,6 @@ export default {
             '--tw-prose-invert-bold': theme('colors.indigo.400'),
             p: {
               marginBottom: '1.5rem',
-              textAlign: 'justify',
             },
           },
         },

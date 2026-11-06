@@ -62,6 +62,24 @@ const hreflangLinks = [
 
     <!-- Inline theme script first to prevent FOUT -->
     <script is:inline set:html={themeScript}></script>
+    <script is:inline>
+      // Eventos de conversión: funciona con Umami y Plausible, y no hace nada si no hay analítica.
+      window.track = function (name, data) {
+        try {
+          if (window.umami && typeof window.umami.track === 'function') window.umami.track(name, data);
+          if (typeof window.plausible === 'function') window.plausible(name, data ? { props: data } : undefined);
+        } catch (e) {}
+      };
+      if (!window.__trackClicks) {
+        window.__trackClicks = true;
+        document.addEventListener('click', function (event) {
+          var el = event.target.closest && event.target.closest('[data-track]');
+          if (!el) return;
+          var data = el.dataset.trackSource ? { source: el.dataset.trackSource } : undefined;
+          window.track(el.dataset.track, data);
+        });
+      }
+    </script>
 
     <SEO
       title={title}

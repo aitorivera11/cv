@@ -1,0 +1,66 @@
+---
+import AnimateOnScroll from '../AnimateOnScroll.jsx';
+import ContactModal from '../ContactModal.jsx';
+import CopyEmail from '../CopyEmail.astro';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils.ts';
+import { ArrowDownTrayIcon } from '@heroicons/react/24/solid';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const { email, linkedinUrl } = Astro.props;
+---
+
+<AnimateOnScroll client:visible triggerOnce={false}>
+  <section id="contacte" class="mb-24 scroll-mt-24">
+    <h2 class="section-heading">{t['nav.contact']}</h2>
+
+    <p class="text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+      {t['contact.section.title']}
+    </p>
+    <p class="mt-4 max-w-xl text-base leading-relaxed text-slate-600 dark:text-slate-300">
+      {t['contact.section.text']}
+    </p>
+
+    <div class="mt-8 flex flex-wrap items-center gap-4">
+      <ContactModal
+        client:visible
+        t={t}
+        source="contact-section"
+        triggerClassName="group inline-flex items-center justify-center gap-2 bg-indigo-600 text-white font-semibold py-3 px-7 rounded-full hover:bg-indigo-700 transition-colors duration-200 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+      />
+      {linkedinUrl && (
+        <a
+          href={linkedinUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-track="linkedin-click"
+          data-track-source="contact-section"
+          class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-slate-600 px-5 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+        >
+          LinkedIn
+        </a>
+      )}
+      <a
+        href={`/api/cv/${lang}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-track="cv-download"
+        data-track-source="contact-section"
+        class="inline-flex items-center gap-2 rounded-full border border-slate-300 dark:border-slate-600 px-5 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+      >
+        <ArrowDownTrayIcon className="w-4 h-4" />
+        {t['button.downloadCV']}
+      </a>
+    </div>
+
+    {email && (
+      <div class="mt-8">
+        <p class="mb-1 text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+          {t['contact.section.email']}
+        </p>
+        <CopyEmail email={email} t={t} />
+      </div>
+    )}
+  </section>
+</AnimateOnScroll>

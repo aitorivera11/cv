@@ -3,7 +3,11 @@ import emailjs from '@emailjs/browser';
 import * as Dialog from '@radix-ui/react-dialog';
 import { EnvelopeIcon, PaperAirplaneIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
-export default function ContactModal({ t }) {
+export default function ContactModal({
+  t,
+  triggerClassName = 'group mt-6 inline-flex items-center justify-center mx-auto bg-slate-800 text-white dark:bg-white dark:text-slate-900 font-semibold py-2 px-6 rounded-full hover:bg-slate-900 dark:hover:bg-slate-100 transition-colors duration-200 shadow-sm',
+  source = 'sidebar',
+}) {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -25,8 +29,19 @@ export default function ContactModal({ t }) {
     setLoading(true);
     setErrorMsg("");
 
-    emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, e.target, PUBLIC_KEY)
+    // El motivo se antepone al mensaje: así llega en el correo sin tocar la plantilla de EmailJS.
+    const form = new FormData(e.target);
+    const topic = form.get('topic');
+    const topicLabel = topic ? t[`contact.topic.${topic}`] : '';
+    const params = {
+      user_name: form.get('user_name'),
+      user_email: form.get('user_email'),
+      message: topicLabel ? `[${topicLabel}] ${form.get('message')}` : form.get('message'),
+    };
+
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, params, PUBLIC_KEY)
       .then(() => {
+        window.track?.('contact-sent', { source });
         setSent(true);
         setLoading(false);
         e.target.reset();
@@ -44,7 +59,9 @@ export default function ContactModal({ t }) {
       <Dialog.Trigger asChild>
         <button
           aria-label={t['contact.button']}
-          className="group mt-6 inline-flex items-center justify-center mx-auto bg-slate-800 text-white dark:bg-white dark:text-slate-900 font-semibold py-2 px-6 rounded-full hover:bg-slate-900 dark:hover:bg-slate-100 transition-colors duration-200 shadow-sm"
+          data-track="contact-open"
+          data-track-source={source}
+          className={triggerClassName}
         >
           <EnvelopeIcon className="w-5 h-5 mr-2 transition-transform group-hover:-rotate-12" />
           <span>{t['contact.button']}</span>
@@ -118,6 +135,20 @@ export default function ContactModal({ t }) {
                   autoComplete="email"
                   className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
+              </div>
+              <div>
+                <label htmlFor="contact-topic" className="sr-only">{t['contact.topic']}</label>
+                <select
+                  id="contact-topic"
+                  name="topic"
+                  defaultValue="proposal"
+                  className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  <option value="proposal">{t['contact.topic.proposal']}</option>
+                  <option value="project">{t['contact.topic.project']}</option>
+                  <option value="collab">{t['contact.topic.collab']}</option>
+                  <option value="other">{t['contact.topic.other']}</option>
+                </select>
               </div>
               <div>
                 <label htmlFor="contact-message" className="sr-only">{t['contact.message']}</label>
