@@ -1,11 +1,28 @@
 ---
 import { Image } from 'astro:assets';
-import { getDirectusAssetUrl } from '../../lib/directus-content';
+import {
+  getDirectusAssetUrl,
+  type Category,
+  type PostSummary,
+  type SiteSettings,
+  type Tag,
+} from '../../lib/directus-content';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import Footer from '../Footer.astro';
 import ContactModal from '../ContactModal.jsx';
 import AppIcon from '../icons/AppIcon.astro';
 import { HomeIcon, SunIcon, MoonIcon, Bars3Icon, ArrowDownTrayIcon } from '@heroicons/react/24/solid';
+
+interface Props {
+  lang?: string;
+  settings?: SiteSettings | null;
+  blogTitle: string;
+  blogDescription: string;
+  categories?: Category[];
+  tags?: Tag[];
+  recentPosts?: PostSummary[];
+  t: Record<string, string>;
+}
 
 const {
   lang = 'ca',

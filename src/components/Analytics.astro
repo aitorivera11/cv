@@ -4,8 +4,8 @@ const analyticsSrc = import.meta.env.PUBLIC_ANALYTICS_SRC;
 const analyticsDomain = import.meta.env.PUBLIC_ANALYTICS_DOMAIN;
 const analyticsWebsiteId = import.meta.env.PUBLIC_ANALYTICS_WEBSITE_ID;
 
-const supportedProviders = ['umami', 'plausible', 'custom'];
-const isProviderSupported = supportedProviders.includes(analyticsProvider);
+const supportedProviders: string[] = ['umami', 'plausible', 'custom'];
+const isProviderSupported = supportedProviders.includes(String(analyticsProvider));
 
 const shouldLoadScript =
   Boolean(analyticsProvider) &&

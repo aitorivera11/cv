@@ -1,5 +1,16 @@
 ---
 import { localizedUrl } from '../../i18n/utils.ts';
+import type { TaxonomyItem } from '../../lib/directus-content';
+
+interface Props {
+  lang: string;
+  slug: string;
+  title: string;
+  excerpt?: string;
+  publishedAt: string;
+  categories?: TaxonomyItem[];
+  tags?: TaxonomyItem[];
+}
 
 const { lang, slug, title, excerpt, publishedAt, categories = [], tags = [] } = Astro.props
 ---

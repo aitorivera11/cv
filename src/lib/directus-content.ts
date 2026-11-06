@@ -89,7 +89,7 @@ function getLocalizedField(record: Record<string, unknown>, baseField: string, l
   return ''
 }
 
-type TaxonomyItem = {
+export type TaxonomyItem = {
   title: string
   slug: string
 }
