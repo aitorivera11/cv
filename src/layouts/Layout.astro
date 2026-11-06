@@ -5,7 +5,6 @@ import themeScript from '../scripts/theme.js?raw';
 import { SEO } from 'astro-seo';
 import BackToTop from '../components/BackToTop.jsx';
 import Analytics from '../components/Analytics.astro';
-import { contentSecurityPolicyMeta } from '../lib/csp';
 
 interface HreflangUrl {
   lang: string;
@@ -46,7 +45,6 @@ const hreflangLinks = [
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="Content-Security-Policy" content={contentSecurityPolicyMeta} />
 
     <!-- Font preload to eliminate render-blocking font flash -->
     <link
@@ -104,7 +102,7 @@ const hreflangLinks = [
         ],
         link: [
           { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
-          { rel: 'sitemap', href: '/sitemap-index.xml' },
+          { rel: 'sitemap', href: '/sitemap.xml' },
           ...hreflangLinks,
         ],
       }}

@@ -23,7 +23,7 @@ Copia `.env.example` a `.env` para trabajar en local.
 | `PUBLIC_EMAILJS_SERVICE_ID`, `PUBLIC_EMAILJS_TEMPLATE_ID`, `PUBLIC_EMAILJS_PUBLIC_KEY` | Sí (formulario) | ✅ | ✅ | Configuración de EmailJS para el formulario de contacto. |
 | `PUBLIC_ANALYTICS_PROVIDER`, `PUBLIC_ANALYTICS_SRC`, `PUBLIC_ANALYTICS_WEBSITE_ID`, `PUBLIC_ANALYTICS_DOMAIN` | No | ✅ | ✅ | Analítica opcional (Umami, Plausible o `custom`). |
 
-> Las variables `PUBLIC_*` y `DIRECTUS_*` se leen durante el build (Astro prerenderiza el blog y las páginas `/es` y `/en`), así que deben estar disponibles en tiempo de build.
+> Astro incrusta estas variables en el build (`import.meta.env`), así que tienen que estar definidas también en tiempo de build y cambiar una exige redesplegar. El build ya no consulta Directus: todas las páginas se generan en cada petición.
 
 ### Analítica (opcional)
 
@@ -73,11 +73,19 @@ Puntos a tener en cuenta:
 - En servidores con poca RAM (≈4 GB compartidos) conviene tener **swap** activado: un build sin swap puede dejar la máquina sin respuesta.
 - Para evitar el corte entre versiones, Coolify necesita poder hacer *rolling update*, lo que no es posible con un nombre de contenedor fijo.
 
+## Contenido y caché
+
+Todas las páginas (portada, blog y posts, en los tres idiomas) se renderizan en cada petición a partir de Directus, así que un cambio de contenido se ve sin redesplegar. Hay dos capas de caché:
+
+- En memoria en el servidor (`DIRECTUS_CACHE_TTL_MS`, 60 s por defecto).
+- Cabecera `Cache-Control: s-maxage=60, stale-while-revalidate=300` en las páginas HTML, por si Cloudflare las cachea.
+
+Un post que no existe responde con **404**, y un idioma no soportado (`/fr`) también. El mapa del sitio es dinámico: `/sitemap.xml` (con alternativas de idioma por URL); `/sitemap-index.xml` redirige a él.
+
 ## Seguridad
 
 - Cabeceras en todas las respuestas del servidor: `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` y `Strict-Transport-Security`.
-- `Content-Security-Policy` por cabecera (middleware) y como `<meta>` en el layout, porque las páginas prerenderizadas no pasan por el middleware. La política permite `'unsafe-inline'` en scripts (necesario para las islas de Astro y el script de tema) pero restringe el resto de orígenes, `object-src`, `base-uri` y `form-action`.
-- Las páginas prerenderizadas solo reciben la CSP vía `<meta>`; el resto de cabeceras puede añadirlas Cloudflare (por ejemplo, HSTS).
+- `Content-Security-Policy` por cabecera (middleware). La política permite `'unsafe-inline'` en scripts (necesario para las islas de Astro y el script de tema) pero restringe el resto de orígenes, `object-src`, `base-uri` y `form-action`.
 
 ## Estructura
 
@@ -86,7 +94,7 @@ src/
   components/   Islas React y componentes Astro
   layouts/      Layout principal (SEO, tema, CSP)
   lib/          Directus, PDF, almacenamiento de CV y CSP
-  pages/        Rutas (ca sin prefijo, [locale]/ para es/en) y API
+  pages/        Rutas `[...locale]/` (catalán sin prefijo, `es` y `en`), sitemap y API
   i18n/         Cadenas de interfaz
 pdf/            Plantilla HTML del CV
 docker-entrypoint.mjs
