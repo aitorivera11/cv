@@ -8,6 +8,7 @@ import Formacio from '../../components/sections/Formacio.astro'
 import SobreMi from '../../components/sections/SobreMi.astro'
 import { useTranslations, normalizeLocale } from '../../i18n/utils'
 import { isValidLocaleParam } from '../../lib/locale'
+import { absoluteUrl, sizedImageUrl } from '../../lib/image'
 import { serviceUnavailable } from '../../lib/http'
 import Footer from '../../components/Footer.astro'
 import SectionIndicator from '../../components/SectionIndicator.jsx'
@@ -57,7 +58,7 @@ const personSchema = {
   name: data?.nom || 'Aitor Rivera Garcia',
   jobTitle: data?.titol || '',
   url: `${siteUrl}/`,
-  image: data?.fotoUrl || `${siteUrl}/og-image.jpg`,
+  image: data?.fotoUrl ? absoluteUrl(sizedImageUrl(data.fotoUrl, 200), siteUrl) : `${siteUrl}/og-image.jpg`,
   sameAs: [data?.linkedinUrl, data?.githubUrl].filter(Boolean),
   email: data?.email ? `mailto:${data.email}` : undefined,
   knowsLanguage: ['ca', 'es', 'en-US'],

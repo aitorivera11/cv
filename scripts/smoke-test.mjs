@@ -29,6 +29,10 @@ check(html.includes('rel="canonical" href="https://aitorivera.com/es/"'), '/es t
 check(Boolean(home.headers.get('content-security-policy')), '/es envía Content-Security-Policy');
 check(Boolean(home.headers.get('strict-transport-security')), '/es envía Strict-Transport-Security');
 
+const post = await (await fetch(base + '/es/blog/hola')).text();
+const og = post.match(/<meta property="og:image" content="([^"]+)"/)?.[1] ?? '';
+check(og.startsWith('https://'), `og:image del post es una URL absoluta (${og.slice(0, 60)}…)`);
+
 const sitemap = await (await fetch(base + '/sitemap.xml')).text();
 check(sitemap.includes('/es/blog/hola'), 'el sitemap incluye los posts en todos los idiomas');
 

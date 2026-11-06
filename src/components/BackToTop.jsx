@@ -1,4 +1,4 @@
-import { MotionConfig, motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { LazyMotion, domAnimation, MotionConfig, m, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import { RocketLaunchIcon } from "@heroicons/react/24/solid";
 
@@ -51,7 +51,7 @@ function BackToTopRocketProgressInner() {
   return (
     <AnimatePresence>
       {show && (
-        <motion.button
+        <m.button
           initial={{ opacity: 0, y: 50, rotate: 15 }}
           animate={{ opacity: 1, y: 0, rotate: 0 }}
           exit={{ opacity: 0, y: 50, rotate: 15 }}
@@ -66,7 +66,7 @@ function BackToTopRocketProgressInner() {
         >
           <RocketLaunchIcon className="w-5 h-5 md:w-6 md:h-6 z-10 rotate-315" aria-hidden="true" />
 
-          <motion.svg
+          <m.svg
             className="absolute inset-0 w-full h-full"
             viewBox="0 0 100 100"
             fill="none"
@@ -74,7 +74,7 @@ function BackToTopRocketProgressInner() {
             focusable="false"
           >
             <circle cx="50" cy="50" r="45" stroke="" strokeWidth="8" />
-            <motion.circle
+            <m.circle
               cx="50"
               cy="50"
               r="45"
@@ -84,18 +84,21 @@ function BackToTopRocketProgressInner() {
               transform="rotate(-90 50 50)"
               style={{ pathLength }}
             />
-          </motion.svg>
-        </motion.button>
+          </m.svg>
+        </m.button>
       )}
     </AnimatePresence>
   );
 }
 
-// Respeta prefers-reduced-motion también en las animaciones de JS (framer-motion).
+// LazyMotion carga solo las animaciones básicas (mucho menos JS); `m` sustituye a `motion`.
+// MotionConfig respeta prefers-reduced-motion también en las animaciones de JS.
 export default function BackToTopRocketProgress(props) {
   return (
-    <MotionConfig reducedMotion="user">
-      <BackToTopRocketProgressInner {...props} />
-    </MotionConfig>
+    <LazyMotion features={domAnimation} strict>
+      <MotionConfig reducedMotion="user">
+        <BackToTopRocketProgressInner {...props} />
+      </MotionConfig>
+    </LazyMotion>
   );
 }

@@ -14,6 +14,14 @@ export default function ContactModal({ t }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Honeypot: un bot que rellena el campo oculto recibe un "éxito" falso y no se envía nada.
+    if (e.target.elements.website?.value) {
+      setSent(true);
+      e.target.reset();
+      return;
+    }
+
     setLoading(true);
     setErrorMsg("");
 
@@ -82,6 +90,11 @@ export default function ContactModal({ t }) {
           {/* FORM OR SUCCESS */}
           {!sent && (
             <form onSubmit={handleSubmit} className="space-y-4" aria-busy={loading}>
+              {/* Campo trampa para bots: fuera de pantalla, sin foco ni lectura por lector de pantalla */}
+              <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+                <label htmlFor="contact-website">Website</label>
+                <input id="contact-website" type="text" name="website" tabIndex={-1} autoComplete="off" />
+              </div>
               <div>
                 <label htmlFor="contact-name" className="sr-only">{t['contact.name']}</label>
                 <input

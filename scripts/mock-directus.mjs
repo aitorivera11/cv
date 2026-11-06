@@ -26,6 +26,7 @@ const data = {
   post: [
     {
       slug: 'hola',
+      cover_image: 'cover123',
       published_at: '2026-01-01T00:00:00Z',
       ...loc('title', 'Hola'),
       ...loc('excerpt', 'Extracto'),
