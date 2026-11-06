@@ -203,14 +203,14 @@ html.theme-transition *::after {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgb(100 116 139);
+  color: rgb(71 85 105); /* slate-600: 7:1 sobre fondo claro */
   margin-bottom: 2rem;
   padding-bottom: 0.625rem;
   border-bottom: 1px solid rgb(226 232 240);
 }
 
 .dark .section-heading {
-  color: rgb(100 116 139);
+  color: rgb(148 163 184); /* slate-400: 6.9:1 sobre fondo oscuro */
   border-bottom-color: rgb(30 41 59);
 }
 
@@ -455,19 +455,23 @@ html.theme-transition *::after {
   padding-top: 5rem;
 }
 
-/* Desktop: each section fills exactly one viewport-height "page" */
+/* Desktop: cada sección (o grupo de secciones cortas) ocupa como mínimo una pantalla.
+   Si el contenido es más alto, la página simplemente crece: no hay scroll dentro de otro scroll. */
 @media (min-width: 1024px) {
   .snap-section {
     scroll-snap-align: start;
-    height: 100%;
-    overflow-y: auto;
+    min-height: 100%;
     padding: 3.5rem 4rem;
 
-    /* Vertically center short content; fall back to flex-start if content overflows */
+    /* Centra verticalmente el contenido corto */
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;   /* safe fallback */
-    justify-content: safe center;  /* modern browsers */
+    justify-content: center;
+  }
+
+  /* Varias secciones cortas en una misma página */
+  .snap-section--group {
+    gap: 4rem;
   }
 
   /* Remove mb-24 spacers — snap sections are their own pages */

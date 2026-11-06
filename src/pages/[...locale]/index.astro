@@ -91,7 +91,7 @@ const websiteSchema = {
     <main
       id="main-content"
       transition:name="main-content"
-      class="w-full lg:w-3/5 lg:h-screen lg:overflow-y-scroll lg:snap-y lg:snap-mandatory scroll-smooth"
+      class="w-full lg:w-3/5 lg:h-screen lg:overflow-y-scroll lg:snap-y lg:snap-proximity scroll-smooth"
     >
       {data ? (
         <>
@@ -101,16 +101,12 @@ const websiteSchema = {
           <div class="snap-section">
             <Experiencia experiencies={data.experiencies} />
           </div>
-          <div class="snap-section">
+          <div class="snap-section snap-section--group">
             <Formacio formacions={data.formacions} />
-          </div>
-          <div class="snap-section">
             <Habilitats tecniques={data.habilitatsTecniques} clau={data.habilitatsClau} />
           </div>
-          <div class="snap-section">
+          <div class="snap-section snap-section--group">
             <Idiomes />
-          </div>
-          <div class="snap-section">
             <ContactSection email={data.email} linkedinUrl={data.linkedinUrl} />
           </div>
         </>

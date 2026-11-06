@@ -14,7 +14,7 @@ const idiomes = [
 ];
 ---
 
-<AnimateOnScroll client:visible triggerOnce={false}>
+<AnimateOnScroll client:visible>
   <section id="idiomes" class="mb-24 scroll-mt-24">
     <h2 class="section-heading">
       {t['nav.languages']}
@@ -43,7 +43,7 @@ const idiomes = [
           </div>
 
           <span
-            class="w-16 shrink-0 text-xs font-medium text-slate-500 dark:text-slate-400 text-right"
+            class="w-16 shrink-0 text-xs font-medium text-slate-600 dark:text-slate-400 text-right"
             aria-hidden="true"
           >
             {idioma.nivell}

@@ -145,7 +145,7 @@ const articleSchema = post ? {
                 {new Date(post.publishedAt).toLocaleDateString(lang)}
               </time>
               {readTime && (
-                <span class="inline-flex items-center gap-1 text-slate-500 dark:text-slate-400">
+                <span class="inline-flex items-center gap-1 text-slate-600 dark:text-slate-400">
                   <svg class="w-4 h-4 text-indigo-400 dark:text-indigo-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                   {readTime} {t['blog.readTime']}
                 </span>
@@ -195,6 +195,10 @@ const articleSchema = post ? {
                       gap: 0.5rem;
                       align-items: center;
                     }
+                    /* Los iconos eran negros fijos: invisibles en modo oscuro */
+                    .astro-social-share .social-share-btn { color: rgb(51 65 85); }
+                    .dark .astro-social-share .social-share-btn { color: rgb(226 232 240); }
+                    .astro-social-share .social-share-btn svg { fill: currentColor !important; }
                   </style>
                 </slot>
 

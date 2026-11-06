@@ -84,7 +84,7 @@ export default function ContactModal({
           <Dialog.Title className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
             {t['contact.title']}
           </Dialog.Title>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
             {t['contact.subtitle'] || "Omple el formulari i et respondré el més aviat possible."}
           </p>
 
@@ -188,7 +188,7 @@ export default function ContactModal({
 
           {/* Close Button */}
           <Dialog.Close
-            className="absolute top-3 right-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
+            className="absolute top-3 right-3 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 rounded"
             aria-label={t['contact.close']}
           >
             <XMarkIcon className="w-6 h-6 transition-transform hover:-rotate-90" />

@@ -13,7 +13,7 @@ const homePath = lang === 'ca' ? '/' : `/${lang}`;
   description="Page not found"
   lang={lang}
 >
-  <main class="min-h-screen flex flex-col items-center justify-center text-center p-8 gap-6">
+  <main id="main-content" class="min-h-screen flex flex-col items-center justify-center text-center p-8 gap-6">
     <Escape404 t={t} homePath={homePath} client:load />
   </main>
 </Layout>

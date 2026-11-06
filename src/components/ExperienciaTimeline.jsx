@@ -4,7 +4,7 @@ import { LazyMotion, domAnimation, MotionConfig, m, useInView } from 'framer-mot
 
 function ExperienciaTimelineInner({ experiencies, heading, techLabel = 'Tecnologies' }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: false, amount: 0.05 });
+  const isInView = useInView(ref, { once: true, amount: 0.05 });
 
   return (
     <section id="experiencia" className="mb-24 scroll-mt-24">
@@ -29,7 +29,7 @@ function ExperienciaTimelineInner({ experiencies, heading, techLabel = 'Tecnolog
               initial={{ opacity: 0, x: 16 }}
               animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 16 }}
               transition={{
-                delay: i * 0.14 + 0.3,
+                delay: i * 0.1 + 0.1,
                 duration: 0.5,
                 ease: [0.22, 1, 0.36, 1],
               }}
@@ -43,7 +43,7 @@ function ExperienciaTimelineInner({ experiencies, heading, techLabel = 'Tecnolog
                 initial={{ scale: 0, opacity: 0 }}
                 animate={isInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
                 transition={{
-                  delay: i * 0.14 + 0.18,
+                  delay: i * 0.1 + 0.05,
                   duration: 0.45,
                   ease: [0.34, 1.56, 0.64, 1],
                 }}
@@ -53,7 +53,7 @@ function ExperienciaTimelineInner({ experiencies, heading, techLabel = 'Tecnolog
                 <div className="grid sm:grid-cols-8 gap-4 sm:gap-6">
                   {/* Date badge */}
                   <div className="sm:col-span-2 flex sm:flex-col sm:items-start items-center gap-2">
-                    <span className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 leading-relaxed">
+                    <span className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400 leading-relaxed">
                       {feina.dates}
                     </span>
                   </div>
@@ -65,7 +65,7 @@ function ExperienciaTimelineInner({ experiencies, heading, techLabel = 'Tecnolog
                       transition-colors duration-200 leading-snug">
                       {feina.titol}
                     </h3>
-                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
                       {feina.empresa}
                     </p>
                     <div className="prose prose-sm prose-slate dark:prose-invert max-w-none
