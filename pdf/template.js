@@ -1,4 +1,8 @@
 // pdf/template.js
+// "Actual" viene de Directus en un solo idioma: se muestra como "Present" en inglés.
+const localizeDates = (value, lang) =>
+  lang === "en" ? String(value || "").replace(/\bActual\b/g, "Present") : value || "";
+
 export function cvTemplate(data, fotoUrl, lang = "ca") {
   const {
     nom,
@@ -69,8 +73,6 @@ export function cvTemplate(data, fotoUrl, lang = "ca") {
   <head>
     <meta charset="UTF-8" />
     <style>
-      <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
-
       * {
         box-sizing: border-box;
       }
@@ -92,7 +94,8 @@ export function cvTemplate(data, fotoUrl, lang = "ca") {
         grid-template-columns: 32% 68%;
         gap: 24px;
         padding: 26px 32px 52px;
-        height: auto;
+        /* A4 menos márgenes: así la barra inferior queda al pie de la hoja */
+        min-height: 272mm;
       }
 
       .page::before {
@@ -328,7 +331,7 @@ export function cvTemplate(data, fotoUrl, lang = "ca") {
             <div class="experience">
               <div class="experience-title">${e.titol}</div>
               <div class="experience-company">${e.empresa}</div>
-              <div class="experience-dates">${e.dates || ""}</div>
+              <div class="experience-dates">${localizeDates(e.dates, lang)}</div>
               ${
                 e.descripcio
                   ? `<div class="experience-desc">${e.descripcio}</div>`
@@ -351,7 +354,7 @@ export function cvTemplate(data, fotoUrl, lang = "ca") {
             <div class="formation">
               <div class="formation-title">${f.titulacio}</div>
               <div class="formation-centre">${f.centre}</div>
-              <div class="formation-dates">${f.dates || ""}</div>
+              <div class="formation-dates">${localizeDates(f.dates, lang)}</div>
             </div>
           `
           )
