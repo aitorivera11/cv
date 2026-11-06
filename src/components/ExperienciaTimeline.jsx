@@ -2,7 +2,7 @@
 import { useRef } from 'react';
 import { MotionConfig, motion, useInView } from 'framer-motion';
 
-function ExperienciaTimelineInner({ experiencies, heading }) {
+function ExperienciaTimelineInner({ experiencies, heading, techLabel = 'Tecnologies' }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.05 });
 
@@ -74,7 +74,7 @@ function ExperienciaTimelineInner({ experiencies, heading }) {
                       <p>{feina.descripcio}</p>
                     </div>
                     {feina.tecnologies?.length > 0 && (
-                      <ul className="mt-3 flex flex-wrap gap-1.5" aria-label="Tecnologies">
+                      <ul className="mt-3 flex flex-wrap gap-1.5" aria-label={techLabel}>
                         {feina.tecnologies.map((tag, j) => (
                           <li key={j} className="tag-pill">{tag}</li>
                         ))}

@@ -36,6 +36,7 @@ const {
 } = Astro.props;
 
 import { sizedImageUrl } from '../../lib/image';
+import { format } from '../../i18n/utils.ts';
 const fotoUrl = settings?.fotoUrl || getDirectusAssetUrl(settings?.foto);
 
 const langItems = [
@@ -59,7 +60,7 @@ const langItems = [
           src={sizedImageUrl(fotoUrl, 32)}
           width={32}
           height={32}
-          alt={`Foto de ${settings.nom}`}
+          alt={format(t['a11y.photoOf'], { name: settings.nom })}
           class="h-8 w-8 rounded-full object-cover ring-2 ring-indigo-500/60 flex-shrink-0"
         />
       )}
@@ -104,7 +105,7 @@ const langItems = [
             hover:bg-slate-100 dark:hover:bg-slate-800
             hover:text-indigo-600 dark:hover:text-indigo-400
             transition-colors duration-200"
-          aria-label="Menú"
+          aria-label={t['a11y.menu']}
         >
           <Bars3Icon className="w-4.5 h-4.5" />
         </summary>
@@ -186,17 +187,17 @@ const langItems = [
           <div class="flex justify-center gap-1 mt-3">
             {settings?.linkedinUrl && (
               <a href={settings.linkedinUrl} target="_blank" rel="noopener noreferrer"
-                aria-label={`LinkedIn de ${settings.nom}`}
+                aria-label={format(t['a11y.linkedinOf'], { name: settings.nom })}
                 class="social-icon-btn"><AppIcon name="linkedin" /></a>
             )}
             {settings?.githubUrl && (
               <a href={settings.githubUrl} target="_blank" rel="noopener noreferrer"
-                aria-label={`GitHub de ${settings.nom}`}
+                aria-label={format(t['a11y.githubOf'], { name: settings.nom })}
                 class="social-icon-btn"><AppIcon name="github" /></a>
             )}
             {settings?.email && (
               <a href={`mailto:${settings.email}`}
-                aria-label={`Email de ${settings.nom}`}
+                aria-label={format(t['a11y.emailOf'], { name: settings.nom })}
                 class="social-icon-btn"><AppIcon name="email" /></a>
             )}
           </div>
@@ -298,7 +299,7 @@ const langItems = [
           src={sizedImageUrl(fotoUrl, 96)}
           width={96}
           height={96}
-          alt={`Foto de ${settings.nom}`}
+          alt={format(t['a11y.photoOf'], { name: settings.nom })}
           class="h-24 w-24 rounded-full object-cover pulse-ring-anim"
         />
       </div>
@@ -397,7 +398,7 @@ const langItems = [
 
     <!-- Social icons + CV + Footer -->
     <div class="flex flex-col items-center gap-4 pt-2">
-      <div class="flex items-center gap-1" role="list" aria-label="Xarxes socials">
+      <div class="flex items-center gap-1" role="list" aria-label={t['a11y.social']}>
         <a
           href={`/api/cv/${lang}`}
           target="_blank"
@@ -413,21 +414,21 @@ const langItems = [
         </a>
 
         {settings?.linkedinUrl && (
-          <a href={settings.linkedinUrl} aria-label={`LinkedIn de ${settings.nom}`}
+          <a href={settings.linkedinUrl} aria-label={format(t['a11y.linkedinOf'], { name: settings.nom })}
             target="_blank" rel="noopener noreferrer"
             class="social-icon-btn" role="listitem">
             <AppIcon name="linkedin" />
           </a>
         )}
         {settings?.githubUrl && (
-          <a href={settings.githubUrl} aria-label={`GitHub de ${settings.nom}`}
+          <a href={settings.githubUrl} aria-label={format(t['a11y.githubOf'], { name: settings.nom })}
             target="_blank" rel="noopener noreferrer"
             class="social-icon-btn" role="listitem">
             <AppIcon name="github" />
           </a>
         )}
         {settings?.email && (
-          <a href={`mailto:${settings.email}`} aria-label={`Email de ${settings.nom}`}
+          <a href={`mailto:${settings.email}`} aria-label={format(t['a11y.emailOf'], { name: settings.nom })}
             class="social-icon-btn" role="listitem">
             <AppIcon name="email" />
           </a>

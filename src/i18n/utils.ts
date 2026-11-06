@@ -24,3 +24,8 @@ export function localizedUrl(lang: string, path: string) {
   // Per altres idiomes, prefixa
   return `/${lang}${path.startsWith('/') ? path : `/${path}`}`;
 }
+
+// Substitueix {clau} per valors: format('Foto de {name}', { name: 'Aitor' })
+export function format(template: string | undefined, vars: Record<string, string | undefined>) {
+  return (template ?? '').replace(/\{(\w+)\}/g, (_, key) => vars[key] ?? '');
+}

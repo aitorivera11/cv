@@ -110,7 +110,7 @@ const websiteSchema = {
       ) : (
         <div class="p-8 lg:p-16">
           <div class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 p-8 rounded-2xl border border-slate-200 dark:border-slate-700">
-            <p>No s'han trobat dades de Directus.</p>
+            <p>{t['site.noData']}</p>
           </div>
         </div>
       )}
@@ -126,6 +126,7 @@ const websiteSchema = {
   {data && (
     <SectionIndicator
       client:load
+      label={t['a11y.sections']}
       sections={[
         { id: 'sobre-mi',    label: t['nav.about'] },
         { id: 'experiencia', label: t['nav.experience'] },

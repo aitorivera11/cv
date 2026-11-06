@@ -6,6 +6,7 @@ import HeroShrinkHeader from './HeroShrinkHeader.jsx';
 import SidebarHeroAnimated from './SidebarHeroAnimated.jsx';
 import { SunIcon, MoonIcon, ArrowDownTrayIcon } from '@heroicons/react/24/solid';
 import AppIcon from './icons/AppIcon.astro';
+import { format } from '../i18n/utils.ts';
 
 const { settings, t, lang } = Astro.props;
 const fotoUrl = settings?.fotoUrl || getDirectusAssetUrl(settings?.foto);
@@ -115,7 +116,7 @@ const langItems = [
   <!-- ── BOTTOM: social + download + footer ─────────────── -->
   <div class="relative mt-8 flex flex-col items-center gap-6">
     <!-- Social icons -->
-    <div class="flex items-center gap-1" role="list" aria-label="Xarxes socials">
+    <div class="flex items-center gap-1" role="list" aria-label={t['a11y.social']}>
       <!-- Download CV — primary CTA -->
       <a
         href={cvDownloadUrl}
@@ -134,7 +135,7 @@ const langItems = [
       {settings?.linkedinUrl && (
         <a
           href={settings.linkedinUrl}
-          aria-label={`LinkedIn de ${settings.nom}`}
+          aria-label={format(t['a11y.linkedinOf'], { name: settings.nom })}
           target="_blank"
           rel="noopener noreferrer"
           class="social-icon-btn"
@@ -146,7 +147,7 @@ const langItems = [
       {settings?.githubUrl && (
         <a
           href={settings.githubUrl}
-          aria-label={`GitHub de ${settings.nom}`}
+          aria-label={format(t['a11y.githubOf'], { name: settings.nom })}
           target="_blank"
           rel="noopener noreferrer"
           class="social-icon-btn"
@@ -158,7 +159,7 @@ const langItems = [
       {settings?.email && (
         <a
           href={`mailto:${settings.email}`}
-          aria-label={`Email de ${settings.nom}`}
+          aria-label={format(t['a11y.emailOf'], { name: settings.nom })}
           class="social-icon-btn"
           role="listitem"
         >
