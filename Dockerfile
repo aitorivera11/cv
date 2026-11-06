@@ -1,24 +1,33 @@
+# syntax=docker/dockerfile:1
+
 # Build
 FROM node:24-bookworm-slim AS builder
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm npm ci
 COPY . .
 RUN npm run build
 
-# Runtime (Node server)
+# Runtime (Node server + Chromium per generar PDFs)
 FROM mcr.microsoft.com/playwright:v1.60.0-jammy
 WORKDIR /app
-ENV NODE_ENV=production
+ENV NODE_ENV=production \
+    HOST=0.0.0.0 \
+    PORT=4321 \
+    CV_STORAGE_DIR=/app/storage/cv
 
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
 
 COPY --from=builder /app/dist ./dist
 
-# Carpeta persistente recomendada para CVs
+# Carpeta persistente recomendada per als CVs (munta-hi un volum)
 RUN mkdir -p /app/storage/cv
-ENV CV_STORAGE_DIR=/app/storage/cv
 
 EXPOSE 4321
+
+# /robots.txt no toca Directus: serveix per saber si el procés Node respon.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||4321)+'/robots.txt').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+
 CMD ["node", "./dist/server/entry.mjs"]

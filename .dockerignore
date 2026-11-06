@@ -1,0 +1,12 @@
+.git
+.github
+.vscode
+.astro
+node_modules
+dist
+storage
+*.pdf
+.env
+.env.*
+!.env.example
+npm-debug.log*
