@@ -186,17 +186,17 @@ const langItems = [
           <!-- Xarxes socials -->
           <div class="flex justify-center gap-1 mt-3">
             {settings?.linkedinUrl && (
-              <a href={settings.linkedinUrl} target="_blank" rel="noopener noreferrer"
+              <a href={settings.linkedinUrl} data-track="linkedin-click" data-track-source="blog" target="_blank" rel="noopener noreferrer"
                 aria-label={format(t['a11y.linkedinOf'], { name: settings.nom })}
                 class="social-icon-btn"><AppIcon name="linkedin" /></a>
             )}
             {settings?.githubUrl && (
-              <a href={settings.githubUrl} target="_blank" rel="noopener noreferrer"
+              <a href={settings.githubUrl} data-track="github-click" data-track-source="blog" target="_blank" rel="noopener noreferrer"
                 aria-label={format(t['a11y.githubOf'], { name: settings.nom })}
                 class="social-icon-btn"><AppIcon name="github" /></a>
             )}
             {settings?.email && (
-              <a href={`mailto:${settings.email}`}
+              <a href={`mailto:${settings.email}`} data-track="email-click" data-track-source="blog"
                 aria-label={format(t['a11y.emailOf'], { name: settings.nom })}
                 class="social-icon-btn"><AppIcon name="email" /></a>
             )}
@@ -400,7 +400,7 @@ const langItems = [
     <div class="flex flex-col items-center gap-4 pt-2">
       <div class="flex items-center gap-1" role="list" aria-label={t['a11y.social']}>
         <a
-          href={`/api/cv/${lang}`}
+          href={`/api/cv/${lang}`} data-track="cv-download" data-track-source="blog"
           target="_blank"
           rel="noopener noreferrer"
           aria-label={t['button.downloadCV']}
@@ -414,21 +414,21 @@ const langItems = [
         </a>
 
         {settings?.linkedinUrl && (
-          <a href={settings.linkedinUrl} aria-label={format(t['a11y.linkedinOf'], { name: settings.nom })}
+          <a href={settings.linkedinUrl} data-track="linkedin-click" data-track-source="blog" aria-label={format(t['a11y.linkedinOf'], { name: settings.nom })}
             target="_blank" rel="noopener noreferrer"
             class="social-icon-btn" role="listitem">
             <AppIcon name="linkedin" />
           </a>
         )}
         {settings?.githubUrl && (
-          <a href={settings.githubUrl} aria-label={format(t['a11y.githubOf'], { name: settings.nom })}
+          <a href={settings.githubUrl} data-track="github-click" data-track-source="blog" aria-label={format(t['a11y.githubOf'], { name: settings.nom })}
             target="_blank" rel="noopener noreferrer"
             class="social-icon-btn" role="listitem">
             <AppIcon name="github" />
           </a>
         )}
         {settings?.email && (
-          <a href={`mailto:${settings.email}`} aria-label={format(t['a11y.emailOf'], { name: settings.nom })}
+          <a href={`mailto:${settings.email}`} data-track="email-click" data-track-source="blog" aria-label={format(t['a11y.emailOf'], { name: settings.nom })}
             class="social-icon-btn" role="listitem">
             <AppIcon name="email" />
           </a>
