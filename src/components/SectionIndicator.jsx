@@ -23,7 +23,7 @@ export default function SectionIndicator({ sections }) {
   const scrollTo = (i) => {
     const mainEl = document.getElementById('main-content');
     if (!mainEl) return;
-    mainEl.scrollTo({ top: i * mainEl.clientHeight, behavior: 'smooth' });
+    mainEl.scrollTo({ top: i * mainEl.clientHeight, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   };
 
   return (

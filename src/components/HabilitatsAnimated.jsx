@@ -1,6 +1,6 @@
 // src/components/HabilitatsAnimated.jsx
 import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { MotionConfig, motion, useInView } from 'framer-motion';
 import { CommandLineIcon, PuzzlePieceIcon } from '@heroicons/react/24/solid';
 
 const listContainer = {
@@ -27,7 +27,7 @@ const headingVariant = {
   },
 };
 
-export default function HabilitatsAnimated({ tecniques, clau, t }) {
+function HabilitatsAnimatedInner({ tecniques, clau, t }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.1 });
 
@@ -90,5 +90,14 @@ export default function HabilitatsAnimated({ tecniques, clau, t }) {
         </div>
       </div>
     </section>
+  );
+}
+
+// Respeta prefers-reduced-motion también en las animaciones de JS (framer-motion).
+export default function HabilitatsAnimated(props) {
+  return (
+    <MotionConfig reducedMotion="user">
+      <HabilitatsAnimatedInner {...props} />
+    </MotionConfig>
   );
 }

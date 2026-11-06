@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { MotionConfig, motion, AnimatePresence } from "framer-motion";
 
-export default function HeroShrinkHeader({ fotoUrl, nom, titol, t = {} }) {
+function HeroShrinkHeaderInner({ fotoUrl, nom, titol, t = {} }) {
   const [shrink, setShrink] = useState(false);
   const [activeSection, setActiveSection] = useState(null);
 
@@ -87,4 +87,13 @@ function formatSectionName(sectionId, t) {
     formacio: t["nav.education"],
   };
   return mapping[sectionId] || sectionId;
+}
+
+// Respeta prefers-reduced-motion también en las animaciones de JS (framer-motion).
+export default function HeroShrinkHeader(props) {
+  return (
+    <MotionConfig reducedMotion="user">
+      <HeroShrinkHeaderInner {...props} />
+    </MotionConfig>
+  );
 }

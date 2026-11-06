@@ -20,6 +20,9 @@ ENV NODE_ENV=production \
     CV_STORAGE_DIR=/app/storage/cv \
     ASTRO_TELEMETRY_DISABLED=1
 
+# Mateixa versió de Node que al build (Astro 7 exigeix Node >= 22.23.4)
+COPY --from=builder /usr/local/bin/node /usr/local/bin/node
+
 COPY package*.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist

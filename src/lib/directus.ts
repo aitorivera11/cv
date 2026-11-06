@@ -10,8 +10,19 @@ function requireEnv(name: 'DIRECTUS_URL' | 'DIRECTUS_TOKEN') {
   return value
 }
 
-export const DIRECTUS_URL = requireEnv('DIRECTUS_URL')
+function createClient() {
+  return createDirectus(requireEnv('DIRECTUS_URL'))
+    .with(staticToken(requireEnv('DIRECTUS_TOKEN')))
+    .with(rest())
+}
 
-export const directus = createDirectus(DIRECTUS_URL)
-  .with(staticToken(requireEnv('DIRECTUS_TOKEN')))
-  .with(rest())
+let client: ReturnType<typeof createClient> | undefined
+
+// El client es crea en la primera petició, no en importar el mòdul:
+// així un build o un import sense variables no peta abans d'hora.
+export const directus = {
+  request: ((...args: Parameters<ReturnType<typeof createClient>['request']>) => {
+    client ??= createClient()
+    return client.request(...args)
+  }) as ReturnType<typeof createClient>['request'],
+}
