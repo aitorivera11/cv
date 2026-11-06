@@ -12,7 +12,7 @@ COPY . .
 RUN npm run build && npm prune --omit=dev --no-audit --no-fund
 
 # Runtime (Node server + Chromium per generar PDFs)
-FROM mcr.microsoft.com/playwright:v1.60.0-jammy
+FROM mcr.microsoft.com/playwright:v1.65.0-jammy
 WORKDIR /app
 ENV NODE_ENV=production \
     HOST=0.0.0.0 \
