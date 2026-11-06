@@ -5,6 +5,11 @@ function getDirectusBaseUrl(): string {
   return rawUrl.replace(/\/+$/, '')
 }
 
+const ALLOWED_PARAMS = new Set(['width', 'height', 'fit', 'quality', 'format', 'withoutEnlargement'])
+const NUMERIC_PARAMS = new Set(['width', 'height', 'quality'])
+const MAX_DIMENSION = 3000
+const MAX_ASSET_BYTES = 25 * 1024 * 1024
+
 export const GET: APIRoute = async ({ params, request }) => {
   const encodedPath = params.path
   if (!encodedPath) {
@@ -23,8 +28,19 @@ export const GET: APIRoute = async ({ params, request }) => {
     return new Response('Missing DIRECTUS_URL', { status: 500 })
   }
 
+  // Només reenviem els paràmetres de transformació d'imatge coneguts, amb límits.
   const requestUrl = new URL(request.url)
-  const upstreamUrl = `${directusBaseUrl}/${decodedPath}${requestUrl.search}`
+  const query = new URLSearchParams()
+  for (const [key, value] of requestUrl.searchParams) {
+    if (!ALLOWED_PARAMS.has(key) || value.length > 20) continue
+    if (NUMERIC_PARAMS.has(key)) {
+      const n = Number(value)
+      if (!Number.isFinite(n) || n < 1 || n > MAX_DIMENSION) continue
+    }
+    query.set(key, value)
+  }
+  const search = query.size > 0 ? `?${query.toString()}` : ''
+  const upstreamUrl = `${directusBaseUrl}/${decodedPath}${search}`
 
   const token = typeof import.meta.env.DIRECTUS_TOKEN === 'string' ? import.meta.env.DIRECTUS_TOKEN : ''
   const headers: HeadersInit = {}
@@ -39,6 +55,11 @@ export const GET: APIRoute = async ({ params, request }) => {
     return new Response(`Failed to fetch asset (${upstreamResponse.status})`, {
       status: upstreamResponse.status,
     })
+  }
+
+  const contentLength = Number(upstreamResponse.headers.get('content-length') ?? 0)
+  if (contentLength > MAX_ASSET_BYTES) {
+    return new Response('Asset too large', { status: 413 })
   }
 
   const responseHeaders = new Headers()
