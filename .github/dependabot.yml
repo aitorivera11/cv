@@ -11,6 +11,10 @@ updates:
       # La versión de Playwright debe coincidir con la etiqueta de la imagen del Dockerfile:
       # se actualizan a la vez y a mano.
       - dependency-name: playwright
+      # TypeScript: @astrojs/check solo admite TypeScript 5 y 6 (peer dependency). La 7.x rompe
+      # `npm ci` y deja el deploy sin construirse, así que se espera a que @astrojs/check la admita.
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
     open-pull-requests-limit: 5
 
   - package-ecosystem: github-actions
