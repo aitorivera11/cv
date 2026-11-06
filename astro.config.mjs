@@ -2,7 +2,6 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
-import sentry from '@sentry/astro';
 import spotlightjs from '@spotlightjs/astro';
 import sitemap from '@astrojs/sitemap';
 import node from '@astrojs/node';
@@ -21,7 +20,6 @@ export default defineConfig({
 
   integrations: [
     react(),
-    sentry(),
     ...(process.env.NODE_ENV === 'production' ? [] : [spotlightjs()]),
     sitemap({
       i18n: {
