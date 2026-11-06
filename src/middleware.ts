@@ -18,6 +18,16 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
 
+  // Pàgines HTML dinàmiques: Cloudflare (si fa cache) pot servir-les 60 s i revalidar en segon pla.
+  if (
+    context.request.method === 'GET' &&
+    response.status === 200 &&
+    (response.headers.get('content-type') ?? '').includes('text/html') &&
+    !response.headers.has('Cache-Control')
+  ) {
+    response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300');
+  }
+
   // CSP només per a documents HTML (no per a PDF ni JSON de l'API)
   if ((response.headers.get('content-type') ?? '').includes('text/html')) {
     response.headers.set('Content-Security-Policy', contentSecurityPolicy);

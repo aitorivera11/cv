@@ -3,7 +3,6 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 import spotlightjs from '@spotlightjs/astro';
-import sitemap from '@astrojs/sitemap';
 import node from '@astrojs/node';
 
 // https://astro.build/config
@@ -21,16 +20,6 @@ export default defineConfig({
   integrations: [
     react(),
     ...(process.env.NODE_ENV === 'production' ? [] : [spotlightjs()]),
-    sitemap({
-      i18n: {
-        defaultLocale: 'ca',
-        locales: {
-          en: 'en-US',
-          es: 'es-ES',
-          ca: 'ca-ES',
-        },
-      },
-    }),
   ],
   i18n: {
     // L'idioma per defecte no tindrà prefix a l'URL (p.ex. /)

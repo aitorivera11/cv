@@ -24,8 +24,4 @@ const baseDirectives = [
   "form-action 'self'",
 ];
 
-// Capçalera HTTP (inclou frame-ancestors, que no es pot posar en un <meta>)
 export const contentSecurityPolicy = [...baseDirectives, "frame-ancestors 'self'"].join('; ');
-
-// Per al <meta>: les pàgines prerenderitzades no passen pel middleware i no tenen capçaleres.
-export const contentSecurityPolicyMeta = baseDirectives.join('; ');
