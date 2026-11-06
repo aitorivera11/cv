@@ -39,7 +39,11 @@ const data = {
   tag: [],
   experiencia: [{ id: 1, ...loc('titol', 'Feina'), empresa: 'ACME', data_inici: '2020-01-01', ...loc('descripcio', 'd') }],
   formacio: [{ id: 1, ...loc('titol', 'Grau'), centre: 'UPC', ...loc('descripcio', 'd') }],
-  habilitat: [{ id: 1, ...loc('nom', 'JS'), tipus: 'tecnica', nivell: 80 }],
+  habilitat: [
+    { categoria: 'tecnica', ...loc('nom', 'Django') },
+    { categoria: 'tecnica', ...loc('nom', 'SQL') },
+    { categoria: 'clau', ...loc('nom', 'Lideratge') },
+  ],
 };
 
 http

@@ -26,6 +26,8 @@ const home = await fetch(base + '/es');
 const html = await home.text();
 check(/<html lang="es"/.test(html), '/es declara lang="es"');
 check(html.includes('rel="canonical" href="https://aitorivera.com/es/"'), '/es tiene canonical correcto');
+check(/<title>[^<]+ · [^<]+<\/title>/.test(html), '/es tiene <title> con nombre y rol');
+check(html.includes('Django · Python · SQL') && html.includes('Barcelona'), '/es muestra los datos clave (perfil, ubicación y stack)');
 check(Boolean(home.headers.get('content-security-policy')), '/es envía Content-Security-Policy');
 check(Boolean(home.headers.get('strict-transport-security')), '/es envía Strict-Transport-Security');
 

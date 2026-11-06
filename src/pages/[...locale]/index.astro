@@ -64,6 +64,7 @@ const personSchema = {
   sameAs: [data?.linkedinUrl, data?.githubUrl].filter(Boolean),
   email: data?.email ? `mailto:${data.email}` : undefined,
   knowsLanguage: ['ca', 'es', 'en-US'],
+  knowsAbout: (habilitats.tecniques ?? []).map((skill) => skill.nom).filter(Boolean),
 }
 
 const websiteSchema = {
@@ -78,7 +79,7 @@ const websiteSchema = {
 ---
 
 <Layout
-  title={data?.nom || 'Aitor Rivera Garcia'}
+  title={data?.nom ? (data.titol ? `${data.nom} · ${data.titol}` : data.nom) : 'Aitor Rivera Garcia'}
   description={data?.resumSidebar || ''}
   lang={lang}
   canonical={`${siteUrl}/${localePath}`}
