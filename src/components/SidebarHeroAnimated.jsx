@@ -1,4 +1,5 @@
 // src/components/SidebarHeroAnimated.jsx
+import { sizedImageUrl } from "../lib/image";
 import { MotionConfig, motion } from 'framer-motion';
 import ContactModal from './ContactModal.jsx';
 import ScrollAwareNav from './ScrollAwareNav.jsx';
@@ -48,7 +49,9 @@ function SidebarHeroAnimatedInner({ fotoUrl, nom, titol, t }) {
       {fotoUrl && (
         <motion.div className="mb-6" variants={photoVariants}>
           <img
-            src={fotoUrl}
+            src={sizedImageUrl(fotoUrl, 96)}
+            width={96}
+            height={96}
             alt={`Foto de ${nom}`}
             className="h-24 w-24 rounded-full object-cover pulse-ring-anim"
             fetchPriority="high"
