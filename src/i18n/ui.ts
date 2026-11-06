@@ -1,11 +1,5 @@
 // src/i18n/ui.ts
 
-export const languages = {
-  en: 'English',
-  es: 'Español',
-  ca: 'Català',
-};
-
 export const defaultLang = 'ca';
 
 export const ui = {
