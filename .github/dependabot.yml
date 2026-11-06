@@ -23,4 +23,11 @@ updates:
     schedule:
       interval: monthly
     ignore:
-      - dependency-name: mcr.microsoft.com/playwright
+      # Dependabot nombra estas imágenes por su nombre corto ("playwright", "node").
+      # Playwright: su versión debe coincidir con la del paquete de npm (si no, Chromium no
+      # se encuentra y el PDF falla); se actualizan a la vez y a mano.
+      - dependency-name: playwright
+      # Node: el salto de versión mayor se decide a mano (solo versiones LTS, es decir, pares
+      # y no EOL; el sitio usa 24). Dependabot proponía Node 25, que ya está fuera de soporte.
+      - dependency-name: node
+        update-types: ["version-update:semver-major"]
