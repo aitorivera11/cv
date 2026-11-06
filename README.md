@@ -12,6 +12,8 @@ Este proyecto ya no depende de Vercel ni de `@vercel/blob`.
 
 ## Endpoints API
 
+> Els endpoints `POST` requereixen `Authorization: Bearer $CV_ADMIN_TOKEN`. Sense la variable definida queden desactivats (503).
+
 ### `POST /api/generate-upload-cv`
 Genera los 3 CV (`ca`, `es`, `en`) y los guarda en disco.
 
@@ -68,7 +70,7 @@ npm run preview
 Para generar los CV en servidor:
 
 ```bash
-curl -X POST http://localhost:4321/api/generate-upload-cv
+curl -X POST -H "Authorization: Bearer $CV_ADMIN_TOKEN" http://localhost:4321/api/generate-upload-cv
 ```
 
 

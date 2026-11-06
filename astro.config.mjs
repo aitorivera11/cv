@@ -22,7 +22,7 @@ export default defineConfig({
   integrations: [
     react(),
     sentry(),
-    spotlightjs(),
+    ...(process.env.NODE_ENV === 'production' ? [] : [spotlightjs()]),
     sitemap({
       i18n: {
         defaultLocale: 'ca',

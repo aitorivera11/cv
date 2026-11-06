@@ -1,74 +1,15 @@
-name: Generate and Upload CVs
+name: Regenerate CVs
 
 on:
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
-  build:
+  regenerate:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
-
-      - name: Generate PDFs
-        run: npm run cv
+      - name: Trigger CV generation on the server
         env:
-          PUBLIC_SANITY_PROJECT_ID: ${{ secrets.PUBLIC_SANITY_PROJECT_ID }}
-          PUBLIC_SANITY_DATASET: ${{ secrets.PUBLIC_SANITY_DATASET }}
-          SANITY_TOKEN: ${{ secrets.SANITY_TOKEN }}
-
-      # -------------------------
-      #   CA
-      # -------------------------
-      - name: Encode CA PDF
-        run: base64 cv-aitor-ca.pdf > cv-ca.b64
-
-      - name: Upload CA to Vercel Blob
+          CV_ADMIN_TOKEN: ${{ secrets.CV_ADMIN_TOKEN }}
         run: |
-          RESPONSE=$(curl -s -X POST "https://aitorivera.com/api/upload-cv" \
-            -H "Content-Type: application/json" \
-            -d "{\"filename\":\"cv-aitor-ca.pdf\", \"content\":\"$(cat cv-ca.b64)\"}" \
-          )
-          echo "Response: $RESPONSE"
-
-      # -------------------------
-      #   ES
-      # -------------------------
-      - name: Encode ES PDF
-        run: base64 cv-aitor-es.pdf > cv-es.b64
-
-      - name: Upload ES to Vercel Blob
-        run: |
-          RESPONSE=$(curl -s -X POST "https://aitorivera.com/api/upload-cv" \
-            -H "Content-Type: application/json" \
-            -d "{\"filename\":\"cv-aitor-es.pdf\", \"content\":\"$(cat cv-es.b64)\"}" \
-          )
-          echo "Response: $RESPONSE"
-
-      # -------------------------
-      #   EN
-      # -------------------------
-      - name: Encode EN PDF
-        run: base64 cv-aitor-en.pdf > cv-en.b64
-
-      - name: Upload EN to Vercel Blob
-        run: |
-          RESPONSE=$(curl -s -X POST "https://aitorivera.com/api/upload-cv" \
-            -H "Content-Type: application/json" \
-            -d "{\"filename\":\"cv-aitor-en.pdf\", \"content\":\"$(cat cv-en.b64)\"}" \
-          )
-          echo "Response: $RESPONSE"
+          curl --fail-with-body -sS -X POST "https://aitorivera.com/api/generate-upload-cv" \
+            -H "Authorization: Bearer ${CV_ADMIN_TOKEN}"
