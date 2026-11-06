@@ -1,6 +1,4 @@
 import type { APIRoute } from 'astro';
-import { chromium } from 'playwright';
-import { cvTemplate } from '../../../../pdf/template.js';
 import {
   getCvFilename,
   isSupportedLang,
@@ -9,38 +7,8 @@ import {
   saveCv,
   saveCvMeta,
 } from '../../../lib/cv-storage';
-import { getCvData, getDirectusAssetOriginUrl, type SupportedLang } from '../../../lib/directus-content';
-
-function getPhotoUrl(photo: unknown) {
-  const photoUrl = getDirectusAssetOriginUrl(photo)
-  if (!photoUrl) {
-    return '';
-  }
-
-  return `${photoUrl}?width=400&height=400&fit=cover`;
-}
-
-async function generatePdfBuffer(data: Record<string, any>, lang: string): Promise<Buffer> {
-  const fotoUrl = getPhotoUrl(data.foto);
-  const html = cvTemplate(data, fotoUrl, lang);
-
-  const browser = await chromium.launch();
-
-  try {
-    const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: 'networkidle' });
-
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: { top: '10mm', bottom: '10mm', left: '8mm', right: '8mm' },
-    });
-
-    return pdfBuffer as Buffer;
-  } finally {
-    await browser.close();
-  }
-}
+import { getCvData, type SupportedLang } from '../../../lib/directus-content';
+import { generatePdfBuffer } from '../../../lib/pdf';
 
 function buildPdfResponse(file: Buffer, filename: string) {
   return new Response(file, {
@@ -48,7 +16,7 @@ function buildPdfResponse(file: Buffer, filename: string) {
     headers: {
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="${filename}"`,
-      'Cache-Control': 'no-store',
+      'Cache-Control': 'public, max-age=300, must-revalidate',
     },
   });
 }

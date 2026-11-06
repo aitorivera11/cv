@@ -177,7 +177,7 @@ export type HabilitatItem = {
   categoria: string
 }
 
-export async function getSiteSettings(lang: SupportedLang): Promise<SiteSettings | null> {
+async function getSiteSettingsUncached(lang: SupportedLang): Promise<SiteSettings | null> {
   const raw = await directus.request(
     readSingleton('site_settings', {
       fields: [
@@ -217,7 +217,7 @@ export async function getSiteSettings(lang: SupportedLang): Promise<SiteSettings
   }
 }
 
-export async function getBlogSettings(lang: SupportedLang): Promise<BlogSettings | null> {
+async function getBlogSettingsUncached(lang: SupportedLang): Promise<BlogSettings | null> {
   const raw = await directus.request(
     readSingleton('blog_settings', {
       fields: [
@@ -274,7 +274,7 @@ function normalizePost(item: unknown, lang: SupportedLang): PostSummary | null {
   }
 }
 
-export async function getPosts(lang: SupportedLang): Promise<PostSummary[]> {
+async function getPostsUncached(lang: SupportedLang): Promise<PostSummary[]> {
   const items = await directus.request(
     readItems('post', {
       fields: [
@@ -313,7 +313,7 @@ export async function getPosts(lang: SupportedLang): Promise<PostSummary[]> {
   return items.map((item) => normalizePost(item, lang)).filter((post): post is PostSummary => Boolean(post))
 }
 
-export async function getPostBySlug(slug: string, lang: SupportedLang): Promise<PostDetail | null> {
+async function getPostBySlugUncached(slug: string, lang: SupportedLang): Promise<PostDetail | null> {
   const items = await directus.request(
     readItems('post', {
       filter: { slug: { _eq: slug } },
@@ -390,7 +390,7 @@ export async function getPostBySlug(slug: string, lang: SupportedLang): Promise<
   }
 }
 
-export async function getCategories(lang: SupportedLang): Promise<Category[]> {
+async function getCategoriesUncached(lang: SupportedLang): Promise<Category[]> {
   const [categories, posts] = await Promise.all([
     directus.request(
       readItems('category', {
@@ -450,7 +450,7 @@ export async function getCategories(lang: SupportedLang): Promise<Category[]> {
     .filter((item): item is Category => Boolean(item))
 }
 
-export async function getTags(lang: SupportedLang): Promise<Tag[]> {
+async function getTagsUncached(lang: SupportedLang): Promise<Tag[]> {
   const items = await directus.request(
     readItems('tag', {
       fields: ['slug', 'title_ca', 'title_es', 'title_en'],
@@ -473,7 +473,7 @@ export async function getTags(lang: SupportedLang): Promise<Tag[]> {
     .filter((item): item is Tag => Boolean(item))
 }
 
-export async function getExperiencia(lang: SupportedLang): Promise<ExperienciaItem[]> {
+async function getExperienciaUncached(lang: SupportedLang): Promise<ExperienciaItem[]> {
   const items = await directus.request(
     readItems('experiencia', {
       fields: [
@@ -511,7 +511,7 @@ export async function getExperiencia(lang: SupportedLang): Promise<ExperienciaIt
     .filter((item): item is ExperienciaItem => Boolean(item))
 }
 
-export async function getFormacio(lang: SupportedLang): Promise<FormacioItem[]> {
+async function getFormacioUncached(lang: SupportedLang): Promise<FormacioItem[]> {
   const items = await directus.request(
     readItems('formacio', {
       fields: ['centre', 'dates', 'ordre', 'titulacio_ca', 'titulacio_es', 'titulacio_en'],
@@ -534,7 +534,7 @@ export async function getFormacio(lang: SupportedLang): Promise<FormacioItem[]> 
     .filter((item): item is FormacioItem => Boolean(item))
 }
 
-export async function getHabilitats(lang: SupportedLang): Promise<{ tecniques: HabilitatItem[]; clau: HabilitatItem[] }> {
+async function getHabilitatsUncached(lang: SupportedLang): Promise<{ tecniques: HabilitatItem[]; clau: HabilitatItem[] }> {
   const items = await directus.request(
     readItems('habilitat', {
       fields: ['categoria', 'nom_ca', 'nom_es', 'nom_en'],
@@ -562,7 +562,7 @@ export async function getHabilitats(lang: SupportedLang): Promise<{ tecniques: H
   }
 }
 
-export async function getCvData(lang: SupportedLang) {
+async function getCvDataUncached(lang: SupportedLang) {
   const [settings, experiencies, formacions, habilitats] = await Promise.all([
     getSiteSettings(lang),
     getExperiencia(lang),
@@ -590,3 +590,34 @@ export async function getCvData(lang: SupportedLang) {
     habilitatsClau: habilitats.clau,
   }
 }
+
+// --- Caché en memòria amb TTL (evita cridar Directus a cada petició SSR) ---
+const CACHE_TTL_MS = Number(process.env.DIRECTUS_CACHE_TTL_MS ?? import.meta.env.DIRECTUS_CACHE_TTL_MS ?? 60_000)
+const cache = new Map<string, { expires: number; value: Promise<unknown> }>()
+
+function cached<A extends unknown[], R>(name: string, fn: (...args: A) => Promise<R>) {
+  return (...args: A): Promise<R> => {
+    if (CACHE_TTL_MS <= 0) return fn(...args)
+
+    const key = `${name}:${JSON.stringify(args)}`
+    const hit = cache.get(key)
+    if (hit && hit.expires > Date.now()) return hit.value as Promise<R>
+
+    const value = fn(...args)
+    cache.set(key, { expires: Date.now() + CACHE_TTL_MS, value })
+    // No cachegem errors
+    value.catch(() => cache.delete(key))
+    return value
+  }
+}
+
+export const getSiteSettings = cached('getSiteSettings', getSiteSettingsUncached)
+export const getBlogSettings = cached('getBlogSettings', getBlogSettingsUncached)
+export const getPosts = cached('getPosts', getPostsUncached)
+export const getPostBySlug = cached('getPostBySlug', getPostBySlugUncached)
+export const getCategories = cached('getCategories', getCategoriesUncached)
+export const getTags = cached('getTags', getTagsUncached)
+export const getExperiencia = cached('getExperiencia', getExperienciaUncached)
+export const getFormacio = cached('getFormacio', getFormacioUncached)
+export const getHabilitats = cached('getHabilitats', getHabilitatsUncached)
+export const getCvData = cached('getCvData', getCvDataUncached)
