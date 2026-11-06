@@ -5,7 +5,8 @@ FROM node:24-bookworm-slim AS builder
 WORKDIR /app
 # Limita la memòria de Node perquè el build no ofegui servidors petits
 ENV NODE_OPTIONS=--max-old-space-size=1536 \
-    ASTRO_TELEMETRY_DISABLED=1
+    ASTRO_TELEMETRY_DISABLED=1 \
+    NPM_CONFIG_UPDATE_NOTIFIER=false
 COPY package*.json ./
 RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-fund
 COPY . .

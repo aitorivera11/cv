@@ -59,7 +59,7 @@ export const GET: APIRoute = async ({ params, request }) => {
     return buildPdfResponse(cachedCv.file, cachedCv.filename, etag);
   }
 
-  const pdfBuffer = await generatePdfBuffer(html, lang);
+  const pdfBuffer = await generatePdfBuffer(data, lang);
   const savedCv = await saveCv(lang, pdfBuffer);
   await saveCvMeta(lang, { sourceHash });
 
