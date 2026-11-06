@@ -23,7 +23,7 @@ export default function ScrollAwareNav({ t }) {
   }, []);
 
   const linkClass = id =>
-    `transition-colors hover:underline ${
+    `whitespace-nowrap transition-colors hover:underline ${
       activeSection === id
         ? 'text-indigo-600 dark:text-indigo-400 font-semibold'
         : 'text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400'
@@ -34,7 +34,7 @@ export default function ScrollAwareNav({ t }) {
       className="mt-10 hidden lg:flex justify-center gap-4 text-sm font-medium"
       aria-label={t['nav.mainSections'] || 'Seccions principals'}
     >
-      <ul className="flex gap-4">
+      <ul className="flex flex-wrap justify-center gap-x-4 gap-y-1">
         <li>
           <a href="#sobre-mi" className={linkClass('sobre-mi')} aria-current={activeSection === 'sobre-mi' ? 'page' : undefined}>
             {t['nav.about']}
@@ -60,7 +60,11 @@ export default function ScrollAwareNav({ t }) {
             {t['nav.languages']}
           </a>
         </li>
-
+        <li>
+          <a href="#contacte" className={linkClass('contacte')} aria-current={activeSection === 'contacte' ? 'page' : undefined}>
+            {t['nav.contact']}
+          </a>
+        </li>
       </ul>
     </nav>
   );
