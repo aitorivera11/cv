@@ -117,13 +117,13 @@ const langItems = [
   <div class="relative mt-8 flex flex-col items-center gap-6">
     <!-- Social icons -->
     <div class="flex items-center gap-1" role="group" aria-label={t['a11y.social']}>
-      <!-- Download CV — primary CTA -->
+      <!-- Download CV — secondary CTA (el principal es «Contacta\'m») -->
       <a
         href={cvDownloadUrl} data-track="cv-download" data-track-source="sidebar"
         target="_blank"
         rel="noopener noreferrer"
         aria-label={t['button.downloadCV']}
-        class="btn-cta mr-2"
+        class="btn-secondary mr-2"
       >
         <span aria-hidden="true">
           <ArrowDownTrayIcon className="w-4 h-4" />
