@@ -1,8 +1,8 @@
 // src/components/ExperienciaTimeline.jsx
 import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { MotionConfig, motion, useInView } from 'framer-motion';
 
-export default function ExperienciaTimeline({ experiencies, heading }) {
+function ExperienciaTimelineInner({ experiencies, heading }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.05 });
 
@@ -88,5 +88,14 @@ export default function ExperienciaTimeline({ experiencies, heading }) {
         </ul>
       </div>
     </section>
+  );
+}
+
+// Respeta prefers-reduced-motion también en las animaciones de JS (framer-motion).
+export default function ExperienciaTimeline(props) {
+  return (
+    <MotionConfig reducedMotion="user">
+      <ExperienciaTimelineInner {...props} />
+    </MotionConfig>
   );
 }

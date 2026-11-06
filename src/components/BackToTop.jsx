@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { MotionConfig, motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import { RocketLaunchIcon } from "@heroicons/react/24/solid";
 
@@ -8,7 +8,10 @@ const LABELS = {
   en: 'Back to top',
 };
 
-export default function BackToTopRocketProgress() {
+const scrollBehavior = () =>
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+
+function BackToTopRocketProgressInner() {
   const [show, setShow] = useState(false);
   const mainRef = useRef(null);
   const lang = typeof document !== 'undefined' ? (document.documentElement.lang || 'ca') : 'ca';
@@ -39,9 +42,9 @@ export default function BackToTopRocketProgress() {
   const handleClick = () => {
     const mainEl = document.getElementById('main-content');
     if (mainEl && mainEl.scrollTop > 0) {
-      mainEl.scrollTo({ top: 0, behavior: 'smooth' });
+      mainEl.scrollTo({ top: 0, behavior: scrollBehavior() });
     } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: scrollBehavior() });
     }
   };
 
@@ -85,5 +88,14 @@ export default function BackToTopRocketProgress() {
         </motion.button>
       )}
     </AnimatePresence>
+  );
+}
+
+// Respeta prefers-reduced-motion también en las animaciones de JS (framer-motion).
+export default function BackToTopRocketProgress(props) {
+  return (
+    <MotionConfig reducedMotion="user">
+      <BackToTopRocketProgressInner {...props} />
+    </MotionConfig>
   );
 }

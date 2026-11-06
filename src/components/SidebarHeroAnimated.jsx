@@ -1,5 +1,5 @@
 // src/components/SidebarHeroAnimated.jsx
-import { motion } from 'framer-motion';
+import { MotionConfig, motion } from 'framer-motion';
 import ContactModal from './ContactModal.jsx';
 import ScrollAwareNav from './ScrollAwareNav.jsx';
 
@@ -37,7 +37,7 @@ const item = {
   },
 };
 
-export default function SidebarHeroAnimated({ fotoUrl, nom, titol, t }) {
+function SidebarHeroAnimatedInner({ fotoUrl, nom, titol, t }) {
   return (
     <motion.div
       className="relative flex-grow flex flex-col justify-center items-center text-center"
@@ -81,5 +81,14 @@ export default function SidebarHeroAnimated({ fotoUrl, nom, titol, t }) {
         <ScrollAwareNav t={t} />
       </motion.div>
     </motion.div>
+  );
+}
+
+// Respeta prefers-reduced-motion también en las animaciones de JS (framer-motion).
+export default function SidebarHeroAnimated(props) {
+  return (
+    <MotionConfig reducedMotion="user">
+      <SidebarHeroAnimatedInner {...props} />
+    </MotionConfig>
   );
 }
