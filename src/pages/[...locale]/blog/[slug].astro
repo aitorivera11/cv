@@ -4,6 +4,7 @@ import BlogSidebar from '../../../components/blog/BlogSidebar.astro'
 import RelatedPosts from '../../../components/blog/RelatedPosts.astro'
 import { normalizeLocale, useTranslations } from '../../../i18n/utils'
 import { isValidLocaleParam } from '../../../lib/locale'
+import { ogImageUrl, widthImageUrl } from '../../../lib/image'
 import { serviceUnavailable } from '../../../lib/http'
 import CopyLinkButton from '../../../components/CopyLinkButton.astro';
 import { 
@@ -65,7 +66,7 @@ function estimateReadTime(html: string): number {
 if (!post) Astro.response.status = 404
 
 const readTime = post?.content ? estimateReadTime(post.content) : null
-const seoImage = post?.coverImageUrl || settings?.defaultCoverUrl || `${siteUrl}/og-image.jpg`
+const seoImage = ogImageUrl(post?.coverImageUrl || settings?.defaultCoverUrl || '', siteUrl) || `${siteUrl}/og-image.jpg`
 const canonicalUrl = `${siteUrl}/${lang === 'ca' ? '' : `${lang}/`}blog/${slug}`
 
 const hreflangUrls = [
@@ -125,7 +126,7 @@ const articleSchema = post ? {
           {post.coverImageUrl && (
             <div class="mb-8 -mx-6 lg:-mx-16 rounded-2xl overflow-hidden">
               <img
-                src={post.coverImageUrl}
+                src={widthImageUrl(post.coverImageUrl, 1200)}
                 alt={post.title}
                 class="w-full h-48 sm:h-64 md:h-80 object-cover"
                 loading="eager"

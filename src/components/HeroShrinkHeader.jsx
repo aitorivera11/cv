@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { sizedImageUrl } from "../lib/image";
-import { MotionConfig, motion, AnimatePresence } from "framer-motion";
+import { LazyMotion, domAnimation, MotionConfig, m, AnimatePresence } from "framer-motion";
 
 function HeroShrinkHeaderInner({ fotoUrl, nom, titol, t = {} }) {
   const [shrink, setShrink] = useState(false);
@@ -65,7 +65,7 @@ function HeroShrinkHeaderInner({ fotoUrl, nom, titol, t = {} }) {
       <div className="relative overflow-hidden h-5 w-28 text-right flex-shrink-0">
         <AnimatePresence mode="sync">
           {shrink && activeSection && (
-            <motion.span
+            <m.span
               key={activeSection}
               initial={{ y: "100%", opacity: 0 }}
               animate={{ y: "0%", opacity: 1 }}
@@ -74,7 +74,7 @@ function HeroShrinkHeaderInner({ fotoUrl, nom, titol, t = {} }) {
               className="absolute right-0 text-xs font-semibold text-indigo-600 dark:text-indigo-400 whitespace-nowrap"
             >
               {formatSectionName(activeSection, t)}
-            </motion.span>
+            </m.span>
           )}
         </AnimatePresence>
       </div>
@@ -93,11 +93,14 @@ function formatSectionName(sectionId, t) {
   return mapping[sectionId] || sectionId;
 }
 
-// Respeta prefers-reduced-motion también en las animaciones de JS (framer-motion).
+// LazyMotion carga solo las animaciones básicas (mucho menos JS); `m` sustituye a `motion`.
+// MotionConfig respeta prefers-reduced-motion también en las animaciones de JS.
 export default function HeroShrinkHeader(props) {
   return (
-    <MotionConfig reducedMotion="user">
-      <HeroShrinkHeaderInner {...props} />
-    </MotionConfig>
+    <LazyMotion features={domAnimation} strict>
+      <MotionConfig reducedMotion="user">
+        <HeroShrinkHeaderInner {...props} />
+      </MotionConfig>
+    </LazyMotion>
   );
 }

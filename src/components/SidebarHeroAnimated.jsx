@@ -1,6 +1,6 @@
 // src/components/SidebarHeroAnimated.jsx
 import { sizedImageUrl } from "../lib/image";
-import { MotionConfig, motion } from 'framer-motion';
+import { LazyMotion, domAnimation, MotionConfig, m } from 'framer-motion';
 import ContactModal from './ContactModal.jsx';
 import ScrollAwareNav from './ScrollAwareNav.jsx';
 
@@ -40,14 +40,14 @@ const item = {
 
 function SidebarHeroAnimatedInner({ fotoUrl, nom, titol, t }) {
   return (
-    <motion.div
+    <m.div
       className="relative flex-grow flex flex-col justify-center items-center text-center"
       variants={container}
       initial="hidden"
       animate="visible"
     >
       {fotoUrl && (
-        <motion.div className="mb-6" variants={photoVariants}>
+        <m.div className="mb-6" variants={photoVariants}>
           <img
             src={sizedImageUrl(fotoUrl, 96)}
             width={96}
@@ -56,42 +56,45 @@ function SidebarHeroAnimatedInner({ fotoUrl, nom, titol, t }) {
             className="h-24 w-24 rounded-full object-cover pulse-ring-anim"
             fetchPriority="high"
           />
-        </motion.div>
+        </m.div>
       )}
 
-      <motion.h1
+      <m.h1
         className="text-4xl lg:text-[2.6rem] font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight"
         variants={item}
       >
         {nom}
-      </motion.h1>
+      </m.h1>
 
-      <motion.p
+      <m.p
         className="mt-2 text-base font-semibold gradient-text tracking-wide"
         variants={item}
       >
         {titol}
-      </motion.p>
+      </m.p>
 
-      <motion.div
+      <m.div
         className="mt-8 w-full flex justify-center"
         variants={item}
       >
         <ContactModal t={t} />
-      </motion.div>
+      </m.div>
 
-      <motion.div variants={item}>
+      <m.div variants={item}>
         <ScrollAwareNav t={t} />
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 }
 
-// Respeta prefers-reduced-motion también en las animaciones de JS (framer-motion).
+// LazyMotion carga solo las animaciones básicas (mucho menos JS); `m` sustituye a `motion`.
+// MotionConfig respeta prefers-reduced-motion también en las animaciones de JS.
 export default function SidebarHeroAnimated(props) {
   return (
-    <MotionConfig reducedMotion="user">
-      <SidebarHeroAnimatedInner {...props} />
-    </MotionConfig>
+    <LazyMotion features={domAnimation} strict>
+      <MotionConfig reducedMotion="user">
+        <SidebarHeroAnimatedInner {...props} />
+      </MotionConfig>
+    </LazyMotion>
   );
 }

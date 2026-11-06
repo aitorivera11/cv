@@ -1,6 +1,6 @@
 // src/components/ExperienciaTimeline.jsx
 import { useRef } from 'react';
-import { MotionConfig, motion, useInView } from 'framer-motion';
+import { LazyMotion, domAnimation, MotionConfig, m, useInView } from 'framer-motion';
 
 function ExperienciaTimelineInner({ experiencies, heading, techLabel = 'Tecnologies' }) {
   const ref = useRef(null);
@@ -12,7 +12,7 @@ function ExperienciaTimelineInner({ experiencies, heading, techLabel = 'Tecnolog
 
       <div ref={ref} className="relative">
         {/* Animated vertical gradient line */}
-        <motion.div
+        <m.div
           aria-hidden="true"
           className="absolute left-[6px] top-2 bottom-2 w-0.5 rounded-full origin-top pointer-events-none"
           style={{ background: 'linear-gradient(to bottom, #6366f1, #8b5cf6)' }}
@@ -23,7 +23,7 @@ function ExperienciaTimelineInner({ experiencies, heading, techLabel = 'Tecnolog
 
         <ul className="space-y-3">
           {experiencies?.map((feina, i) => (
-            <motion.li
+            <m.li
               key={i}
               className="relative pl-7"
               initial={{ opacity: 0, x: 16 }}
@@ -35,7 +35,7 @@ function ExperienciaTimelineInner({ experiencies, heading, techLabel = 'Tecnolog
               }}
             >
               {/* Animated dot — border-circle over the gradient line */}
-              <motion.span
+              <m.span
                 aria-hidden="true"
                 className="absolute left-0 top-[22px] block w-[14px] h-[14px] rounded-full
                   border-2 border-indigo-500 dark:border-indigo-400
@@ -83,7 +83,7 @@ function ExperienciaTimelineInner({ experiencies, heading, techLabel = 'Tecnolog
                   </div>
                 </div>
               </div>
-            </motion.li>
+            </m.li>
           ))}
         </ul>
       </div>
@@ -91,11 +91,14 @@ function ExperienciaTimelineInner({ experiencies, heading, techLabel = 'Tecnolog
   );
 }
 
-// Respeta prefers-reduced-motion también en las animaciones de JS (framer-motion).
+// LazyMotion carga solo las animaciones básicas (mucho menos JS); `m` sustituye a `motion`.
+// MotionConfig respeta prefers-reduced-motion también en las animaciones de JS.
 export default function ExperienciaTimeline(props) {
   return (
-    <MotionConfig reducedMotion="user">
-      <ExperienciaTimelineInner {...props} />
-    </MotionConfig>
+    <LazyMotion features={domAnimation} strict>
+      <MotionConfig reducedMotion="user">
+        <ExperienciaTimelineInner {...props} />
+      </MotionConfig>
+    </LazyMotion>
   );
 }
