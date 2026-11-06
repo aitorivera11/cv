@@ -73,11 +73,23 @@ function SidebarHeroAnimatedInner({ fotoUrl, nom, titol, t }) {
         {titol}
       </m.p>
 
+      {t?.['hero.tagline'] && (
+        <m.p
+          className="mt-4 max-w-xs text-sm leading-relaxed text-slate-600 dark:text-slate-400"
+          variants={item}
+        >
+          {t['hero.tagline']}
+        </m.p>
+      )}
+
       <m.div
         className="mt-8 w-full flex justify-center"
         variants={item}
       >
-        <ContactModal t={t} />
+        <ContactModal
+          t={t}
+          triggerClassName="btn-cta group cursor-pointer"
+        />
       </m.div>
 
       <m.div variants={item}>

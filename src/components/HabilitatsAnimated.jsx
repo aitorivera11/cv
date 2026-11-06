@@ -3,6 +3,9 @@ import { useRef } from 'react';
 import { LazyMotion, domAnimation, MotionConfig, m, useInView } from 'framer-motion';
 import { CommandLineIcon, PuzzlePieceIcon } from '@heroicons/react/24/solid';
 
+// Las primeras habilidades técnicas (orden de Directus) se muestran destacadas.
+const MAIN_SKILLS = 4;
+
 const listContainer = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.045 } },
@@ -55,7 +58,11 @@ function HabilitatsAnimatedInner({ tecniques, clau, t }) {
             animate={isInView ? 'visible' : 'hidden'}
           >
             {tecniques?.map((hab, i) => (
-              <m.li key={i} className="skill-pill-tech" variants={pillVariant}>
+              <m.li
+                key={i}
+                className={i < MAIN_SKILLS ? 'skill-pill-tech skill-pill-main' : 'skill-pill-tech'}
+                variants={pillVariant}
+              >
                 {hab.nom}
               </m.li>
             ))}
