@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Build (única instal·lació de dependències: la de producció es reutilitza al runtime)
-FROM node:24-bookworm-slim AS builder
+FROM node:25-bookworm-slim AS builder
 WORKDIR /app
 # Limita la memòria de Node perquè el build no ofegui servidors petits
 ENV NODE_OPTIONS=--max-old-space-size=1536 \
