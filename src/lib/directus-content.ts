@@ -119,8 +119,6 @@ export type SiteSettings = {
   descripcioSobreMi: string
   foto: unknown
   fotoUrl: string
-  cvPdf: unknown
-  cvPdfUrl: string
   linkedinUrl: string
   githubUrl: string
   email: string
@@ -183,7 +181,6 @@ async function getSiteSettingsUncached(lang: SupportedLang): Promise<SiteSetting
       fields: [
         'nom',
         'foto',
-        'cv_pdf',
         'linkedin_url',
         'github_url',
         'email',
@@ -209,8 +206,6 @@ async function getSiteSettingsUncached(lang: SupportedLang): Promise<SiteSetting
     descripcioSobreMi: getLocalizedField(raw, 'descripcio_sobre_mi', lang),
     foto: raw.foto,
     fotoUrl: getDirectusAssetUrl(raw.foto),
-    cvPdf: raw.cv_pdf,
-    cvPdfUrl: getDirectusAssetUrl(raw.cv_pdf),
     linkedinUrl: typeof raw.linkedin_url === 'string' ? raw.linkedin_url : '',
     githubUrl: typeof raw.github_url === 'string' ? raw.github_url : '',
     email: typeof raw.email === 'string' ? raw.email : '',
@@ -573,11 +568,9 @@ async function getCvDataUncached(lang: SupportedLang) {
   if (!settings) return null
 
   return {
-    _updatedAt: new Date().toISOString(),
     nom: settings.nom,
     foto: settings.foto,
     fotoUrl: settings.fotoUrl,
-    cvPdf: settings.cvPdfUrl,
     linkedinUrl: settings.linkedinUrl,
     githubUrl: settings.githubUrl,
     email: settings.email,

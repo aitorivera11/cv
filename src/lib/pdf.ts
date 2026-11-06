@@ -7,8 +7,11 @@ function getPhotoUrl(photo: unknown) {
   return photoUrl ? `${photoUrl}?width=400&height=400&fit=cover` : '';
 }
 
-async function renderPdf(data: Record<string, any>, lang: string): Promise<Buffer> {
-  const html = cvTemplate(data, getPhotoUrl(data.foto), lang);
+export function renderCvHtml(data: Record<string, any>, lang: string): string {
+  return cvTemplate(data, getPhotoUrl(data.foto), lang);
+}
+
+async function renderPdf(html: string): Promise<Buffer> {
   const browser = await chromium.launch();
 
   try {
@@ -28,11 +31,11 @@ async function renderPdf(data: Record<string, any>, lang: string): Promise<Buffe
 // Evita llançar diversos Chromium alhora per al mateix idioma.
 const inFlight = new Map<string, Promise<Buffer>>();
 
-export function generatePdfBuffer(data: Record<string, any>, lang: string): Promise<Buffer> {
+export function generatePdfBuffer(html: string, lang: string): Promise<Buffer> {
   const existing = inFlight.get(lang);
   if (existing) return existing;
 
-  const promise = renderPdf(data, lang).finally(() => inFlight.delete(lang));
+  const promise = renderPdf(html).finally(() => inFlight.delete(lang));
   inFlight.set(lang, promise);
   return promise;
 }
