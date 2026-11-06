@@ -4,6 +4,7 @@ import BlogSidebar from '../../../components/blog/BlogSidebar.astro'
 import PostCard from '../../../components/blog/PostCard.astro'
 import { normalizeLocale, useTranslations } from '../../../i18n/utils'
 import { isValidLocaleParam } from '../../../lib/locale'
+import { serviceUnavailable } from '../../../lib/http'
 import { getBlogSettings, getCategories, getPosts, getSiteSettings, getTags } from '../../../lib/directus-content'
 
 if (!isValidLocaleParam(Astro.params.locale)) {
@@ -13,13 +14,18 @@ if (!isValidLocaleParam(Astro.params.locale)) {
 const lang = normalizeLocale(Astro.params.locale)
 const t = useTranslations(lang)
 
-const [settings, posts, sidebarSettings, categories, tags] = await Promise.all([
+const loaded = await Promise.all([
   getBlogSettings(lang),
   getPosts(lang),
   getSiteSettings(lang),
   getCategories(lang),
   getTags(lang),
-])
+]).catch((error) => {
+  console.error(error)
+  return null
+})
+if (!loaded) return serviceUnavailable()
+const [settings, posts, sidebarSettings, categories, tags] = loaded
 
 const recentPosts = posts.slice(0, 5)
 

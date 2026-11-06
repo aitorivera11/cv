@@ -584,23 +584,43 @@ async function getCvDataUncached(lang: SupportedLang) {
   }
 }
 
-// --- Caché en memòria amb TTL (evita cridar Directus a cada petició SSR) ---
+// --- Caché en memòria amb TTL i "stale-if-error" ---
+// Si Directus falla, es serveix l'últim valor bo en lloc de trencar la pàgina.
 const CACHE_TTL_MS = Number(process.env.DIRECTUS_CACHE_TTL_MS ?? import.meta.env.DIRECTUS_CACHE_TTL_MS ?? 60_000)
-const cache = new Map<string, { expires: number; value: Promise<unknown> }>()
+const ERROR_RETRY_MS = 10_000
+
+type CacheEntry = { expires: number; hasValue: boolean; value?: unknown; pending?: Promise<unknown> }
+const cache = new Map<string, CacheEntry>()
 
 function cached<A extends unknown[], R>(name: string, fn: (...args: A) => Promise<R>) {
   return (...args: A): Promise<R> => {
     if (CACHE_TTL_MS <= 0) return fn(...args)
 
     const key = `${name}:${JSON.stringify(args)}`
-    const hit = cache.get(key)
-    if (hit && hit.expires > Date.now()) return hit.value as Promise<R>
+    const entry = cache.get(key)
 
-    const value = fn(...args)
-    cache.set(key, { expires: Date.now() + CACHE_TTL_MS, value })
-    // No cachegem errors
-    value.catch(() => cache.delete(key))
-    return value
+    if (entry?.hasValue && entry.expires > Date.now()) return Promise.resolve(entry.value as R)
+    if (entry?.pending) return entry.pending as Promise<R>
+
+    const pending = fn(...args).then(
+      (value) => {
+        cache.set(key, { expires: Date.now() + CACHE_TTL_MS, hasValue: true, value })
+        return value
+      },
+      (error) => {
+        if (entry?.hasValue) {
+          console.warn(`[directus] ${name} ha fallat, es serveix l'últim valor bo`, error)
+          cache.set(key, { expires: Date.now() + ERROR_RETRY_MS, hasValue: true, value: entry.value })
+          return entry.value as R
+        }
+        cache.delete(key)
+        throw error
+      },
+    )
+
+    // Mentre es carrega, conservem el valor antic per si falla
+    cache.set(key, { ...entry, expires: entry?.expires ?? 0, hasValue: entry?.hasValue ?? false, pending })
+    return pending
   }
 }
 
