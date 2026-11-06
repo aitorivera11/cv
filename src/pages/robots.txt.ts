@@ -5,10 +5,6 @@ User-agent: *
 Allow: /
 
 Disallow: /api/
-Disallow: /api/cv/
-Disallow: /api/generate-upload-cv
-Disallow: /api/upload-cv
-Disallow: /api/directus-assets/
 
 Sitemap: ${sitemapURL.href}
 `;

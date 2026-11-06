@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { createHash } from 'node:crypto';
 import {
   getCvFilename,
   isSupportedLang,
@@ -8,7 +9,7 @@ import {
   saveCvMeta,
 } from '../../../lib/cv-storage';
 import { getCvData, type SupportedLang } from '../../../lib/directus-content';
-import { generatePdfBuffer } from '../../../lib/pdf';
+import { generatePdfBuffer, renderCvHtml } from '../../../lib/pdf';
 
 function buildPdfResponse(file: Buffer, filename: string) {
   return new Response(file, {
@@ -40,17 +41,19 @@ export const GET: APIRoute = async ({ params }) => {
     });
   }
 
-  const sourceUpdatedAt = data._updatedAt ?? null;
+  // El PDF només es regenera si canvia el contingut (o la plantilla): la clau és el hash del HTML.
+  const html = renderCvHtml(data, lang);
+  const sourceHash = createHash('sha256').update(html).digest('hex');
   const cachedCv = await readCv(lang);
   const cachedMeta = await readCvMeta(lang);
 
-  if (cachedCv && cachedMeta?.sourceUpdatedAt === sourceUpdatedAt) {
+  if (cachedCv && cachedMeta?.sourceHash === sourceHash) {
     return buildPdfResponse(cachedCv.file, cachedCv.filename);
   }
 
-  const pdfBuffer = await generatePdfBuffer(data, lang);
+  const pdfBuffer = await generatePdfBuffer(html, lang);
   const savedCv = await saveCv(lang, pdfBuffer);
-  await saveCvMeta(lang, { sourceUpdatedAt });
+  await saveCvMeta(lang, { sourceHash });
 
   return buildPdfResponse(pdfBuffer, savedCv.filename || getCvFilename(lang));
 };

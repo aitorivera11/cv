@@ -18,13 +18,12 @@ Copia `.env.example` a `.env` para trabajar en local.
 |---|---|---|---|---|
 | `DIRECTUS_URL` | Sí | ✅ | ✅ | URL base de Directus, sin barra final. |
 | `DIRECTUS_TOKEN` | Sí | ✅ | ✅ | Token estático de solo lectura. |
-| `CV_ADMIN_TOKEN` | No | ❌ | ✅ | Protege los endpoints `POST`. Si no está definida, quedan desactivados (503). |
 | `CV_STORAGE_DIR` | No | ❌ | ✅ | Carpeta donde se guardan los PDF. Por defecto `./storage/cv` (en Docker, `/app/storage/cv`). |
 | `DIRECTUS_CACHE_TTL_MS` | No | ❌ | ✅ | TTL de la caché en memoria de Directus. Por defecto `60000`; con `0` se desactiva. |
 | `PUBLIC_EMAILJS_SERVICE_ID`, `PUBLIC_EMAILJS_TEMPLATE_ID`, `PUBLIC_EMAILJS_PUBLIC_KEY` | Sí (formulario) | ✅ | ✅ | Configuración de EmailJS para el formulario de contacto. |
 | `PUBLIC_ANALYTICS_PROVIDER`, `PUBLIC_ANALYTICS_SRC`, `PUBLIC_ANALYTICS_WEBSITE_ID`, `PUBLIC_ANALYTICS_DOMAIN` | No | ✅ | ✅ | Analítica opcional (Umami, Plausible o `custom`). |
 
-> Las variables `PUBLIC_*` y `DIRECTUS_*` se leen durante el build (Astro prerenderiza el blog y las páginas `/es` y `/en`), así que deben estar disponibles en tiempo de build. `CV_ADMIN_TOKEN` solo se necesita en ejecución: no la marques como *Buildtime* en Coolify.
+> Las variables `PUBLIC_*` y `DIRECTUS_*` se leen durante el build (Astro prerenderiza el blog y las páginas `/es` y `/en`), así que deben estar disponibles en tiempo de build.
 
 ### Analítica (opcional)
 
@@ -53,22 +52,12 @@ node docker-entrypoint.mjs   # arranca el build (usa HOST y PORT)
 
 ## API
 
-Los endpoints `POST` exigen la cabecera `Authorization: Bearer $CV_ADMIN_TOKEN`.
-
 | Endpoint | Descripción |
 |---|---|
-| `GET /api/cv/:lang` | Descarga el CV en PDF (`ca`, `es`, `en`). Si el PDF guardado está desactualizado respecto a Directus, se regenera. Las peticiones simultáneas de un mismo idioma comparten un único render. |
-| `POST /api/generate-upload-cv` | Genera los tres PDF desde Directus y los guarda en disco. |
-| `POST /api/upload-cv` | Guarda un PDF enviado como `{ "lang": "es", "content": "<base64>" }`. Valida idioma, cabecera `%PDF-` y un máximo de 5 MB. |
+| `GET /api/cv/:lang` | Genera y descarga el CV en PDF (`ca`, `es`, `en`) a partir de Directus. El PDF se guarda en `CV_STORAGE_DIR` y solo se regenera cuando cambia el contenido o la plantilla (la clave es el hash del HTML). Las peticiones simultáneas de un mismo idioma comparten un único render. |
 | `GET /api/directus-assets/:path` | Proxy de imágenes de Directus (solo `assets/…`, solo parámetros de transformación conocidos). |
 
-```bash
-curl -X POST -H "Authorization: Bearer $CV_ADMIN_TOKEN" https://aitorivera.com/api/generate-upload-cv
-```
-
-También existe el workflow manual **Regenerate CVs** (`.github/workflows/generate-cv.yml`), que hace esa misma llamada y necesita el secreto `CV_ADMIN_TOKEN` en GitHub. Si el dominio está detrás de Cloudflare, comprueba que ninguna regla de WAF o de bots bloquee ese `POST`.
-
-El script `npm run cv` genera los PDF en local (`cv-aitor-*.pdf`, ignorados por git) usando las variables `DIRECTUS_URL` y `DIRECTUS_TOKEN`.
+No hace falta guardar los PDF en el repositorio ni generarlos a mano: el botón de descarga llama a `GET /api/cv/:lang`.
 
 ## Despliegue (Coolify / Docker)
 
@@ -96,9 +85,9 @@ Puntos a tener en cuenta:
 src/
   components/   Islas React y componentes Astro
   layouts/      Layout principal (SEO, tema, CSP)
-  lib/          Directus, PDF, almacenamiento de CV, auth y CSP
+  lib/          Directus, PDF, almacenamiento de CV y CSP
   pages/        Rutas (ca sin prefijo, [locale]/ para es/en) y API
   i18n/         Cadenas de interfaz
-pdf/            Plantilla del CV y script para generarlo en local
+pdf/            Plantilla HTML del CV
 docker-entrypoint.mjs
 ```

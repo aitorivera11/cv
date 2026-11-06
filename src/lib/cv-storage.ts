@@ -6,7 +6,7 @@ const STORAGE_DIR = process.env.CV_STORAGE_DIR || path.join(process.cwd(), 'stor
 const ALLOWED_LANGS = new Set(['ca', 'es', 'en']);
 
 type CvMeta = {
-  sourceUpdatedAt: string | null;
+  sourceHash: string | null;
 };
 
 export function isSupportedLang(lang: string) {
@@ -15,10 +15,6 @@ export function isSupportedLang(lang: string) {
 
 export function getCvFilename(lang: string) {
   return `cv-aitor-${lang}.pdf`;
-}
-
-export function getCvPublicUrl(lang: string) {
-  return `/api/cv/${lang}`;
 }
 
 function getCvFilePath(lang: string) {
@@ -41,7 +37,6 @@ export async function saveCv(lang: string, pdfBuffer: Buffer) {
   return {
     filename: getCvFilename(lang),
     filePath,
-    url: getCvPublicUrl(lang),
   };
 }
 
@@ -81,13 +76,11 @@ export async function readCvMeta(lang: string): Promise<CvMeta | null> {
     const raw = await fs.readFile(getCvMetaPath(lang), 'utf-8');
     const parsed = JSON.parse(raw) as CvMeta;
 
-    if (!Object.hasOwn(parsed, 'sourceUpdatedAt')) {
+    if (typeof parsed.sourceHash !== 'string') {
       return null;
     }
 
-    return {
-      sourceUpdatedAt: parsed.sourceUpdatedAt ?? null,
-    };
+    return { sourceHash: parsed.sourceHash };
   } catch {
     return null;
   }
