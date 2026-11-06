@@ -2,6 +2,11 @@
 import AnimateOnScroll from '../AnimateOnScroll.jsx';
 import { getLangFromUrl, useTranslations } from '../../i18n/utils.ts';
 import { AcademicCapIcon } from '@heroicons/react/24/solid';
+import type { FormacioItem } from '../../lib/directus-content';
+
+interface Props {
+  formacions?: FormacioItem[];
+}
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);

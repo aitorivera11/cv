@@ -52,7 +52,7 @@ function SidebarHeroAnimatedInner({ fotoUrl, nom, titol, t }) {
             src={sizedImageUrl(fotoUrl, 96)}
             width={96}
             height={96}
-            alt={`Foto de ${nom}`}
+            alt={(t?.['a11y.photoOf'] ?? 'Foto de {name}').replace('{name}', nom)}
             className="h-24 w-24 rounded-full object-cover pulse-ring-anim"
             fetchPriority="high"
           />

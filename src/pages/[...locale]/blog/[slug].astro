@@ -4,6 +4,7 @@ import BlogSidebar from '../../../components/blog/BlogSidebar.astro'
 import RelatedPosts from '../../../components/blog/RelatedPosts.astro'
 import { normalizeLocale, useTranslations } from '../../../i18n/utils'
 import { isValidLocaleParam } from '../../../lib/locale'
+import { serviceUnavailable } from '../../../lib/http'
 import CopyLinkButton from '../../../components/CopyLinkButton.astro';
 import { 
   SocialShare, 
@@ -38,14 +39,19 @@ const lang = normalizeLocale(Astro.params.locale)
 const t = useTranslations(lang)
 const slug = Astro.params.slug || ''
 
-const [post, sidebarSettings, settings, categories, tags, recentPosts] = await Promise.all([
+const loaded = await Promise.all([
   getPostBySlug(slug, lang),
   getSiteSettings(lang),
   getBlogSettings(lang),
   getCategories(lang),
   getTags(lang),
   getPosts(lang),
-])
+]).catch((error) => {
+  console.error(error)
+  return null
+})
+if (!loaded) return serviceUnavailable()
+const [post, sidebarSettings, settings, categories, tags, recentPosts] = loaded
 
 const siteUrl = 'https://aitorivera.com'
 const shareUrl = `${siteUrl}/${lang === 'ca' ? '' : `${lang}/`}blog/${slug}`

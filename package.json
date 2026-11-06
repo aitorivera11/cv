@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "check": "astro check"
   },
   "dependencies": {
     "@astrojs/node": "^11.1.11",
@@ -26,9 +27,11 @@
     "react-dom": "^19.2.6"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.12",
     "@spotlightjs/astro": "^3.2.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "tailwindcss": "^4.3.0"
+    "tailwindcss": "^4.3.0",
+    "typescript": "^6.0.3"
   }
 }

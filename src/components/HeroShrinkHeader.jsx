@@ -47,7 +47,7 @@ function HeroShrinkHeaderInner({ fotoUrl, nom, titol, t = {} }) {
             width={32}
             height={32}
             decoding="async"
-            alt={`Foto de ${nom}`}
+            alt={(t['a11y.photoOf'] ?? 'Foto de {name}').replace('{name}', nom)}
             className="w-8 h-8 rounded-full object-cover ring-2 ring-indigo-500/60 flex-shrink-0"
           />
         )}

@@ -5,6 +5,7 @@ import themeScript from '../scripts/theme.js?raw';
 import { SEO } from 'astro-seo';
 import BackToTop from '../components/BackToTop.jsx';
 import Analytics from '../components/Analytics.astro';
+import { normalizeLocale, useTranslations } from '../i18n/utils.ts';
 
 interface HreflangUrl {
   lang: string;
@@ -122,7 +123,7 @@ const hreflangLinks = [
              focus:px-4 focus:py-2 focus:rounded-lg focus:bg-indigo-600 focus:text-white
              focus:font-semibold focus:shadow-lg focus:outline-none"
     >
-      {lang === 'ca' ? 'Salta al contingut' : lang === 'es' ? 'Saltar al contenido' : 'Skip to content'}
+      {useTranslations(normalizeLocale(lang))['a11y.skip']}
     </a>
     <slot />
     <BackToTop client:idle />

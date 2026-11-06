@@ -1,7 +1,7 @@
 // src/components/SectionIndicator.jsx
 import { useState, useEffect } from 'react';
 
-export default function SectionIndicator({ sections }) {
+export default function SectionIndicator({ sections, label = 'Navegació per seccions' }) {
   const [active, setActive] = useState(0);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function SectionIndicator({ sections }) {
   return (
     <nav
       className="hidden lg:flex fixed right-4 top-1/2 -translate-y-1/2 z-40 flex-col gap-2.5"
-      aria-label="Navegació per seccions"
+      aria-label={label}
     >
       {sections.map((section, i) => (
         <button

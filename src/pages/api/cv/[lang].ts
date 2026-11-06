@@ -12,7 +12,7 @@ import { getCvData, type SupportedLang } from '../../../lib/directus-content';
 import { generatePdfBuffer, renderCvHtml } from '../../../lib/pdf';
 
 function buildPdfResponse(file: Buffer, filename: string) {
-  return new Response(file, {
+  return new Response(new Uint8Array(file), {
     status: 200,
     headers: {
       'Content-Type': 'application/pdf',
