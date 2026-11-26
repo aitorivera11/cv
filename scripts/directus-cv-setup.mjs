@@ -6,8 +6,8 @@
 //   node scripts/directus-cv-setup.mjs --only=schema   # solo campos/colección  (o --only=content)
 //   node scripts/directus-cv-setup.mjs --allow-pending # escribe también textos con [PENDIENTE] (no recomendado)
 //
-// Variables: DIRECTUS_URL y DIRECTUS_ADMIN_TOKEN (token con permisos de administración;
-// el token de solo lectura de la web NO sirve para esto).
+// Variables: DIRECTUS_URL y, opcional, DIRECTUS_ADMIN_TOKEN (permisos de administración; el token
+// de solo lectura de la web NO sirve). Sin ella, se espera que un proxy inyecte Authorization.
 //
 // Garantías:
 //  - Nunca borra nada: ni registros, ni campos, ni colecciones. Solo crea o actualiza.
@@ -27,10 +27,13 @@ const only = [...args].find((a) => a.startsWith('--only='))?.split('=')[1];
 const doSchema = !only || only === 'schema';
 const doContent = !only || only === 'content';
 
-const BASE = (process.env.DIRECTUS_URL || '').replace(/\/+$/, '');
+// DIRECTUS_URL es la raíz de la API (https://admin.aitorivera.com), SIN el "/admin" del panel.
+const BASE = (process.env.DIRECTUS_URL || '').replace(/\/+$/, '').replace(/\/admin$/, '');
+// DIRECTUS_ADMIN_TOKEN es opcional: si el token está guardado como secreto de red del entorno,
+// el proxy añade la cabecera Authorization y el script no necesita verlo.
 const TOKEN = process.env.DIRECTUS_ADMIN_TOKEN || '';
-if (!BASE || !TOKEN) {
-  console.error('Faltan DIRECTUS_URL y/o DIRECTUS_ADMIN_TOKEN.');
+if (!BASE) {
+  console.error('Falta DIRECTUS_URL (p. ej. https://admin.aitorivera.com).');
   process.exit(1);
 }
 
@@ -43,7 +46,7 @@ let changes = 0;
 async function api(method, route, body) {
   const res = await fetch(`${BASE}${route}`, {
     method,
-    headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
+    headers: { ...(TOKEN ? { Authorization: `Bearer ${TOKEN}` } : {}), 'Content-Type': 'application/json' },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
   if (res.status === 204) return null;
