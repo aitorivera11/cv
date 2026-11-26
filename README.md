@@ -73,6 +73,32 @@ Dependabot propone actualizaciones mensuales agrupadas. La versión de Playwrigh
 
 No hace falta guardar los PDF en el repositorio ni generarlos a mano: el botón de descarga llama a `GET /api/cv/:lang`.
 
+## CV en PDF (ATS / IA de RRHH)
+
+La plantilla (`pdf/template.js`) genera un PDF de **una página A4, una sola columna** y con el texto en este orden: nombre → titular → contacto → resumen → experiencia → proyectos → formación → habilidades → idiomas. Contacto con enlaces `mailto:`/`tel:`/`https:`, habilidades en `<ul><li>` separadas por comas, `<title>` «Nombre - CV - titular», `lang` por versión y descarga como `Aitor-Rivera-Garcia-CV-ES.pdf` (`CA`/`ES`/`EN`).
+
+- **Fuentes**: Space Grotesk estática (un `.woff2` por peso en `public/fonts/cv/`). La fuente variable de la web hacía que Chromium la incrustase como Type 3; con las estáticas `pdffonts` no muestra ninguna.
+- **Datos**: salen de Directus. Los campos nuevos (`data_inici`/`data_fi`, `logros_*`, `tecnologies_*`, `grup`, `telefon`, `ubicacio`, `nivell_angles_*` y la colección `projecte`) se crean con `scripts/directus-cv-setup.mjs`. Mientras no estén aplicados, la web sigue funcionando con los campos antiguos y lo avisa en el log (`[cv] …`).
+- **Traducciones**: si falta una traducción, el CV usa otro idioma y escribe en el log `[cv] falta la traducción <colección>.<campo>_<idioma>`. Si queda algún `[PENDIENTE…]` sin resolver, también avisa.
+
+### Cargar el esquema y el contenido en Directus
+
+```bash
+export DIRECTUS_URL=https://tu-directus DIRECTUS_ADMIN_TOKEN=...   # token de administración, no el de solo lectura
+node scripts/directus-cv-setup.mjs            # simulacro: lista lo que haría
+node scripts/directus-cv-setup.mjs --apply    # aplica (idempotente; nunca borra; guarda copia de lo que cambia)
+```
+
+Después hay que dar **lectura** al token de la web sobre la colección `projecte` y los campos nuevos. El script no escribe ningún texto con `[PENDIENTE]`: los lista al final para que se completen (cifras, fechas, nivel de inglés) en el panel o en `scripts/directus/cv-content.mjs`.
+
+### Verificar los PDF
+
+```bash
+node scripts/verify-cv.mjs http://127.0.0.1:4321 cv-verify   # necesita poppler-utils (pdffonts, pdftotext, pdftoppm)
+```
+
+Comprueba por idioma: sin fuentes Type 3, una página A4, orden del texto, habilidades separadas, título, nombre de descarga y que no haya texto de otro idioma. Deja las capturas en `cv-verify/`.
+
 ## Despliegue (Coolify / Docker)
 
 El `Dockerfile` tiene dos etapas:

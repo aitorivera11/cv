@@ -1,369 +1,333 @@
 // pdf/template.js
-// "Actual" viene de Directus en un solo idioma: se muestra como "Present" en inglés.
-const localizeDates = (value, lang) =>
-  lang === "en" ? String(value || "").replace(/\bActual\b/g, "Present") : value || "";
+// Plantilla del CV en PDF. Pensada para que la lectura del PDF (ATS / IA de RRHH) sea fiel:
+//  - Una sola columna en el DOM, en este orden: nombre → titular → contacto → resumen →
+//    experiencia → proyectos → formación → habilidades → idiomas.
+//  - Texto real con enlaces mailto:/tel:/https:, listas <ul><li> y sin texto oculto.
 
-export function cvTemplate(data, fotoUrl, lang = "ca") {
+const LANGS = ['ca', 'es', 'en'];
+
+const labels = {
+  ca: {
+    experience: 'Experiència professional',
+    projects: 'Projectes',
+    education: 'Formació',
+    skills: 'Habilitats tècniques',
+    languagesTitle: 'Idiomes',
+    technologies: 'Tecnologies',
+    contact: 'Contacte',
+    languages: { ca: 'Català', es: 'Castellà', en: 'Anglès', native: 'Nadiu' },
+    groups: {
+      llenguatges: 'Llenguatges',
+      frameworks: 'Frameworks',
+      bbdd: 'Bases de dades',
+      devops: 'DevOps',
+      altres: 'Altres',
+      gestio: 'Gestió',
+    },
+  },
+  es: {
+    experience: 'Experiencia profesional',
+    projects: 'Proyectos',
+    education: 'Formación',
+    skills: 'Habilidades técnicas',
+    languagesTitle: 'Idiomas',
+    technologies: 'Tecnologías',
+    contact: 'Contacto',
+    languages: { ca: 'Catalán', es: 'Castellano', en: 'Inglés', native: 'Nativo' },
+    groups: {
+      llenguatges: 'Lenguajes',
+      frameworks: 'Frameworks',
+      bbdd: 'Bases de datos',
+      devops: 'DevOps',
+      altres: 'Otros',
+      gestio: 'Gestión',
+    },
+  },
+  en: {
+    experience: 'Professional experience',
+    projects: 'Projects',
+    education: 'Education',
+    skills: 'Technical skills',
+    languagesTitle: 'Languages',
+    technologies: 'Technologies',
+    contact: 'Contact',
+    languages: { ca: 'Catalan', es: 'Spanish', en: 'English', native: 'Native' },
+    groups: {
+      llenguatges: 'Programming languages',
+      frameworks: 'Frameworks',
+      bbdd: 'Databases',
+      devops: 'DevOps',
+      altres: 'Other',
+      gestio: 'Management',
+    },
+  },
+};
+
+const GROUP_ORDER = ['llenguatges', 'frameworks', 'bbdd', 'devops', 'altres', 'gestio'];
+
+// Textos del CV que aún son un marcador [PENDIENTE…] no deben salir en un PDF público.
+const PENDING = /\[PENDIENTE/;
+
+const esc = (value) =>
+  String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+
+// "Actual" (texto antiguo de Directus) → palabra del idioma. Las fechas nuevas ya vienen formateadas.
+const PRESENT = { ca: 'actualitat', es: 'actualidad', en: 'present' };
+const localizeDates = (value, lang) =>
+  String(value || '').replace(/\b(Actual|Present|Actualidad|Actualitat)\b/gi, PRESENT[lang] || '$1');
+
+const asciiSlug = (value) =>
+  String(value || '')
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^A-Za-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+const telHref = (phone) => `tel:${String(phone).replace(/[^\d+]/g, '')}`;
+const displayUrl = (url) => String(url).replace(/^https?:\/\/(www\.)?/i, '').replace(/\/+$/, '');
+const safeUrl = (url) => (/^https?:\/\//i.test(url) ? url : '');
+
+export function cvLang(lang) {
+  return LANGS.includes(lang) ? lang : 'ca';
+}
+
+export function cvTitle(data, lang) {
+  return `${data.nom} - CV - ${data.titol}`;
+}
+
+export function cvDownloadFilename(data, lang) {
+  return `${asciiSlug(data.nom) || 'CV'}-CV-${cvLang(lang).toUpperCase()}.pdf`;
+}
+
+// Devuelve los textos aún pendientes ([PENDIENTE…]) para avisar en el log.
+export function findPendingText(html) {
+  return [...new Set(html.match(/\[PENDIENTE[^\]]*\]/g) || [])];
+}
+
+// Lista de habilidades: una <li> por habilidad y la coma dentro del propio <li> ("Python," "Django"),
+// de modo que el texto extraído sea "Python, Django, Docker" y no "PythonDjangoDocker".
+// La coma es visible a propósito: el texto oculto (clip, transparente, fuera de pantalla) o bien no
+// llega al PDF o bien se extrae descolocado, y además los detectores de ATS lo penalizan.
+function skillList(items) {
+  return `<ul class="skill-list">${items
+    .map((name, i) => `<li>${esc(name)}${i < items.length - 1 ? ',' : ''}</li>`)
+    .join('')}</ul>`;
+}
+
+function groupSkills(habilitats) {
+  const groups = new Map();
+  for (const h of habilitats) {
+    const key = GROUP_ORDER.includes(h.grup) ? h.grup : 'altres';
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(h.nom);
+  }
+  return GROUP_ORDER.filter((key) => groups.has(key)).map((key) => [key, groups.get(key)]);
+}
+
+export function cvTemplate(data, fotoUrl, rawLang = 'ca') {
+  const lang = cvLang(rawLang);
+  const t = labels[lang];
   const {
     nom,
     titol,
-    resumSidebar, 
+    resumSidebar = '',
     experiencies = [],
+    projectes = [],
     formacions = [],
     habilitatsTecniques = [],
-    habilitatsClau = [],
     email,
+    telefon = '',
+    ubicacio = '',
+    linkedinUrl = '',
+    githubUrl = '',
+    nivellAngles = '',
   } = data;
 
-  const labels = {
-    ca: {
-      contact: "Contacte",
-      techSkills: "Habilitats tècniques",
-      keySkills: "Habilitats clau",
-      experience: "Experiència professional",
-      education: "Formació",
-      languages: {
-        title : "Idiomes",
-        ca: "Català",
-        es: "Castellà",
-        en: "Anglès", 
-        native: "Nadiu",
-        basic: "Bàsic"
-      }
-    },
-    es: {
-      contact: "Contacto",
-      techSkills: "Habilidades técnicas",
-      keySkills: "Competencias clave",
-      experience: "Experiencia profesional",
-      education: "Formación",
-      languages: {
-        title : "Idiomas",
-        ca: "Catalán",
-        es: "Castellano",
-        en: "Inglés", 
-        native: "Nativo",
-        basic: "Básico"
-      }
-    },
-    en: {
-      contact: "Contact",
-      techSkills: "Technical skills",
-      keySkills: "Key skills",
-      experience: "Professional experience",
-      education: "Education",
-      languages: {
-        title : "Languages",  
-        ca: "Catalan",
-        es: "Spanish",
-        en: "English", 
-        native: "Native",
-        basic: "Basic"
-      }
+  // El titular no se repite en el resumen
+  const summary = String(resumSidebar).trim();
+  const summaryText = summary.toLowerCase().startsWith(String(titol).trim().toLowerCase())
+    ? summary.slice(String(titol).trim().length).replace(/^[\s.:·–-]+/, '')
+    : summary;
+
+  const contactItems = [
+    email && `<li><a href="mailto:${esc(email)}">${esc(email)}</a></li>`,
+    telefon && `<li><a href="${esc(telHref(telefon))}">${esc(telefon)}</a></li>`,
+    safeUrl(linkedinUrl) && `<li><a href="${esc(linkedinUrl)}">${esc(displayUrl(linkedinUrl))}</a></li>`,
+    safeUrl(githubUrl) && `<li><a href="${esc(githubUrl)}">${esc(displayUrl(githubUrl))}</a></li>`,
+    ubicacio && `<li>${esc(ubicacio)}</li>`,
+  ].filter(Boolean);
+
+  const level = nivellAngles && !PENDING.test(nivellAngles) ? ` – ${esc(nivellAngles)}` : '';
+
+  return `<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+  <meta charset="UTF-8" />
+  <title>${esc(cvTitle(data, lang))}</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Space Grotesk', Arial, sans-serif;
+      margin: 0;
+      color: #1f2937;
+      background: #ffffff;
+      font-size: 11px;
+      line-height: 1.34;
     }
-  };
+    ul { margin: 0; padding: 0; list-style: none; }
+    a { color: inherit; text-decoration: none; }
 
-  const t = labels[lang] || labels.ca;
+    .page {
+      position: relative;
+      padding: 14px 24px 20px;
+      min-height: 283mm;
+    }
+    .page::before, .page::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #4f46e5, #8b5cf6);
+    }
+    .page::before { top: 0; }
+    .page::after { bottom: 0; }
 
-  const telefon = "625947211";
-  const web = "aitorivera.com";
+    /* Cabecera: foto a la izquierda, nombre / titular / contacto a la derecha */
+    header { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; }
+    .photo {
+      width: 76px; height: 76px; border-radius: 9999px; object-fit: cover;
+      border: 3px solid #4f46e5;
+    }
+    h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; font-weight: 700; color: #111827; line-height: 1.15; }
+    .headline { margin: 2px 0 0; font-size: 13px; font-weight: 500; color: #4f46e5; }
+    .contact { display: flex; flex-wrap: wrap; margin-top: 6px; font-size: 11px; color: #374151; }
+    .contact li + li { margin-left: 8px; padding-left: 8px; border-left: 1px solid #c7d2fe; }
 
-  return `
-  <html>
-  <head>
-    <meta charset="UTF-8" />
-    <style>
-      * {
-        box-sizing: border-box;
-      }
+    h2 {
+      font-size: 11px; margin: 10px 0 5px; font-weight: 700; color: #4f46e5;
+      letter-spacing: .08em; text-transform: uppercase;
+      border-bottom: 1px solid #e5e7eb; padding-bottom: 2px;
+    }
+    h3 { margin: 0; font-size: 12.5px; font-weight: 600; color: #111827; }
 
-      body {
-        font-family: 'Space Grotesk', sans-serif;
-        margin: 0;
-        padding: 0;
-        background: #ffffff; /* fora el gris que feia l'efecte raro */
-        color: #1f2937; /* slate-800 */
-      }
+    .summary { margin: 8px 0 0; font-size: 11.5px; color: #374151; }
 
-      .page {
-        position: relative;
-        max-width: 860px;
-        margin: 0 auto;
-        background: #ffffff;
-        display: grid;
-        grid-template-columns: 32% 68%;
-        gap: 24px;
-        padding: 26px 32px 52px;
-        /* A4 menos márgenes: así la barra inferior queda al pie de la hoja */
-        min-height: 272mm;
-      }
+    .entry { margin-bottom: 6px; break-inside: avoid; }
+    .entry-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+    .dates { font-size: 11px; color: #6b7280; white-space: nowrap; }
+    .company { font-size: 11px; color: #4b5563; font-weight: 500; }
+    .achievements { margin-top: 2px; }
+    .achievements li { position: relative; padding-left: 11px; margin-bottom: 1px; }
+    .achievements li::before {
+      content: ""; position: absolute; left: 1px; top: 0.62em;
+      width: 4px; height: 4px; border-radius: 9999px; background: #6366f1;
+    }
+    .tech { margin-top: 2px; font-size: 10.5px; color: #4b5563; }
+    .tech strong, .skill-group strong { font-weight: 600; color: #3730a3; }
 
-      .page::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #4f46e5, #8b5cf6);
-      }
+    .skill-group { margin-bottom: 2px; display: flex; gap: 4px; }
+    .skill-list { display: flex; flex-wrap: wrap; }
+    .skill-list li { white-space: nowrap; margin-right: 4px; color: #374151; }
 
-      .page::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #4f46e5, #8b5cf6);
-      }
-
-      h1 {
-        margin: 0;
-        font-size: 22px;
-        letter-spacing: -0.5px;
-        font-weight: 800;
-        color: #111827;
-      }
-
-      h2 {
-        font-size: 12px;
-        margin: 18px 0 8px;
-        font-weight: 700;
-        color: #4f46e5; /* Indigo 600 */
-        letter-spacing: .08em;
-        text-transform: uppercase;
-      }
-
-      .sidebar {
-        padding-right: 18px;
-        border-right: 1px solid #e5e7eb;
-      }
-
-      .header-block {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .photo {
-        width: 110px;
-        height: 110px;
-        border-radius: 9999px;
-        object-fit: cover;
-        margin-bottom: 10px;
-        border: 3px solid #4f46e5;
-        box-shadow: 0 6px 16px rgba(79, 70, 229, 0.25);
-      }
-
-      .role {
-        font-size: 13px;
-        color: #4b5563;
-        margin-top: 4px;
-      }
-
-      .summary {
-        font-size: 13px;
-        color: #374151;
-        line-height: 1.45;
-        margin-top: 10px;
-      }
-
-      .contact-line {
-        font-size: 12px;
-        color: #374151;
-        line-height: 1.4;
-      }
-
-      .contact-line + .contact-line {
-        margin-top: 2px;
-      }
-
-      .skills-pills {
-        margin-top: 4px;
-      }
-
-      .skill-pill {
-        display: inline-block;
-        background: #eef2ff; /* indigo-100 */
-        color: #3730a3;      /* indigo-800 */
-        border-radius: 9999px;
-        padding: 2px 8px;
-        font-size: 11px;
-        margin: 0 4px 4px 0;
-        white-space: nowrap;
-      }
-
-      .main {
-        padding-left: 4px;
-        font-size: 12px;
-      }
-
-      .experience {
-        margin-bottom: 14px;
-      }
-
-      .experience-title {
-        font-weight: 600;
-        font-size: 13px;
-        color: #111827;
-      }
-
-      .experience-company {
-        font-size: 12px;
-        color: #4b5563;
-      }
-
-      .experience-dates {
-        font-size: 11px;
-        color: #9ca3af;
-        margin-top: 2px;
-        margin-bottom: 4px;
-      }
-
-      .experience-desc {
-        font-size: 12px;
-        color: #374151;
-        line-height: 1.4;
-        margin-bottom: 3px;
-      }
-
-      .tech-stack {
-        font-size: 11px;
-        color: #4b5563;
-      }
-
-      .formation {
-        margin-bottom: 8px;
-      }
-
-      .formation-title {
-        font-weight: 600;
-        font-size: 12px;
-        color: #111827;
-      }
-
-      .formation-centre {
-        font-size: 12px;
-        color: #4b5563;
-      }
-
-      .formation-dates {
-        font-size: 11px;
-        color: #9ca3af;
-      }
-
-      .contact-block {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        font-size: 12px;
-        line-height: 1.4;
-      }
-
-      .lang-level {
-        font-size: 11px;
-        color: #4b5563;
-        margin-bottom: 2px;
-      }
-
-      .lang-name {
-        font-weight: 600;
-        font-size: 12px;
-        color: #111827;
-      }
-
-
-    </style>
-  </head>
-
-  <body>
-    <div class="page">
-      <!-- COL 1: SIDEBAR -->
-      <div class="sidebar">
-        <div class="header-block">
-          ${fotoUrl ? `<img class="photo" src="${fotoUrl}" alt="${nom}" />` : ``}
-          <h1>${nom}</h1>
-          <div class="role">${titol}</div>
-          <p class="summary">${resumSidebar}</p>
-        </div>
-
-        <div class="contact-block">
-          <span>${email}</span>
-          <span>${telefon}</span>
-          <span>${web}</span>
-        </div>
-
-        <div>
-          <h2>${t.techSkills}</h2>
-          <div class="skills-pills">
-            ${habilitatsTecniques
-              .map((h) => `<span class="skill-pill">${h.nom}</span>`)
-              .join("")}
-          </div>
-        </div>
-
-        <div>
-          <h2>${t.keySkills}</h2>
-          <div class="skills-pills">
-            ${habilitatsClau
-              .map((h) => `<span class="skill-pill">${h.nom}</span>`)
-              .join("")}
-          </div>
-        </div>
-        <div>
-          <h2>${t.languages.title}</h2>
-          <div class="lang-level">
-            <div><span class="lang-name">${t.languages.ca}</span> ${t.languages.native}</div>
-            <div><span class="lang-name">${t.languages.es}</span> ${t.languages.native}</div>
-            <div><span class="lang-name">${t.languages.en}</span> ${t.languages.basic}</div>
-          </div>
-        </div>
-
+    .languages { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+    .languages strong { font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      ${fotoUrl ? `<img class="photo" src="${esc(fotoUrl)}" alt="" />` : '<span></span>'}
+      <div>
+        <h1>${esc(nom)}</h1>
+        <p class="headline">${esc(titol)}</p>
+        <ul class="contact" aria-label="${esc(t.contact)}">${contactItems.join('')}</ul>
       </div>
+    </header>
 
-      <!-- COL 2: CONTINGUT PRINCIPAL -->
-      <div class="main">
-        <h2>${t.experience}</h2>
-        ${experiencies
-          .map(
-            (e) => `
-            <div class="experience">
-              <div class="experience-title">${e.titol}</div>
-              <div class="experience-company">${e.empresa}</div>
-              <div class="experience-dates">${localizeDates(e.dates, lang)}</div>
-              ${
-                e.descripcio
-                  ? `<div class="experience-desc">${e.descripcio}</div>`
-                  : ""
-              }
-              ${
-                e.tecnologies?.length
-                  ? `<div class="tech-stack">${e.tecnologies.join(" • ")}</div>`
-                  : ""
-              }
-            </div>
-          `
-          )
-          .join("")}
+    ${summaryText ? `<p class="summary">${esc(summaryText)}</p>` : ''}
 
-        <h2>${t.education}</h2>
-        ${formacions
-          .map(
-            (f) => `
-            <div class="formation">
-              <div class="formation-title">${f.titulacio}</div>
-              <div class="formation-centre">${f.centre}</div>
-              <div class="formation-dates">${localizeDates(f.dates, lang)}</div>
-            </div>
-          `
-          )
-          .join("")}
-      </div>
+    <section>
+      <h2>${esc(t.experience)}</h2>
+      ${experiencies
+        .map((e) => {
+          const logros = (e.logros || []).filter(Boolean);
+          const techs = (e.tecnologies || []).filter(Boolean);
+          return `
+      <article class="entry">
+        <div class="entry-head">
+          <h3>${esc(e.titol)}<span class="company"> · ${esc(e.empresa)}</span></h3>
+          <span class="dates">${esc(localizeDates(e.dates, lang))}</span>
+        </div>
+        ${
+          logros.length
+            ? `<ul class="achievements">${logros.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>`
+            : e.descripcio
+              ? `<p style="margin:2px 0 0">${esc(e.descripcio)}</p>`
+              : ''
+        }
+        ${techs.length ? `<div class="tech"><strong>${esc(t.technologies)}:</strong> ${esc(techs.join(', '))}</div>` : ''}
+      </article>`;
+        })
+        .join('')}
+    </section>
 
+    ${
+      projectes.length
+        ? `<section>
+      <h2>${esc(t.projects)}</h2>
+      ${projectes
+        .map((p) => {
+          const href = safeUrl(p.url);
+          const techs = (p.tecnologies || []).filter(Boolean);
+          return `
+      <article class="entry">
+        <h3>${href ? `<a href="${esc(href)}">${esc(p.nom)}</a>` : esc(p.nom)}</h3>
+        ${p.descripcio ? `<p style="margin:1px 0 0">${esc(p.descripcio)}</p>` : ''}
+        ${techs.length ? `<div class="tech"><strong>${esc(t.technologies)}:</strong> ${esc(techs.join(', '))}</div>` : ''}
+      </article>`;
+        })
+        .join('')}
+    </section>`
+        : ''
+    }
 
-    </div>
-  </body>
-  </html>
-  `;
+    <section>
+      <h2>${esc(t.education)}</h2>
+      ${formacions
+        .map(
+          (f) => `
+      <article class="entry">
+        <div class="entry-head">
+          <h3>${esc(f.titulacio)}<span class="company"> · ${esc(f.centre)}</span></h3>
+          <span class="dates">${esc(localizeDates(f.dates, lang))}</span>
+        </div>
+      </article>`,
+        )
+        .join('')}
+    </section>
+
+    <section>
+      <h2>${esc(t.skills)}</h2>
+      <ul>
+        ${groupSkills(habilitatsTecniques)
+          .map(([key, items]) => `<li class="skill-group"><strong>${esc(t.groups[key])}:</strong> ${skillList(items)}</li>`)
+          .join('')}
+      </ul>
+    </section>
+
+    <section>
+      <h2>${esc(t.languagesTitle)}</h2>
+      <ul class="languages">
+        <li><strong>${esc(t.languages.ca)}</strong> – ${esc(t.languages.native)}</li>
+        <li><strong>${esc(t.languages.es)}</strong> – ${esc(t.languages.native)}</li>
+        <li><strong>${esc(t.languages.en)}</strong>${level}</li>
+      </ul>
+    </section>
+  </div>
+</body>
+</html>`;
 }

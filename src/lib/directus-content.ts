@@ -89,6 +89,80 @@ function getLocalizedField(record: Record<string, unknown>, baseField: string, l
   return ''
 }
 
+// Avisos de traducción: una sola vez por campo, para no inundar el log.
+const warned = new Set<string>()
+function warnOnce(message: string) {
+  if (warned.has(message)) return
+  warned.add(message)
+  console.warn(`[cv] ${message}`)
+}
+
+// Igual que getLocalizedField, pero avisa en el log cuando hay que tirar de otro idioma.
+function getLocalizedFieldWarn(record: Record<string, unknown>, baseField: string, lang: SupportedLang, where: string): string {
+  const exact = record[`${baseField}_${lang}`]
+  if (typeof exact === 'string' && exact.trim()) return exact
+
+  for (const fallbackLang of LOCALIZED_FALLBACK_ORDER[lang]) {
+    const value = record[`${baseField}_${fallbackLang}`]
+    if (typeof value === 'string' && value.trim()) {
+      warnOnce(`falta la traducción ${where}.${baseField}_${lang}; se usa ${fallbackLang}`)
+      return value
+    }
+  }
+  return ''
+}
+
+// Acepta un array JSON (etiquetas) o un texto con un elemento por línea (logros).
+function asStringList(value: unknown): string[] {
+  const list = typeof value === 'string' ? value.split(/\r?\n/) : Array.isArray(value) ? value : []
+  return list
+    .filter((v): v is string => typeof v === 'string')
+    .map((v) => v.replace(/^\s*[-•*]\s*/, '').trim())
+    .filter(Boolean)
+}
+
+function getLocalizedList(record: Record<string, unknown>, baseField: string, lang: SupportedLang, where: string): string[] {
+  const exact = asStringList(record[`${baseField}_${lang}`])
+  if (exact.length) return exact
+
+  for (const fallbackLang of LOCALIZED_FALLBACK_ORDER[lang]) {
+    const value = asStringList(record[`${baseField}_${fallbackLang}`])
+    if (value.length) {
+      warnOnce(`falta la traducción ${where}.${baseField}_${lang}; se usa ${fallbackLang}`)
+      return value
+    }
+  }
+  return []
+}
+
+// 'YYYY-MM' o 'YYYY-MM-DD' → 'MM/YYYY'. Devuelve '' si no hay mes.
+function formatMonthYear(value: unknown): string {
+  if (typeof value !== 'string') return ''
+  const match = value.match(/^(\d{4})-(\d{2})/)
+  return match ? `${match[2]}/${match[1]}` : ''
+}
+
+const PRESENT_LABEL: Record<SupportedLang, string> = { ca: 'actualitat', es: 'actualidad', en: 'present' }
+
+function formatDateRange(start: unknown, end: unknown, lang: SupportedLang, legacy: string, where: string): string {
+  const from = formatMonthYear(start)
+  if (!from) {
+    if (legacy) warnOnce(`${where} no tiene data_inici (mes/año); se usa el texto antiguo "${legacy}"`)
+    return legacy
+  }
+  return `${from} – ${formatMonthYear(end) || PRESENT_LABEL[lang]}`
+}
+
+// Pide los campos nuevos; si el esquema aún no está aplicado en Directus, vuelve a los antiguos.
+async function withSchemaFallback<T>(what: string, full: () => Promise<T>, legacy: () => Promise<T>): Promise<T> {
+  try {
+    return await full()
+  } catch {
+    warnOnce(`${what}: el esquema nuevo de Directus no está aplicado (scripts/directus-cv-setup.mjs); se usan los campos antiguos`)
+    return legacy()
+  }
+}
+
 export type TaxonomyItem = {
   title: string
   slug: string
@@ -115,6 +189,9 @@ function normalizeTaxonomy(item: unknown, lang: SupportedLang): TaxonomyItem | n
 export type SiteSettings = {
   nom: string
   titol: string
+  telefon: string
+  ubicacio: string
+  nivellAngles: string
   resumSidebar: string
   descripcioSobreMi: string
   foto: unknown
@@ -160,6 +237,15 @@ export type ExperienciaItem = {
   tecnologies: string[]
   titol: string
   descripcio: string
+  logros: string[]
+  ordre: number
+}
+
+export type ProjecteItem = {
+  nom: string
+  descripcio: string
+  tecnologies: string[]
+  url: string
   ordre: number
 }
 
@@ -173,28 +259,38 @@ export type FormacioItem = {
 export type HabilitatItem = {
   nom: string
   categoria: string
+  grup: string
 }
 
+const SITE_SETTINGS_LEGACY_FIELDS = [
+  'nom',
+  'foto',
+  'linkedin_url',
+  'github_url',
+  'email',
+  'titol_ca',
+  'titol_es',
+  'titol_en',
+  'resum_sidebar_ca',
+  'resum_sidebar_es',
+  'resum_sidebar_en',
+  'descripcio_sobre_mi_ca',
+  'descripcio_sobre_mi_es',
+  'descripcio_sobre_mi_en',
+]
+const SITE_SETTINGS_CV_FIELDS = [
+  'telefon',
+  'ubicacio',
+  'nivell_angles_ca',
+  'nivell_angles_es',
+  'nivell_angles_en',
+]
+
 async function getSiteSettingsUncached(lang: SupportedLang): Promise<SiteSettings | null> {
-  const raw = await directus.request(
-    readSingleton('site_settings', {
-      fields: [
-        'nom',
-        'foto',
-        'linkedin_url',
-        'github_url',
-        'email',
-        'titol_ca',
-        'titol_es',
-        'titol_en',
-        'resum_sidebar_ca',
-        'resum_sidebar_es',
-        'resum_sidebar_en',
-        'descripcio_sobre_mi_ca',
-        'descripcio_sobre_mi_es',
-        'descripcio_sobre_mi_en',
-      ],
-    }),
+  const raw = await withSchemaFallback(
+    'site_settings',
+    () => directus.request(readSingleton('site_settings', { fields: [...SITE_SETTINGS_LEGACY_FIELDS, ...SITE_SETTINGS_CV_FIELDS] })),
+    () => directus.request(readSingleton('site_settings', { fields: SITE_SETTINGS_LEGACY_FIELDS })),
   )
 
   if (!isRecord(raw)) return null
@@ -202,6 +298,9 @@ async function getSiteSettingsUncached(lang: SupportedLang): Promise<SiteSetting
   return {
     nom: typeof raw.nom === 'string' ? raw.nom : '',
     titol: getLocalizedField(raw, 'titol', lang),
+    telefon: typeof raw.telefon === 'string' ? raw.telefon : '',
+    ubicacio: typeof raw.ubicacio === 'string' ? raw.ubicacio : '',
+    nivellAngles: getLocalizedField(raw, 'nivell_angles', lang),
     resumSidebar: getLocalizedField(raw, 'resum_sidebar', lang),
     descripcioSobreMi: getLocalizedField(raw, 'descripcio_sobre_mi', lang),
     foto: raw.foto,
@@ -468,23 +567,22 @@ async function getTagsUncached(lang: SupportedLang): Promise<Tag[]> {
     .filter((item): item is Tag => Boolean(item))
 }
 
+const EXPERIENCIA_LEGACY_FIELDS = [
+  'empresa', 'dates', 'tecnologies', 'ordre',
+  'titol_ca', 'titol_es', 'titol_en',
+  'descripcio_ca', 'descripcio_es', 'descripcio_en',
+]
+const EXPERIENCIA_CV_FIELDS = [
+  'data_inici', 'data_fi',
+  'logros_ca', 'logros_es', 'logros_en',
+  'tecnologies_ca', 'tecnologies_es', 'tecnologies_en',
+]
+
 async function getExperienciaUncached(lang: SupportedLang): Promise<ExperienciaItem[]> {
-  const items = await directus.request(
-    readItems('experiencia', {
-      fields: [
-        'empresa',
-        'dates',
-        'tecnologies',
-        'ordre',
-        'titol_ca',
-        'titol_es',
-        'titol_en',
-        'descripcio_ca',
-        'descripcio_es',
-        'descripcio_en',
-      ],
-      sort: ['ordre'],
-    }),
+  const items = await withSchemaFallback(
+    'experiencia',
+    () => directus.request(readItems('experiencia', { fields: [...EXPERIENCIA_LEGACY_FIELDS, ...EXPERIENCIA_CV_FIELDS], sort: ['ordre'] })),
+    () => directus.request(readItems('experiencia', { fields: EXPERIENCIA_LEGACY_FIELDS, sort: ['ordre'] })),
   )
 
   if (!Array.isArray(items)) return []
@@ -492,14 +590,25 @@ async function getExperienciaUncached(lang: SupportedLang): Promise<ExperienciaI
   return items
     .map((item) => {
       if (!isRecord(item)) return null
+      const empresa = typeof item.empresa === 'string' ? item.empresa : ''
+      const where = `experiencia[${empresa}]`
+
+      // Etiquetas traducibles; si aún no hay tecnologies_<idioma>, se usa el campo antiguo (un solo idioma).
+      let tecnologies = getLocalizedList(item, 'tecnologies', lang, where)
+      if (!tecnologies.length) {
+        tecnologies = asStringList(item.tecnologies)
+        if (tecnologies.length && lang !== 'ca') {
+          warnOnce(`${where}: solo hay etiquetas del campo antiguo "tecnologies" (sin traducir a ${lang})`)
+        }
+      }
+
       return {
-        empresa: typeof item.empresa === 'string' ? item.empresa : '',
-        dates: typeof item.dates === 'string' ? item.dates : '',
-        tecnologies: Array.isArray(item.tecnologies)
-          ? item.tecnologies.filter((tecnologia): tecnologia is string => typeof tecnologia === 'string')
-          : [],
+        empresa,
+        dates: formatDateRange(item.data_inici, item.data_fi, lang, typeof item.dates === 'string' ? item.dates : '', where),
+        tecnologies,
         titol: getLocalizedField(item, 'titol', lang),
         descripcio: getLocalizedField(item, 'descripcio', lang),
+        logros: getLocalizedList(item, 'logros', lang, where),
         ordre: typeof item.ordre === 'number' ? item.ordre : 0,
       }
     })
@@ -507,11 +616,11 @@ async function getExperienciaUncached(lang: SupportedLang): Promise<ExperienciaI
 }
 
 async function getFormacioUncached(lang: SupportedLang): Promise<FormacioItem[]> {
-  const items = await directus.request(
-    readItems('formacio', {
-      fields: ['centre', 'dates', 'ordre', 'titulacio_ca', 'titulacio_es', 'titulacio_en'],
-      sort: ['ordre'],
-    }),
+  const fields = ['centre', 'dates', 'ordre', 'titulacio_ca', 'titulacio_es', 'titulacio_en']
+  const items = await withSchemaFallback(
+    'formacio',
+    () => directus.request(readItems('formacio', { fields: [...fields, 'data_inici', 'data_fi'], sort: ['ordre'] })),
+    () => directus.request(readItems('formacio', { fields, sort: ['ordre'] })),
   )
 
   if (!Array.isArray(items)) return []
@@ -519,9 +628,10 @@ async function getFormacioUncached(lang: SupportedLang): Promise<FormacioItem[]>
   return items
     .map((item) => {
       if (!isRecord(item)) return null
+      const centre = typeof item.centre === 'string' ? item.centre : ''
       return {
-        centre: typeof item.centre === 'string' ? item.centre : '',
-        dates: typeof item.dates === 'string' ? item.dates : '',
+        centre,
+        dates: formatDateRange(item.data_inici, item.data_fi, lang, typeof item.dates === 'string' ? item.dates : '', `formacio[${centre}]`),
         titulacio: getLocalizedField(item, 'titulacio', lang),
         ordre: typeof item.ordre === 'number' ? item.ordre : 0,
       }
@@ -529,12 +639,50 @@ async function getFormacioUncached(lang: SupportedLang): Promise<FormacioItem[]>
     .filter((item): item is FormacioItem => Boolean(item))
 }
 
+// Proyectos del CV. Si la colección aún no existe en Directus, simplemente no hay proyectos.
+async function getProjectesUncached(lang: SupportedLang): Promise<ProjecteItem[]> {
+  let items: unknown
+  try {
+    items = await directus.request(
+      readItems('projecte', {
+        fields: [
+          'ordre', 'url',
+          'nom_ca', 'nom_es', 'nom_en',
+          'descripcio_ca', 'descripcio_es', 'descripcio_en',
+          'tecnologies_ca', 'tecnologies_es', 'tecnologies_en',
+        ],
+        sort: ['ordre'],
+      }),
+    )
+  } catch {
+    warnOnce('la colección "projecte" no existe o no es legible en Directus; el CV sale sin sección de proyectos')
+    return []
+  }
+
+  if (!Array.isArray(items)) return []
+
+  return items
+    .map((item) => {
+      if (!isRecord(item)) return null
+      const nom = getLocalizedFieldWarn(item, 'nom', lang, 'projecte')
+      if (!nom) return null
+      return {
+        nom,
+        descripcio: getLocalizedFieldWarn(item, 'descripcio', lang, `projecte[${nom}]`),
+        tecnologies: getLocalizedList(item, 'tecnologies', lang, `projecte[${nom}]`),
+        url: typeof item.url === 'string' ? item.url : '',
+        ordre: typeof item.ordre === 'number' ? item.ordre : 0,
+      }
+    })
+    .filter((item): item is ProjecteItem => Boolean(item))
+}
+
 async function getHabilitatsUncached(lang: SupportedLang): Promise<{ tecniques: HabilitatItem[]; clau: HabilitatItem[] }> {
-  const items = await directus.request(
-    readItems('habilitat', {
-      fields: ['categoria', 'nom_ca', 'nom_es', 'nom_en'],
-      sort: ['nom_ca'],
-    }),
+  const fields = ['categoria', 'nom_ca', 'nom_es', 'nom_en']
+  const items = await withSchemaFallback(
+    'habilitat',
+    () => directus.request(readItems('habilitat', { fields: [...fields, 'grup'], sort: ['nom_ca'] })),
+    () => directus.request(readItems('habilitat', { fields, sort: ['nom_ca'] })),
   )
 
   if (!Array.isArray(items)) {
@@ -546,7 +694,8 @@ async function getHabilitatsUncached(lang: SupportedLang): Promise<{ tecniques: 
       if (!isRecord(item)) return null
       return {
         categoria: typeof item.categoria === 'string' ? item.categoria : '',
-        nom: getLocalizedField(item, 'nom', lang),
+        grup: typeof item.grup === 'string' ? item.grup : '',
+        nom: getLocalizedFieldWarn(item, 'nom', lang, 'habilitat'),
       }
     })
     .filter((item): item is HabilitatItem => Boolean(item && item.nom))
@@ -558,11 +707,12 @@ async function getHabilitatsUncached(lang: SupportedLang): Promise<{ tecniques: 
 }
 
 async function getCvDataUncached(lang: SupportedLang) {
-  const [settings, experiencies, formacions, habilitats] = await Promise.all([
+  const [settings, experiencies, formacions, habilitats, projectes] = await Promise.all([
     getSiteSettings(lang),
     getExperiencia(lang),
     getFormacio(lang),
     getHabilitats(lang),
+    getProjectes(lang),
   ])
 
   if (!settings) return null
@@ -574,10 +724,14 @@ async function getCvDataUncached(lang: SupportedLang) {
     linkedinUrl: settings.linkedinUrl,
     githubUrl: settings.githubUrl,
     email: settings.email,
+    telefon: settings.telefon,
+    ubicacio: settings.ubicacio,
+    nivellAngles: settings.nivellAngles,
     titol: settings.titol,
     resumSidebar: settings.resumSidebar,
     descripcioSobreMi: settings.descripcioSobreMi,
     experiencies,
+    projectes,
     formacions,
     habilitatsTecniques: habilitats.tecniques,
     habilitatsClau: habilitats.clau,
@@ -633,4 +787,5 @@ export const getTags = cached('getTags', getTagsUncached)
 export const getExperiencia = cached('getExperiencia', getExperienciaUncached)
 export const getFormacio = cached('getFormacio', getFormacioUncached)
 export const getHabilitats = cached('getHabilitats', getHabilitatsUncached)
+export const getProjectes = cached('getProjectes', getProjectesUncached)
 export const getCvData = cached('getCvData', getCvDataUncached)
