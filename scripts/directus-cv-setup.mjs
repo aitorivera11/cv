@@ -264,11 +264,11 @@ async function applyContent() {
     if (group) await patchItem('habilitat', s, { grup: group }, s.nom_ca || s.nom_es);
     else unresolved.push(`habilitat[${s.nom_ca || s.nom_es}]: sin grupo asignado (se mostrará en "Otros"); dime en cuál va`);
   }
-  for (const [name, group] of seed.newSkills) {
+  for (const [name, group, names] of seed.newSkills) {
     if (skills.some((s) => skillNames(s).includes(norm(name)))) continue;
     plan(`crear habilitat "${name}" (grupo ${group})`);
     if (APPLY) {
-      await api('POST', '/items/habilitat', { categoria: 'tecnica', grup: group, nom_ca: name, nom_es: name, nom_en: name });
+      await api('POST', '/items/habilitat', { categoria: 'tecnica', grup: group, nom_ca: names?.ca ?? name, nom_es: names?.es ?? name, nom_en: names?.en ?? name });
     }
   }
 

@@ -164,7 +164,7 @@ export function cvTemplate(data, fotoUrl, rawLang = 'ca') {
     ubicacio && `<li>${esc(ubicacio)}</li>`,
   ].filter(Boolean);
 
-  const level = nivellAngles && !PENDING.test(nivellAngles) ? ` – ${esc(nivellAngles)}` : '';
+  const level = nivellAngles && !PENDING.test(nivellAngles) ? `: ${esc(nivellAngles)}` : '';
 
   return `<!DOCTYPE html>
 <html lang="${lang}">
@@ -212,7 +212,7 @@ export function cvTemplate(data, fotoUrl, rawLang = 'ca') {
 
     h2 {
       font-size: 11px; margin: 10px 0 5px; font-weight: 700; color: #4f46e5;
-      letter-spacing: .08em; text-transform: uppercase;
+      letter-spacing: 0; text-transform: uppercase;
       border-bottom: 1px solid #e5e7eb; padding-bottom: 2px;
     }
     h3 { margin: 0; font-size: 12.5px; font-weight: 600; color: #111827; }
@@ -325,8 +325,8 @@ export function cvTemplate(data, fotoUrl, rawLang = 'ca') {
     <section>
       <h2>${esc(t.languagesTitle)}</h2>
       <ul class="languages">
-        <li><strong>${esc(t.languages.ca)}</strong> – ${esc(t.languages.native)}</li>
-        <li><strong>${esc(t.languages.es)}</strong> – ${esc(t.languages.native)}</li>
+        <li><strong>${esc(t.languages.ca)}:</strong> ${esc(t.languages.native)}</li>
+        <li><strong>${esc(t.languages.es)}:</strong> ${esc(t.languages.native)}</li>
         <li><strong>${esc(t.languages.en)}</strong>${level}</li>
       </ul>
     </section>
