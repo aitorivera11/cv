@@ -108,7 +108,7 @@ export const skillGroupByName = {
 
 // Habilidades nuevas que pides añadir (se crean si no existen; nombre igual en los 3 idiomas).
 export const newSkills = [
-  ['Python', 'llenguatges'], ['PL/SQL', 'llenguatges'], ['PostgreSQL', 'bbdd'], ['MySQL', 'bbdd'],
+  ['Python', 'llenguatges'], ['Java', 'llenguatges'], ['Spring', 'llenguatges'], ['PL/SQL', 'llenguatges'], ['PostgreSQL', 'bbdd'], ['MySQL', 'bbdd'],
   ['jQuery', 'frameworks'], ['Bootstrap 5', 'frameworks'], ['Linux', 'devops'],
   ['nginx', 'devops'], ['CI/CD', 'devops'], ['API REST', 'altres'], ['Power Platform', 'altres'],
 ];
