@@ -91,11 +91,7 @@ export const projectes = [
     slug: 'pastisseria-botiga',
     ordre: 1,
     nom: L('Botiga en línia de la pastisseria', 'Tienda online de la pastelería', 'Online bakery shop'),
-    descripcio: L(
-      `Botiga en línia desplegada amb Docker i Coolify en un servidor Hetzner ${P('xifra: comandes/mes, URL')}.`,
-      `Tienda online desplegada con Docker y Coolify en un servidor Hetzner ${P('cifra: pedidos/mes, URL')}.`,
-      `Online shop deployed with Docker and Coolify on a Hetzner server ${P('figure: orders/month, URL')}.`,
-    ),
+    descripcio: L('', '', ''), // de momento vacío
     techs: ['Docker', 'Coolify', 'Hetzner'],
     url: null,
   },
@@ -103,11 +99,7 @@ export const projectes = [
     slug: 'app-apoderats',
     ordre: 2,
     nom: L('App per a tutors legals', 'App de apoderados', 'Guardians app'),
-    descripcio: L(
-      `Aplicació per a tutors legals desenvolupada amb Django ${P('context, xifra i URL; confirma la traducció d\'"apoderados"')}.`,
-      `Aplicación para apoderados desarrollada con Django ${P('contexto, cifra y URL')}.`,
-      `Guardians app built with Django ${P('context, figure and URL; confirm the translation of "apoderados"')}.`,
-    ),
+    descripcio: L('', '', ''), // de momento vacío
     techs: ['Django'],
     url: null,
   },
