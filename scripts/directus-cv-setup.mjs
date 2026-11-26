@@ -245,15 +245,15 @@ async function applyContent() {
     unresolved.push(`experiencia[${job.empresa}]: existe en Directus pero no tiene logros en el contenido semilla (no se toca)`);
   }
 
-  // formacio: fechas aproximadas desde `dates` (inicio = enero del primer año, fin = diciembre del último)
+  // formacio: fechas por id del registro (seed.formacioDates)
   const education = await api('GET', '/items/formacio?limit=-1');
-  for (const f of education.filter((f) => !f.data_inici)) {
-    const years = String(f.dates ?? '').match(/\b(19|20)\d{2}\b/g);
-    if (!years) {
-      unresolved.push(`formacio[${f.centre}]: no puedo deducir fechas de "${f.dates}"`);
+  for (const f of education) {
+    const range = seed.formacioDates[f.id];
+    if (!range) {
+      if (!f.data_inici) unresolved.push(`formacio[${f.centre}] (id ${f.id}): sin fechas en el contenido semilla; ahora "${f.dates}"`);
       continue;
     }
-    await patchItem('formacio', f, { data_inici: `${years[0]}-01-01`, data_fi: `${years[years.length - 1]}-12-01` }, f.centre);
+    await patchItem('formacio', f, { data_inici: monthOrNull(range[0]), data_fi: monthOrNull(range[1]) }, f.centre);
   }
 
   // habilitat: grupo + habilidades nuevas

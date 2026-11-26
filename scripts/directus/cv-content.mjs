@@ -76,8 +76,14 @@ export const experiencia = [
   },
 ];
 
-// --- formacio: solo fechas (mes/año) pendientes --------------------------------------
-// No conozco los registros; el script lista los que no tienen mes y espera tus datos.
+// --- formacio: fechas reales (LinkedIn), por id del registro -------------------------
+// IES y Verge de la Salut: LinkedIn solo da años → se usa enero (inicio) y diciembre (fin).
+export const formacioDates = {
+  34: ['2024-05', '2025-02'], // UOC · Smart Cities i Ciutadania
+  35: ['2024-03', '2024-07'], // UOC · Direcció i Gestió de Projectes
+  36: ['2011-01', '2014-12'], // IES Esteve Terradas · DAM
+  33: ['2009-01', '2011-12'], // Verge de la Salut · Batxillerat tecnològic
+};
 
 // --- projecte (colección nueva) ---------------------------------------------------------
 export const projectes = [
