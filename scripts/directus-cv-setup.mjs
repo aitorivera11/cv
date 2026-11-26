@@ -87,6 +87,7 @@ const GROUP_CHOICES = [
   { text: 'DevOps', value: 'devops' },
   { text: 'Otros', value: 'altres' },
   { text: 'Gestión', value: 'gestio' },
+  { text: 'Estilos de programación', value: 'estils' },
 ];
 
 const schemaFields = {
@@ -133,6 +134,16 @@ async function applySchema() {
         schema: {},
         fields: projecteFields,
       });
+    }
+  }
+
+  // El campo habilitat.grup ya existe: añade las opciones nuevas del desplegable si faltan.
+  if (collections.has('habilitat')) {
+    const grup = (await api('GET', '/fields/habilitat')).find((f) => f.field === 'grup');
+    const have = new Set((grup?.meta?.options?.choices ?? []).map((c) => c.value));
+    if (grup && GROUP_CHOICES.some((c) => !have.has(c.value))) {
+      plan('actualizar opciones del desplegable habilitat.grup (añade «Estilos de programación»)');
+      if (APPLY) await api('PATCH', '/fields/habilitat/grup', { meta: { options: { choices: GROUP_CHOICES } } });
     }
   }
 
@@ -234,10 +245,15 @@ async function applyContent() {
     unresolved.push(`experiencia[${job.empresa}]: existe en Directus pero no tiene logros en el contenido semilla (no se toca)`);
   }
 
-  // formacio: solo informe de fechas sin mes
+  // formacio: fechas aproximadas desde `dates` (inicio = enero del primer año, fin = diciembre del último)
   const education = await api('GET', '/items/formacio?limit=-1');
   for (const f of education.filter((f) => !f.data_inici)) {
-    unresolved.push(`formacio[${f.centre}]: falta data_inici/data_fi (mes y año); ahora "${f.dates}"`);
+    const years = String(f.dates ?? '').match(/\b(19|20)\d{2}\b/g);
+    if (!years) {
+      unresolved.push(`formacio[${f.centre}]: no puedo deducir fechas de "${f.dates}"`);
+      continue;
+    }
+    await patchItem('formacio', f, { data_inici: `${years[0]}-01-01`, data_fi: `${years[years.length - 1]}-12-01` }, f.centre);
   }
 
   // habilitat: grupo + habilidades nuevas

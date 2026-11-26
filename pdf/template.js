@@ -23,6 +23,7 @@ const labels = {
       devops: 'DevOps',
       altres: 'Altres',
       gestio: 'Gestió',
+      estils: 'Estils de programació',
     },
   },
   es: {
@@ -41,6 +42,7 @@ const labels = {
       devops: 'DevOps',
       altres: 'Otros',
       gestio: 'Gestión',
+      estils: 'Estilos de programación',
     },
   },
   en: {
@@ -59,11 +61,12 @@ const labels = {
       devops: 'DevOps',
       altres: 'Other',
       gestio: 'Management',
+      estils: 'Programming practices',
     },
   },
 };
 
-const GROUP_ORDER = ['llenguatges', 'frameworks', 'bbdd', 'devops', 'altres', 'gestio'];
+const GROUP_ORDER = ['llenguatges', 'frameworks', 'bbdd', 'devops', 'altres', 'gestio', 'estils'];
 
 // Textos del CV que aún son un marcador [PENDIENTE…] no deben salir en un PDF público.
 const PENDING = /\[PENDIENTE/;

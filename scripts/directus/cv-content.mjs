@@ -30,118 +30,49 @@ export const siteSettings = {
 // --- experiencia ---------------------------------------------------------------------
 // `match`: fragmento (minúsculas) del campo `empresa` para localizar el registro existente.
 // `titol_*`: solo donde me lo has dado; en el resto no se toca el título actual.
-// `inici`/`fi`: 'YYYY-MM'. fi = null → puesto actual. Ahora todos [PENDIENTE]: no los conozco.
+// `inici`/`fi`: 'YYYY-MM'. fi = null → puesto actual. Aproximadas a partir del campo `dates` (inicio = enero, fin = diciembre).
 const L = (ca, es, en) => ({ ca, es, en });
 const P = (what) => `[PENDIENTE: ${what}]`;
 
 export const experiencia = [
   {
     match: 'salle',
-    inici: P('mes/año de inicio'),
-    fi: P('mes/año de fin, o vacío si es el puesto actual'),
+    inici: '2024-01',
+    fi: null,
     techs: ['Django', 'Oracle', 'jQuery', 'Bootstrap 5', 'nginx', 'CI/CD', 'iCal', 'Power Automate', 'Power Apps'],
-    logros: [
-      L(
-        `Desenvolupar aplicacions web amb Django i Oracle, amb interfície en jQuery i Bootstrap 5 ${P('nº d\'aplicacions / usuaris')}.`,
-        `Desarrollé aplicaciones web con Django y Oracle, con interfaz en jQuery y Bootstrap 5 ${P('nº de aplicaciones / usuarios')}.`,
-        `Built web applications with Django and Oracle, with a jQuery and Bootstrap 5 front end ${P('no. of applications / users')}.`,
-      ),
-      L(
-        `Configurar entorns de preproducció i CI/CD amb nginx per automatitzar els desplegaments ${P('xifra: desplegaments/mes o temps estalviat')}.`,
-        `Configuré entornos de preproducción y CI/CD con nginx para automatizar los despliegues ${P('cifra: despliegues/mes o tiempo ahorrado')}.`,
-        `Set up pre-production environments and CI/CD with nginx to automate deployments ${P('figure: deployments/month or time saved')}.`,
-      ),
-      L(
-        `Integrar calendaris iCal a les aplicacions Django ${P('abast / xifra')}.`,
-        `Integré calendarios iCal en las aplicaciones Django ${P('alcance / cifra')}.`,
-        `Integrated iCal calendars into the Django applications ${P('scope / figure')}.`,
-      ),
-      L(
-        `Automatitzar processos interns amb Power Automate i Power Apps ${P('nº de processos i hores estalviades')}.`,
-        `Automaticé procesos internos con Power Automate y Power Apps ${P('nº de procesos y horas ahorradas')}.`,
-        `Automated internal processes with Power Automate and Power Apps ${P('no. of processes and hours saved')}.`,
-      ),
-    ],
+    logros: [], // de momento vacío
   },
   {
     match: 'audifilm',
-    inici: P('mes/año de inicio'),
-    fi: P('mes/año de fin'),
+    inici: '2023-01',
+    fi: '2024-12',
     techs: ['Oracle SQL', 'PL/SQL'],
-    logros: [
-      L(
-        `Desenvolupar solucions d'e-administració per a administracions públiques amb Oracle SQL i PL/SQL ${P('nº d\'administracions / tràmits')}.`,
-        `Desarrollé soluciones de e-administración para administraciones públicas con Oracle SQL y PL/SQL ${P('nº de administraciones / trámites')}.`,
-        `Developed e-Government solutions for public administrations with Oracle SQL and PL/SQL ${P('no. of administrations / procedures')}.`,
-      ),
-      L(
-        `Implementar lògica de negoci i consultes en PL/SQL sobre Oracle ${P('volum de dades / expedients')}.`,
-        `Implementé lógica de negocio y consultas en PL/SQL sobre Oracle ${P('volumen de datos / expedientes')}.`,
-        `Implemented business logic and queries in PL/SQL on Oracle ${P('data volume / case files')}.`,
-      ),
-      L(P('tercer logro'), P('tercer logro'), P('third achievement')),
-    ],
+    logros: [], // de momento vacío
   },
   {
     match: 'ajuntament',
-    inici: P('mes/año de inicio'),
-    fi: P('mes/año de fin'),
+    inici: '2019-01',
+    fi: '2023-12',
     techs: [],
     // Etiquetas no técnicas (se traducen con tagTranslations)
     tags: ['Administració pública', 'eAdministració', 'Gestió de Projectes', 'Estratègia TIC', 'Innovació'],
-    logros: [
-      L(
-        `Definir l'estratègia TIC de l'àrea d'Innovació/TIC ${P('xifra: pressupost / nº de projectes')}.`,
-        `Definí la estrategia TIC del área de Innovación/TIC ${P('cifra: presupuesto / nº de proyectos')}.`,
-        `Defined the ICT strategy for the Innovation/ICT department ${P('figure: budget / no. of projects')}.`,
-      ),
-      L(
-        `Gestionar projectes TIC a Joventut, Habitatge, Comerç i Turisme ${P('nº de projectes i pressupost')}.`,
-        `Gestioné proyectos TIC en Juventud, Vivienda, Comercio y Turismo ${P('nº de proyectos y presupuesto')}.`,
-        `Managed ICT projects across Youth, Housing, Commerce and Tourism ${P('no. of projects and budget')}.`,
-      ),
-      L(P('tercer logro'), P('tercer logro'), P('third achievement')),
-    ],
+    logros: [], // de momento vacío
   },
   {
     match: 'glifing',
     titol: L('Desenvolupador Full Stack', 'Desarrollador Full Stack', 'Full Stack Developer'),
-    inici: P('mes/año de inicio'),
-    fi: P('mes/año de fin'),
+    inici: '2016-01',
+    fi: '2019-12',
     techs: ['Java', 'Spring', 'Django', 'CakePHP', 'MySQL'],
-    logros: [
-      L(
-        `Desenvolupar funcionalitats full stack amb Java Spring i Django sobre MySQL ${P('xifra: usuaris / centres')}.`,
-        `Desarrollé funcionalidades full stack con Java Spring y Django sobre MySQL ${P('cifra: usuarios / centros')}.`,
-        `Developed full stack features with Java Spring and Django on MySQL ${P('figure: users / schools')}.`,
-      ),
-      L(
-        `Mantenir i evolucionar aplicacions en CakePHP ${P('abast / xifra')}.`,
-        `Mantuve y evolucioné aplicaciones en CakePHP ${P('alcance / cifra')}.`,
-        `Maintained and evolved CakePHP applications ${P('scope / figure')}.`,
-      ),
-      L(P('tercer logro'), P('tercer logro'), P('third achievement')),
-    ],
+    logros: [], // de momento vacío
   },
   {
     match: 'fihoca',
     titol: L('Desenvolupador Backend (Java)', 'Desarrollador Backend (Java)', 'Backend Developer (Java)'),
-    inici: P('mes/año de inicio'),
-    fi: P('mes/año de fin'),
+    inici: '2015-01',
+    fi: '2016-12',
     techs: ['Java', 'API REST', 'MySQL', 'Oracle', 'PostgreSQL'],
-    logros: [
-      L(
-        `Desenvolupar APIs en Java ${P('nº d\'endpoints / clients')}.`,
-        `Desarrollé APIs en Java ${P('nº de endpoints / clientes')}.`,
-        `Developed Java APIs ${P('no. of endpoints / clients')}.`,
-      ),
-      L(
-        `Treballar amb bases de dades MySQL, Oracle i PostgreSQL ${P('volum / rendiment')}.`,
-        `Trabajé con bases de datos MySQL, Oracle y PostgreSQL ${P('volumen / rendimiento')}.`,
-        `Worked with MySQL, Oracle and PostgreSQL databases ${P('volume / performance')}.`,
-      ),
-      L(P('tercer logro'), P('tercer logro'), P('third achievement')),
-    ],
+    logros: [], // de momento vacío
   },
 ];
 
@@ -177,7 +108,7 @@ export const projectes = [
 ];
 
 // --- habilitat (campo nuevo `grup`) -------------------------------------------------------
-export const skillGroups = ['llenguatges', 'frameworks', 'bbdd', 'devops', 'altres', 'gestio'];
+export const skillGroups = ['llenguatges', 'frameworks', 'bbdd', 'devops', 'altres', 'gestio', 'estils'];
 
 // nom (en minúsculas) → grupo. Solo se clasifican las que reconozco; el resto se lista para que decidas.
 export const skillGroupByName = {
@@ -189,6 +120,7 @@ export const skillGroupByName = {
   docker: 'devops', git: 'devops', linux: 'devops', nginx: 'devops', 'ci/cd': 'devops',
   coolify: 'devops', hetzner: 'devops',
   'api rest': 'altres', 'power platform': 'altres',
+  'html & css': 'llenguatges', 'clean code': 'estils', dry: 'estils', 'disseny responsive': 'estils',
   'gestió de projectes': 'gestio', 'estratègia tic': 'gestio',
 };
 
