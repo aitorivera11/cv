@@ -30,29 +30,29 @@ export const siteSettings = {
 // --- experiencia ---------------------------------------------------------------------
 // `match`: fragmento (minúsculas) del campo `empresa` para localizar el registro existente.
 // `titol_*`: solo donde me lo has dado; en el resto no se toca el título actual.
-// `inici`/`fi`: 'YYYY-MM'. fi = null → puesto actual. Aproximadas a partir del campo `dates` (inicio = enero, fin = diciembre).
+// `inici`/`fi`: 'YYYY-MM'. fi = null → puesto actual. Fechas reales de LinkedIn.
 const L = (ca, es, en) => ({ ca, es, en });
 const P = (what) => `[PENDIENTE: ${what}]`;
 
 export const experiencia = [
   {
     match: 'salle',
-    inici: '2024-01',
+    inici: '2024-04',
     fi: null,
     techs: ['Django', 'Oracle', 'jQuery', 'Bootstrap 5', 'nginx', 'CI/CD', 'iCal', 'Power Automate', 'Power Apps'],
     logros: [], // de momento vacío
   },
   {
     match: 'audifilm',
-    inici: '2023-01',
-    fi: '2024-12',
+    inici: '2023-11',
+    fi: '2024-02',
     techs: ['Oracle SQL', 'PL/SQL'],
     logros: [], // de momento vacío
   },
   {
     match: 'ajuntament',
-    inici: '2019-01',
-    fi: '2023-12',
+    inici: '2019-06',
+    fi: '2023-06',
     techs: [],
     // Etiquetas no técnicas (se traducen con tagTranslations)
     tags: ['Administració pública', 'eAdministració', 'Gestió de Projectes', 'Estratègia TIC', 'Innovació'],
@@ -62,15 +62,15 @@ export const experiencia = [
     match: 'glifing',
     titol: L('Desenvolupador Full Stack', 'Desarrollador Full Stack', 'Full Stack Developer'),
     inici: '2016-01',
-    fi: '2019-12',
+    fi: '2019-06',
     techs: ['Java', 'Spring', 'Django', 'CakePHP', 'MySQL'],
     logros: [], // de momento vacío
   },
   {
     match: 'fihoca',
     titol: L('Desenvolupador Backend (Java)', 'Desarrollador Backend (Java)', 'Backend Developer (Java)'),
-    inici: '2015-01',
-    fi: '2016-12',
+    inici: '2015-05',
+    fi: '2016-01',
     techs: ['Java', 'API REST', 'MySQL', 'Oracle', 'PostgreSQL'],
     logros: [], // de momento vacío
   },
