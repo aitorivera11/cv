@@ -77,33 +77,17 @@ export const experiencia = [
 ];
 
 // --- formacio: fechas reales (LinkedIn), por id del registro -------------------------
-// IES y Verge de la Salut: LinkedIn solo da años → se usa enero (inicio) y diciembre (fin).
+// Verge de la Salut: LinkedIn solo da años → se usa enero (inicio) y diciembre (fin).
 export const formacioDates = {
   34: ['2024-05', '2025-02'], // UOC · Smart Cities i Ciutadania
   35: ['2024-03', '2024-07'], // UOC · Direcció i Gestió de Projectes
-  36: ['2011-01', '2014-12', '2011 - 2014'], // IES Esteve Terradas · DAM
+  36: ['2011-09', '2014-06', '2011 - 2014'], // IES Esteve Terradas · DAM
   33: ['2009-01', '2011-12'], // Verge de la Salut · Batxillerat tecnològic
 };
 
 // --- projecte (colección nueva) ---------------------------------------------------------
-export const projectes = [
-  {
-    slug: 'pastisseria-botiga',
-    ordre: 1,
-    nom: L('Botiga en línia de la pastisseria', 'Tienda online de la pastelería', 'Online bakery shop'),
-    descripcio: L('', '', ''), // de momento vacío
-    techs: ['Docker', 'Coolify', 'Hetzner'],
-    url: null,
-  },
-  {
-    slug: 'app-apoderats',
-    ordre: 2,
-    nom: L('App per a tutors legals', 'App de apoderados', 'Guardians app'),
-    descripcio: L('', '', ''), // de momento vacío
-    techs: ['Django'],
-    url: null,
-  },
-];
+// De momento sin proyectos: los añadirás tú en Directus (colección `projecte`).
+export const projectes = [];
 
 // --- habilitat (campo nuevo `grup`) -------------------------------------------------------
 export const skillGroups = ['llenguatges', 'frameworks', 'bbdd', 'devops', 'altres', 'gestio', 'estils'];
@@ -124,7 +108,7 @@ export const skillGroupByName = {
 
 // Habilidades nuevas que pides añadir (se crean si no existen; nombre igual en los 3 idiomas).
 export const newSkills = [
-  ['PL/SQL', 'llenguatges'], ['PostgreSQL', 'bbdd'], ['MySQL', 'bbdd'],
+  ['Python', 'llenguatges'], ['PL/SQL', 'llenguatges'], ['PostgreSQL', 'bbdd'], ['MySQL', 'bbdd'],
   ['jQuery', 'frameworks'], ['Bootstrap 5', 'frameworks'], ['Linux', 'devops'],
   ['nginx', 'devops'], ['CI/CD', 'devops'], ['API REST', 'altres'], ['Power Platform', 'altres'],
 ];
