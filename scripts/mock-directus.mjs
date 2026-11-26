@@ -2,6 +2,7 @@
 //   node scripts/mock-directus.mjs            # escucha en el puerto 8055 (o MOCK_DIRECTUS_PORT)
 // Usa DIRECTUS_URL=http://127.0.0.1:8055 y un DIRECTUS_TOKEN cualquiera.
 import http from 'node:http';
+import * as seed from './directus/cv-content.mjs';
 
 const PORT = Number(process.env.MOCK_DIRECTUS_PORT ?? 8055);
 
@@ -17,16 +18,28 @@ const loc = (base, value) => ({
   [`${base}_en`]: `${value} EN`,
 });
 
+const loc2 = (name) => ({ nom_ca: name, nom_es: name, nom_en: name });
+
 const data = {
   site_settings: {
     foto: 'abc123',
-    nom: 'Aitor Test',
-    ...loc('titol', 'Dev'),
-    ...loc('resum_sidebar', 'Resum'),
+    nom: 'Aitor Rivera Garcia',
     ...loc('descripcio_sobre_mi', '<p><strong>Entiendo la tecnología como una herramienta.</strong></p><p>Un párrafo más largo para que la sección tenga cuerpo real y se vea cómo se reparte el espacio en pantalla.</p><p>Otro párrafo con más texto de ejemplo.</p>'),
     linkedin_url: 'https://linkedin.com/in/x',
     github_url: 'https://github.com/x',
     email: 'a@b.c',
+    // Datos del CV (los mismos que carga scripts/directus-cv-setup.mjs)
+    telefon: seed.siteSettings.telefon,
+    ubicacio: seed.siteSettings.ubicacio,
+    titol_ca: seed.siteSettings.titol_ca,
+    titol_es: seed.siteSettings.titol_es,
+    titol_en: seed.siteSettings.titol_en,
+    resum_sidebar_ca: seed.siteSettings.resum_sidebar_ca,
+    resum_sidebar_es: seed.siteSettings.resum_sidebar_es,
+    resum_sidebar_en: seed.siteSettings.resum_sidebar_en,
+    nivell_angles_ca: seed.siteSettings.nivell_angles_ca,
+    nivell_angles_es: seed.siteSettings.nivell_angles_es,
+    nivell_angles_en: seed.siteSettings.nivell_angles_en,
   },
   blog_settings: { ...loc('title', 'Blog'), ...loc('description', 'Desc') },
   post: [
@@ -43,26 +56,64 @@ const data = {
   ],
   category: [],
   tag: [],
-  experiencia: Array.from({ length: 5 }, (_, i) => ({
-    empresa: `Empresa ${i + 1}`,
-    dates: `${2024 - i * 2} - ${i === 0 ? 'Actual' : 2026 - i * 2}`,
-    tecnologies: ['Django', 'Python', 'SQL'],
-    ordre: i,
-    ...loc('titol', `Cargo ${i + 1}`),
-    ...loc('descripcio', 'Descripción de las responsabilidades y logros del puesto, con detalle suficiente para ocupar varias líneas en pantalla y simular contenido real de un CV.'),
-  })),
-  formacio: Array.from({ length: 3 }, (_, i) => ({
-    centre: `Centro ${i + 1}`,
-    dates: `${2010 + i * 2} - ${2012 + i * 2}`,
-    ordre: i,
-    ...loc('titulacio', `Titulación ${i + 1}`),
+  // Experiencia, formación y habilidades: contenido semilla en la forma final del esquema.
+  // Las fechas son DE PRUEBA (las reales están [PENDIENTE]); no son datos reales del CV.
+  experiencia: seed.experiencia.map((job, i) => {
+    const empresa = { salle: 'La Salle', audifilm: 'Audifilm', ajuntament: 'Ajuntament', glifing: 'Glifing', fihoca: 'Fihoca' }[job.match];
+    const legacyTags = job.tags || [];
+    return {
+      empresa,
+      dates: `${2024 - i * 2} - ${i === 0 ? 'Actual' : 2025 - i * 2}`,
+      data_inici: `${2024 - i * 2}-03-01`,
+      data_fi: i === 0 ? null : `${2025 - i * 2}-09-01`,
+      tecnologies: legacyTags,
+      ordre: i,
+      titol_ca: job.titol?.ca ?? 'Càrrec d\'exemple',
+      titol_es: job.titol?.es ?? 'Cargo de ejemplo',
+      titol_en: job.titol?.en ?? 'Sample role',
+      descripcio_ca: 'Descripció antiga.',
+      descripcio_es: 'Descripción antigua.',
+      descripcio_en: 'Old description.',
+      logros_ca: job.logros.map((l) => l.ca).join('\n'),
+      logros_es: job.logros.map((l) => l.es).join('\n'),
+      logros_en: job.logros.map((l) => l.en).join('\n'),
+      tecnologies_ca: seed.tagsFor(job, 'ca', legacyTags),
+      tecnologies_es: seed.tagsFor(job, 'es', legacyTags),
+      tecnologies_en: seed.tagsFor(job, 'en', legacyTags),
+    };
+  }),
+  formacio: [
+    { centre: 'Universitat (exemple)', dates: '2010 - 2014', data_inici: '2010-09-01', data_fi: '2014-06-01', ordre: 0,
+      titulacio_ca: 'Titulació d\'exemple', titulacio_es: 'Titulación de ejemplo', titulacio_en: 'Sample degree' },
+  ],
+  projecte: seed.projectes.map((p) => ({
+    ordre: p.ordre, url: p.url,
+    nom_ca: p.nom.ca, nom_es: p.nom.es, nom_en: p.nom.en,
+    descripcio_ca: p.descripcio.ca, descripcio_es: p.descripcio.es, descripcio_en: p.descripcio.en,
+    tecnologies_ca: p.techs, tecnologies_es: p.techs, tecnologies_en: p.techs,
   })),
   habilitat: [
-    { categoria: 'tecnica', ...loc('nom', 'Django') },
-    { categoria: 'tecnica', ...loc('nom', 'SQL') },
-    { categoria: 'clau', ...loc('nom', 'Lideratge') },
+    ...['Python', 'Java', 'SQL', 'JavaScript'].map((n) => ({ categoria: 'tecnica', grup: 'llenguatges', ...loc2(n) })),
+    ...seed.newSkills.map(([n, grup]) => ({ categoria: 'tecnica', grup, ...loc2(n) })),
+    ...['Django', 'Spring', 'CakePHP'].map((n) => ({ categoria: 'tecnica', grup: 'frameworks', ...loc2(n) })),
+    ...['Oracle'].map((n) => ({ categoria: 'tecnica', grup: 'bbdd', ...loc2(n) })),
+    ...['Docker', 'Git'].map((n) => ({ categoria: 'tecnica', grup: 'devops', ...loc2(n) })),
+    { categoria: 'tecnica', grup: 'gestio', nom_ca: 'Gestió de projectes TIC', nom_es: 'Gestión de proyectos TIC', nom_en: 'ICT project management' },
+    { categoria: 'tecnica', grup: 'gestio', nom_ca: 'Estratègia TIC', nom_es: 'Estrategia TIC', nom_en: 'ICT strategy' },
+    { categoria: 'clau', grup: '', ...loc('nom', 'Lideratge') },
   ],
 };
+
+// MOCK_FILL_PENDING=1: sustituye cada [PENDIENTE: …] por una cifra de relleno de longitud realista,
+// solo para medir si el CV cabe en una página (no son datos reales).
+if (process.env.MOCK_FILL_PENDING) {
+  const fill = (v) =>
+    typeof v === 'string' ? v.replace(/\s*\[PENDIENTE[^\]]*\]/g, ' (−35 % de tiempo)')
+    : Array.isArray(v) ? v.map(fill)
+    : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, fill(x)]))
+    : v;
+  for (const key of Object.keys(data)) data[key] = fill(data[key]);
+}
 
 http
   .createServer((req, res) => {

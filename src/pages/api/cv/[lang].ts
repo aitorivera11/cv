@@ -1,7 +1,6 @@
 import type { APIRoute } from 'astro';
 import { createHash } from 'node:crypto';
 import {
-  getCvFilename,
   isSupportedLang,
   readCv,
   readCvMeta,
@@ -10,6 +9,7 @@ import {
 } from '../../../lib/cv-storage';
 import { getCvData, type SupportedLang } from '../../../lib/directus-content';
 import { generatePdfBuffer, renderCvHtml } from '../../../lib/pdf';
+import { cvDownloadFilename } from '../../../../pdf/template.js';
 
 function buildPdfResponse(file: Buffer, filename: string, etag: string) {
   return new Response(new Uint8Array(file), {
@@ -42,6 +42,9 @@ export const GET: APIRoute = async ({ params, request }) => {
     });
   }
 
+  // Nombre de descarga: Aitor-Rivera-Garcia-CV-ES.pdf (el archivo en disco conserva su nombre interno)
+  const downloadName = cvDownloadFilename(data, lang);
+
   // El PDF només es regenera si canvia el contingut (o la plantilla): la clau és el hash del HTML.
   const html = renderCvHtml(data, lang);
   const sourceHash = createHash('sha256').update(html).digest('hex');
@@ -56,12 +59,12 @@ export const GET: APIRoute = async ({ params, request }) => {
   const cachedMeta = await readCvMeta(lang);
 
   if (cachedCv && cachedMeta?.sourceHash === sourceHash) {
-    return buildPdfResponse(cachedCv.file, cachedCv.filename, etag);
+    return buildPdfResponse(cachedCv.file, downloadName, etag);
   }
 
   const pdfBuffer = await generatePdfBuffer(data, lang);
-  const savedCv = await saveCv(lang, pdfBuffer);
+  await saveCv(lang, pdfBuffer);
   await saveCvMeta(lang, { sourceHash });
 
-  return buildPdfResponse(pdfBuffer, savedCv.filename || getCvFilename(lang), etag);
+  return buildPdfResponse(pdfBuffer, downloadName, etag);
 };

@@ -26,3 +26,6 @@ pnpm-debug.log*
 # CV PDFs generats
 *.pdf
 storage/
+
+# Copias de seguridad que genera scripts/directus-cv-setup.mjs (contienen datos de Directus)
+scripts/directus/backup-*.json

@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { chromium } from 'playwright';
-import { cvTemplate } from '../../pdf/template.js';
+import { cvTemplate, findPendingText } from '../../pdf/template.js';
 import { getDirectusAssetOriginUrl } from './directus-content';
 
 function getPhotoUrl(photo: unknown) {
@@ -53,19 +53,46 @@ async function fetchPhotoDataUri(photoUrl: string): Promise<string> {
   }
 }
 
-// La tipografía de la web (Space Grotesk, subconjunto latino) incrustada: el PDF no depende de Internet.
+// Space Grotesk en archivos ESTÁTICOS (un woff2 por peso, public/fonts/cv). La fuente variable de la web
+// hace que Chromium incruste el PDF con fuentes Type 3 (texto no extraíble de forma fiable).
+const CV_FONT_WEIGHTS = [400, 500, 600, 700];
+
 async function fontFaceStyle(): Promise<string> {
-  try {
-    const font = await readFile(path.join(process.cwd(), 'dist/client/fonts/SpaceGrotesk-latin.woff2'));
-    return `<style>@font-face{font-family:'Space Grotesk';font-weight:300 700;font-style:normal;src:url(data:font/woff2;base64,${font.toString('base64')}) format('woff2');}</style>`;
-  } catch {
-    return '';
+  const dirs = [
+    path.join(process.cwd(), 'dist/client/fonts/cv'),
+    path.join(process.cwd(), 'public/fonts/cv'),
+  ];
+
+  const faces: string[] = [];
+  for (const weight of CV_FONT_WEIGHTS) {
+    let font: Buffer | null = null;
+    for (const dir of dirs) {
+      try {
+        font = await readFile(path.join(dir, `SpaceGrotesk-${weight}.woff2`));
+        break;
+      } catch {
+        // prueba la siguiente carpeta
+      }
+    }
+    if (!font) {
+      console.warn(`[cv] Falta la fuente SpaceGrotesk-${weight}.woff2: el PDF usará una fuente del sistema`);
+      continue;
+    }
+    faces.push(
+      `@font-face{font-family:'Space Grotesk';font-weight:${weight};font-style:normal;src:url(data:font/woff2;base64,${font.toString('base64')}) format('woff2');}`,
+    );
   }
+  return faces.length ? `<style>${faces.join('')}</style>` : '';
 }
 
 async function renderPdf(data: Record<string, any>, lang: string): Promise<Buffer> {
   const photo = await fetchPhotoDataUri(getPhotoUrl(data.foto));
   const html = cvTemplate(data, photo, lang).replace('</head>', `${await fontFaceStyle()}</head>`);
+
+  const pending = findPendingText(html);
+  if (pending.length) {
+    console.warn(`[cv] El CV (${lang}) contiene ${pending.length} texto(s) [PENDIENTE] sin resolver:`, pending);
+  }
 
   const browser = await chromium.launch();
 
@@ -75,7 +102,7 @@ async function renderPdf(data: Record<string, any>, lang: string): Promise<Buffe
     const pdf = await page.pdf({
       format: 'A4',
       printBackground: true,
-      margin: { top: '10mm', bottom: '10mm', left: '8mm', right: '8mm' },
+      margin: { top: '7mm', bottom: '7mm', left: '8mm', right: '8mm' },
     });
     return Buffer.from(pdf);
   } finally {
