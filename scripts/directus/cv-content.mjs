@@ -126,11 +126,14 @@ export const skillGroupByName = {
   'gestió de projectes': 'gestio', 'estratègia tic': 'gestio',
 };
 
-// Habilidades nuevas que pides añadir (se crean si no existen; nombre igual en los 3 idiomas).
+// Habilidades nuevas que pides añadir (se crean si no existen; nombre igual en los 3 idiomas salvo que se indique).
 export const newSkills = [
   ['Python', 'llenguatges'], ['Java', 'llenguatges'], ['Spring', 'llenguatges'], ['PL/SQL', 'llenguatges'], ['PostgreSQL', 'bbdd'], ['MySQL', 'bbdd'],
   ['jQuery', 'frameworks'], ['Bootstrap 5', 'frameworks'], ['Linux', 'devops'],
   ['nginx', 'devops'], ['CI/CD', 'devops'], ['API REST', 'altres'], ['Power Platform', 'altres'],
+  ['GitHub Actions', 'devops'], ['Testing', 'altres'], ['pytest', 'altres'], ['SoapUI', 'altres'],
+  // Tercer elemento opcional: nombre distinto por idioma.
+  ['Microserveis', 'altres', { ca: 'Microserveis', es: 'Microservicios', en: 'Microservices' }],
 ];
 
 // --- traducción de etiquetas (experiencia.tecnologies → tecnologies_ca/es/en) ---------------
