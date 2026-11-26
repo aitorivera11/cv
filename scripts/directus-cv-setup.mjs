@@ -253,7 +253,7 @@ async function applyContent() {
       if (!f.data_inici) unresolved.push(`formacio[${f.centre}] (id ${f.id}): sin fechas en el contenido semilla; ahora "${f.dates}"`);
       continue;
     }
-    await patchItem('formacio', f, { data_inici: monthOrNull(range[0]), data_fi: monthOrNull(range[1]) }, f.centre);
+    await patchItem('formacio', f, { data_inici: monthOrNull(range[0]), data_fi: monthOrNull(range[1]), ...(range[2] ? { dates: range[2] } : {}) }, f.centre);
   }
 
   // habilitat: grupo + habilidades nuevas

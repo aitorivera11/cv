@@ -22,9 +22,9 @@ export const siteSettings = {
     'Over 8 years building with Python/Django and Java for the public sector: universities and e-Government. ' +
     'Plus 4 years managing ICT projects in local government.',
   // Nivel real de inglés: lo tienes que dar tú (p. ej. B2 / C1 / "Profesional").
-  nivell_angles_ca: '[PENDIENTE: nivel real de inglés]',
-  nivell_angles_es: '[PENDIENTE: nivel real de inglés]',
-  nivell_angles_en: '[PENDIENTE: nivel real de inglés]',
+  nivell_angles_ca: 'Nivell tècnic (lectura i escriptura de documentació)',
+  nivell_angles_es: 'Nivel técnico (lectura y escritura de documentación)',
+  nivell_angles_en: 'Technical working proficiency (reading and writing documentation)',
 };
 
 // --- experiencia ---------------------------------------------------------------------
@@ -81,7 +81,7 @@ export const experiencia = [
 export const formacioDates = {
   34: ['2024-05', '2025-02'], // UOC · Smart Cities i Ciutadania
   35: ['2024-03', '2024-07'], // UOC · Direcció i Gestió de Projectes
-  36: ['2011-01', '2014-12'], // IES Esteve Terradas · DAM
+  36: ['2011-01', '2014-12', '2011 - 2014'], // IES Esteve Terradas · DAM
   33: ['2009-01', '2011-12'], // Verge de la Salut · Batxillerat tecnològic
 };
 
