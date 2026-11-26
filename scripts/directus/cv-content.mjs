@@ -9,18 +9,18 @@ export const PENDING = /\[PENDIENTE/;
 export const siteSettings = {
   telefon: '+34 625 947 211',
   ubicacio: 'Barcelona',
-  titol_ca: 'Desenvolupador Full Stack sènior · Python / Django · Oracle',
-  titol_es: 'Desarrollador Full Stack senior · Python / Django · Oracle',
-  titol_en: 'Senior Full Stack Developer · Python / Django · Oracle',
+  titol_ca: 'Desenvolupador Python sènior · Django · Oracle',
+  titol_es: 'Desarrollador Python senior · Django · Oracle',
+  titol_en: 'Senior Python Developer · Django · Oracle',
   resum_sidebar_ca:
-    "Més de 8 anys desenvolupant amb Python/Django i Java per al sector públic: universitats i e-administració. " +
-    "A més, 4 anys gestionant projectes TIC en una administració local.",
+    "Desenvolupador Full Stack sènior amb més de 7 anys en Python/Django, Java (Spring) i Oracle (SQL/PL/SQL) per al sector públic i educatiu: universitats i e-administració. " +
+    "Experiència liderant projectes TIC (4 anys com a responsable d'Innovació i Tecnologies en un ajuntament), CI/CD i automatització de processos amb Power Platform.",
   resum_sidebar_es:
-    'Más de 8 años desarrollando con Python/Django y Java para el sector público: universidades y e-administración. ' +
-    'Además, 4 años gestionando proyectos TIC en una administración local.',
+    'Desarrollador Full Stack senior con más de 7 años en Python/Django, Java (Spring) y Oracle (SQL/PL/SQL) para el sector público y educativo: universidades y e-administración. ' +
+    'Experiencia liderando proyectos TIC (4 años como responsable de Innovación y Tecnologías en un ayuntamiento), CI/CD y automatización de procesos con Power Platform.',
   resum_sidebar_en:
-    'Over 8 years building with Python/Django and Java for the public sector: universities and e-Government. ' +
-    'Plus 4 years managing ICT projects in local government.',
+    'Senior Full Stack Developer with 7+ years in Python/Django, Java (Spring) and Oracle (SQL/PL/SQL) for the public and education sectors: universities and e-government. ' +
+    'Experience leading ICT projects (4 years as Head of Innovation and Technology at a city council), CI/CD and process automation with Power Platform.',
   // Nivel real de inglés: lo tienes que dar tú (p. ej. B2 / C1 / "Profesional").
   nivell_angles_ca: 'Nivell tècnic (lectura i escriptura de documentació)',
   nivell_angles_es: 'Nivel técnico (lectura y escritura de documentación)',
