@@ -40,14 +40,22 @@ export const experiencia = [
     inici: '2024-04',
     fi: null,
     techs: ['Django', 'Oracle', 'jQuery', 'Bootstrap 5', 'nginx', 'CI/CD', 'iCal', 'Power Automate', 'Power Apps'],
-    logros: [], // de momento vacío
+    logros: [
+      L(`Desenvolupar aplicacions web amb Django i Oracle, amb interfície en jQuery i Bootstrap 5.`, `Desarrollé aplicaciones web con Django y Oracle, con interfaz en jQuery y Bootstrap 5.`, `Developed web applications with Django and Oracle, with a jQuery and Bootstrap 5 front end.`),
+      L(`Configurar entorns de preproducció i CI/CD amb nginx per automatitzar els desplegaments.`, `Configuré entornos de preproducción y CI/CD con nginx para automatizar los despliegues.`, `Configured pre-production environments and CI/CD with nginx to automate deployments.`),
+      L(`Integrar calendaris iCal a les aplicacions Django.`, `Integré calendarios iCal en las aplicaciones Django.`, `Integrated iCal calendars into the Django applications.`),
+      L(`Automatitzar processos interns amb Power Automate i Power Apps.`, `Automaticé procesos internos con Power Automate y Power Apps.`, `Automated internal processes with Power Automate and Power Apps.`),
+    ],
   },
   {
     match: 'audifilm',
     inici: '2023-11',
     fi: '2024-02',
     techs: ['Oracle SQL', 'PL/SQL'],
-    logros: [], // de momento vacío
+    logros: [
+      L(`Implantar solucions d'administració electrònica per a administracions públiques.`, `Implanté soluciones de administración electrónica para administraciones públicas.`, `Implemented e-government solutions for public administrations.`),
+      L(`Desenvolupar lògica de negoci i consultes en PL/SQL sobre Oracle.`, `Desarrollé lógica de negocio y consultas en PL/SQL sobre Oracle.`, `Developed business logic and queries in PL/SQL on Oracle.`),
+    ],
   },
   {
     match: 'ajuntament',
@@ -56,7 +64,11 @@ export const experiencia = [
     techs: [],
     // Etiquetas no técnicas (se traducen con tagTranslations)
     tags: ['Administració pública', 'eAdministració', 'Gestió de Projectes', 'Estratègia TIC', 'Innovació'],
-    logros: [], // de momento vacío
+    logros: [
+      L(`Definir l'estratègia TIC de l'àrea d'Innovació i Tecnologies.`, `Definí la estrategia TIC del área de Innovación y Tecnologías.`, `Defined the ICT strategy for the Innovation and Technology department.`),
+      L(`Gestionar projectes municipals d'Innovació i TIC, Joventut, Habitatge, Comerç i Turisme.`, `Gestioné proyectos municipales de Innovación y TIC, Juventud, Vivienda, Comercio y Turismo.`, `Managed municipal projects in Innovation and ICT, Youth, Housing, Commerce and Tourism.`),
+      L(`Participar en decisions estratègiques i coordinar projectes municipals.`, `Participé en decisiones estratégicas y coordiné proyectos municipales.`, `Took part in strategic decisions and coordinated municipal projects.`),
+    ],
   },
   {
     match: 'glifing',
@@ -64,7 +76,11 @@ export const experiencia = [
     inici: '2016-01',
     fi: '2019-06',
     techs: ['Java', 'Spring', 'Django', 'CakePHP', 'MySQL'],
-    logros: [], // de momento vacío
+    logros: [
+      L(`Desenvolupar funcionalitats full stack amb Java (Spring) i Django.`, `Desarrollé funcionalidades full stack con Java (Spring) y Django.`, `Developed full stack features with Java (Spring) and Django.`),
+      L(`Mantenir i evolucionar aplicacions en CakePHP.`, `Mantuve y evolucioné aplicaciones en CakePHP.`, `Maintained and evolved CakePHP applications.`),
+      L(`Dissenyar i optimitzar bases de dades MySQL.`, `Diseñé y optimicé bases de datos MySQL.`, `Designed and optimized MySQL databases.`),
+    ],
   },
   {
     match: 'fihoca',
@@ -72,7 +88,11 @@ export const experiencia = [
     inici: '2015-05',
     fi: '2016-01',
     techs: ['Java', 'API REST', 'MySQL', 'Oracle', 'PostgreSQL'],
-    logros: [], // de momento vacío
+    logros: [
+      L(`Desenvolupar APIs i serveis web amb Java.`, `Desarrollé APIs y servicios web con Java.`, `Developed APIs and web services with Java.`),
+      L(`Treballar amb bases de dades relacionals MySQL, Oracle i PostgreSQL.`, `Trabajé con bases de datos relacionales MySQL, Oracle y PostgreSQL.`, `Worked with MySQL, Oracle and PostgreSQL relational databases.`),
+      L(`Col·laborar amb equips multidisciplinaris per lliurar els projectes.`, `Colaboré con equipos multidisciplinares para entregar los proyectos.`, `Collaborated with multidisciplinary teams to deliver projects.`),
+    ],
   },
 ];
 
